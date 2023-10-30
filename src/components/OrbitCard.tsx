@@ -1,23 +1,29 @@
-import {FC} from 'react'
-import {Button, Card} from 'react-bootstrap'
-import './OrbitCard.css'
+import { FC } from 'react';
+import { Button, Card } from 'react-bootstrap';
 
 interface Props {
-    imageUrl: string
-    orbitName: string
-    pageUrl: string
+    imageUrl: string;
+    orbitName: string;
+    orbitStatus: boolean;
+    pageUrl: string;
 }
 
-const OrbitCard: FC<Props> = ({ imageUrl, orbitName, pageUrl }) => (
+const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, pageUrl }) => (
     <Card className='card'>
-        <Card.Img className="cardImage" variant="top" src={"data:image/jpg;base64, " + {imageUrl}} height = {100} width = {100} />
+        <div className="image-container">
+            <Card.Img className="card_image" src={`data:image/png;base64, ${imageUrl}`} />
+        </div>
         <Card.Body>
-            <div className='textStyle'>
+            <div className='card_title'>
                 <Card.Title> {orbitName} </Card.Title>
+                <Card.Title> Статус: {orbitStatus ? "Доступна" : "Недоступна"} </Card.Title>
             </div>
-        <Button className='cardButton' href={pageUrl}> Подробнее </Button>
+            <Button className='button' href={pageUrl}> Подробнее </Button>
+            <div></div>
+            <Button className='button' href={pageUrl}> Изменить статус </Button>
         </Card.Body>
     </Card>
-)
+);
+
 
 export default OrbitCard;
