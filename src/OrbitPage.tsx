@@ -1,23 +1,25 @@
 import { FC, useEffect, useState } from 'react'
 import './styles/style.css'
+import { useParams } from 'react-router-dom';
 import { getOrbitByName } from './modules/get-orbit-by-name'
 import { Orbit } from './modules/ds'
 
 const OrbitPage: FC = () => {
     const [orbit, setOrbit] = useState<Orbit>()
 
+    const { orbit_name } = useParams();
+
     useEffect(() => {
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString)
-        const orbitName = urlParams.get('orbit_name')
+        console.log("orbit_name: ", orbit_name)
 
         const loadOrbit = async () => {
-            const result = await getOrbitByName(String(orbitName))
+            const result = await getOrbitByName(String(orbit_name))
             setOrbit(result)
         }
 
         loadOrbit()
-    }, []);
+    }, [orbit_name]);
+
 
     return (
         <div>
@@ -35,7 +37,7 @@ const OrbitPage: FC = () => {
                         <p>Описание: {orbit?.Description}</p>
                     </div>
                 </div>
-                <a className="button page_button" href="..">Назад</a>
+                <a className="button page_button" href="../orbits">Назад</a>
             </div>
         </div>
     )

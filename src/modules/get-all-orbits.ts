@@ -1,23 +1,9 @@
 import { Orbit } from './ds';
 
-// export const getOrbits = async (namePattern = ''): Promise<Orbit[]> => {
-//     return fetch('/api/orbits?orbit_name=' + String(namePattern))
-//         .then((response) => {
-//             console.log("namePattern: ", namePattern);
-//             return response.json()
-//                 .then(data => {
-//                     console.log(data); // Вывод данных в консоль
-//                     return data.orbits;
-//                 })
-//                 .catch(() => ({ resultCount: 0, results: [] }));
-//         })
-//         .catch(() => ({ resultCount: 0, results: [] }));
-// }
-
-
-export const getOrbits = async (namePattern = '') : Promise<Orbit[]> => {
-    return fetch('/api/orbits?orbit_name=' + String(namePattern))
+export const getAllOrbits = async (orbitName = '') : Promise<Orbit[]> => {
+    return fetch('/api/orbits?orbit_name=' + String(orbitName))
         .then((response) => {
+            console.log("get-all-orbits");
             return response.json()
             .catch(() => ({ resultCount: 0, results:[]}));
         })

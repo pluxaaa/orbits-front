@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import './styles/style.css';
 import { Orbit } from './modules/ds';
-import { getOrbits } from './modules/get-all-orbits';
+import { getAllOrbits } from './modules/get-all-orbits';
 import OrbitCard from './components/OrbitCard';
 
 const OrbitsPage: FC = () => {
@@ -17,8 +17,12 @@ const OrbitsPage: FC = () => {
 
         const loadOrbits = async () => {
             try {
-                const result = await getOrbits(String(orbitName));
-                setOrbits(Object.values(result)[0] as unknown as Orbit[]);
+                const result = await getAllOrbits(String(orbitName));
+                let temp
+                orbitName == "" 
+                ? temp = Object.values(result)[0] as unknown as Orbit[] 
+                : temp = Object.values(result)[1] as unknown as Orbit[]
+                setOrbits(temp);
             } catch (error) {
                 console.error("Ошибка при загрузке объектов:", error);
             }
@@ -39,14 +43,15 @@ const OrbitsPage: FC = () => {
                     <input type="submit" className="button" value="Поиск" />
                 </form>
             </div>
-            <div className="card_group"> {/* Добавьте контейнер card_group */}
+            <div className="card_group">
                 {orbits.map((orbit, index) => (
                     <OrbitCard
                         key={index}
                         imageUrl={orbit.Image}
                         orbitName={orbit.Name}
                         orbitStatus={orbit.IsAvailable}
-                        pageUrl={`/orbits?orbit_name=${orbit.Name}`}
+                        orbitDetailed={`/orbits/${orbit.Name}`}
+                        changeStatus={`/orbits/change_status/orbit_name=${orbit.Name}`}
                     />
                 ))}
             </div>

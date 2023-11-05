@@ -9,11 +9,11 @@ import OrbitPage from './OrbitPage'
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/orbits',
     element: <OrbitsPage />
   },
   {
-    path: '/orbit',
+    path: '/orbits/:orbit_name',
     element: <OrbitPage />
   }
 ])
