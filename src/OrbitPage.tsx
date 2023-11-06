@@ -3,7 +3,7 @@ import './styles/style.css'
 import { useParams } from 'react-router-dom';
 import { getOrbitByName } from './modules/get-orbit-by-name'
 import { Orbit } from './modules/ds'
-import Header from './components/Header';
+import NavigationMain from './components/NavigationMain';
 
 
 const OrbitPage: FC = () => {
@@ -25,7 +25,7 @@ const OrbitPage: FC = () => {
 
     return (
         <div>
-            <Header/>
+            <NavigationMain/>
             <div className="card-sub">
                 <div className="card-content-sub">
                     <img src={`data:image/png;base64, ${orbit?.Image}`} className="card_image" alt="картинка" />

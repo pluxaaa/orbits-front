@@ -35,9 +35,11 @@ body {
     border-color: #001246;
 }
 
-/* Header */
-.header {
+/* Navbar */
+.navbar {
     position: fixed;
+    padding-left: 20px;
+    padding-right: 20px;
     top: 0;
     z-index: 1000;
     width: 100%;
@@ -46,10 +48,8 @@ body {
     color: #ffffff;
 }
 
-.header-wrapper {
+.navbar-wrapper {
     font-size: 16px;
-    padding-left: 20px;
-    padding-right: 20px;
     position: relative;
     max-width: 1240px;
     height: 100%;
@@ -59,27 +59,54 @@ body {
     margin: 10 auto;
 }
 
-.header-blocks {
+.navbar-blocks {
     display: flex;
     gap: 50px;
     margin: 0 auto;
 }
 
-.header-block {
-    text-decoration: none;
-    color: inherit;
-}
-
-.header-logo {
+.navbar-logo {
     font-weight: 700;
+    color: inherit;
+    transition: text-decoration 0.3s;
+}
+
+.navbar-block, 
+.navbar-profile, 
+.navbar-logo {
+    position: relative;
+    color: inherit;
     text-decoration: none;
+}
+
+.navbar-block::before, 
+.navbar-profile::before, 
+.navbar-logo::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #fff;
+    transform: scaleX(0);
+    transform-origin: bottom left;
+    transition: transform 0.3s ease-in-out;
+}
+
+.navbar-block:hover::before, 
+.navbar-profile:hover::before, 
+.navbar-logo:hover::before {
+    transform: scaleX(1);
+}
+
+.navbar-block:hover,
+.navbar-profile:hover,
+.navbar-logo:hover {
     color: inherit;
 }
 
-.header-profile {
-    text-decoration: none;
-    color: inherit;
-}
+
 
 /* OrbitPage */
 .card-sub {

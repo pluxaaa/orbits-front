@@ -3,27 +3,23 @@ import './styles/style.css';
 import { Orbit } from './modules/ds';
 import { getAllOrbits } from './modules/get-all-orbits';
 import OrbitCard from './components/OrbitCard';
-import Header from './components/Header';
+import NavigationMain from './components/NavigationMain';
 
 const OrbitsPage: FC = () => {
     const [orbits, setOrbits] = useState<Orbit[]>([]);
+    const [searchText, setSearchText] = useState<string>('');
 
     useEffect(() => {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
-        var orbitName = urlParams.get('orbit_name');
-        if (orbitName == null) {
-            orbitName = "";
-        }
+        var orbitName = urlParams.get('orbit_name') || '';
+        setSearchText(orbitName);
 
         const loadOrbits = async () => {
             try {
-                const result = await getAllOrbits(String(orbitName));
-                let temp;
-                orbitName == ""
-                    ? (temp = Object.values(result)[0] as unknown as Orbit[])
-                    : (temp = Object.values(result)[1] as unknown as Orbit[]);
-                setOrbits(temp);
+                const result = await getAllOrbits(orbitName);
+                let temp = orbitName === '' ? Object.values(result)[0] : Object.values(result)[1];
+                setOrbits(temp as unknown as Orbit[]);
             } catch (error) {
                 console.error("Ошибка при загрузке объектов:", error);
             }
@@ -40,12 +36,24 @@ const OrbitsPage: FC = () => {
         );
     };
 
+    const handleSearchSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        window.location.href = `/orbits?orbit_name=${searchText}`;
+    };
+
     return (
         <div>
-            <Header/>
+            <NavigationMain/>
             <div className="search-form">
-                <form method="GET" action="" name="search">
-                    <input type="text" id="orbit_search" name="orbit_name" placeholder="Введите название"/>
+                <form onSubmit={handleSearchSubmit}>
+                    <input
+                        type="text"
+                        id="orbit_search"
+                        name="orbit_name"
+                        placeholder="Введите название"
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                    />
                     <input type="submit" className="button" value="Поиск"/>
                 </form>
             </div>
