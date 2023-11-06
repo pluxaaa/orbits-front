@@ -3,6 +3,8 @@ import './styles/style.css'
 import { useParams } from 'react-router-dom';
 import { getOrbitByName } from './modules/get-orbit-by-name'
 import { Orbit } from './modules/ds'
+import Header from './components/Header';
+
 
 const OrbitPage: FC = () => {
     const [orbit, setOrbit] = useState<Orbit>()
@@ -23,9 +25,7 @@ const OrbitPage: FC = () => {
 
     return (
         <div>
-            <div className="header">
-                <h1>{orbit?.Name}</h1>
-            </div>
+            <Header/>
             <div className="card-sub">
                 <div className="card-content-sub">
                     <img src={`data:image/png;base64, ${orbit?.Image}`} className="card_image" alt="картинка" />
