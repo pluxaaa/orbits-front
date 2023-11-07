@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { getOrbitByName } from './modules/get-orbit-by-name'
 import { Orbit } from './modules/ds'
 import NavigationMain from './components/NavigationMain';
+import Breadcrumbs from './components/Breadcrumbs';
 
 
 const OrbitPage: FC = () => {
@@ -26,6 +27,7 @@ const OrbitPage: FC = () => {
     return (
         <div>
             <NavigationMain/>
+            <Breadcrumbs/>
             <div className="card-sub">
                 <div className="card-content-sub">
                     <img src={`data:image/png;base64, ${orbit?.Image}`} className="card_image" alt="картинка" />

@@ -1,25 +1,28 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from "react-router-dom";
 
-const Breadcrumbs = () => {
+function Breadcrumbs() {
     const location = useLocation();
-    const paths = location.pathname.split('/').filter(path => path);
+
+    let currentLink = '';
+
+    const crumbs = location.pathname.split('/')
+        .filter(crumb => crumb !== '')
+        .map(crumb => {
+            currentLink += `/${crumb}`;
+            const decodedCrumb = decodeURIComponent(crumb);
+
+            return (
+                <div className="crumb" key={crumb}>
+                    <Link to={currentLink}>{decodedCrumb}</Link>
+                </div>
+            );
+        });
 
     return (
-        <div>
-            {paths.map((path, index) => {
-                const routeTo = `/${paths.slice(0, index + 1).join('/')}`;
-                const isLast = index === paths.length - 1;
-
-                return (
-                    <span key={path}>
-                        <Link to={routeTo}>{path}</Link>
-                        {!isLast && <span> &gt; </span>}
-                    </span>
-                );
-            })}
+        <div className="breadcrumbs">
+            {crumbs}
         </div>
     );
-};
+}
 
 export default Breadcrumbs;

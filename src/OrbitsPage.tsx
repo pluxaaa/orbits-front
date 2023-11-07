@@ -4,6 +4,8 @@ import { Orbit } from './modules/ds';
 import { getAllOrbits } from './modules/get-all-orbits';
 import OrbitCard from './components/OrbitCard';
 import NavigationMain from './components/NavigationMain';
+import Breadcrumbs from './components/Breadcrumbs';
+
 
 const OrbitsPage: FC = () => {
     const [orbits, setOrbits] = useState<Orbit[]>([]);
@@ -44,6 +46,7 @@ const OrbitsPage: FC = () => {
     return (
         <div>
             <NavigationMain/>
+            <Breadcrumbs/>
             <div className="search-form">
                 <form onSubmit={handleSearchSubmit}>
                     <input

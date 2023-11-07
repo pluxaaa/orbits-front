@@ -1,10 +1,11 @@
-/* Общее */
+/* Basic */
 body {
     background-color: #f0f0f0;
     font-family: "Century Gothic", sans-serif;
     padding: 0;
 }
 
+/* Button */
 .button {
     background-color: #0E3E8DFF;
     color: white;
@@ -21,6 +22,8 @@ body {
     background-color: #001246;
 }
 
+/* Search-form*/
+
 .search-form input[type="text"] {
     padding: 10px;
     border: 2px solid #0E3E8DFF;
@@ -28,11 +31,39 @@ body {
     font-size: 16px;
     outline: none;
     transition: border-color 0.2s;
-    margin: 80px 20px 0 20px;
+    margin: 10px 20px 0 20px;
 }
 
 .search-form input[type="text"]:focus {
     border-color: #001246;
+}
+
+/* Breadcrumbs */
+
+.breadcrumbs {
+    font-family: "Century Gothic", sans-serif;
+    font-size: 20px;
+    max-width: 1200px;
+    margin-top: 80px;
+    margin-left: 20px;
+}
+
+.breadcrumbs > *{
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.breadcrumbs .crumb::after{
+    content: '/';
+    margin-left: 10px;
+}
+
+.breadcrumbs .crumb:last-child::after{
+    display: none
+}
+
+.breadcrumbs .crumb a{
+    color: #000000;
 }
 
 /* Navbar */
@@ -105,8 +136,6 @@ body {
 .navbar-logo:hover {
     color: inherit;
 }
-
-
 
 /* OrbitPage */
 .card-sub {
