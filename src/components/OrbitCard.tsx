@@ -26,11 +26,10 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
                 setIsStatusChanging(false); //рендер 2 (если не успех) => return (...)
             });
     };
-
     return (
         <Card className='card'>
             <div className="image-container">
-                <Card.Img className="card_image" src={`data:image/png;base64, ${imageUrl}`} />
+                <Card.Img className="card_image" src={`${imageUrl}`} />
             </div>
             <Card.Body>
                 <div className='card_title'>

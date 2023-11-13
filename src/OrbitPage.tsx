@@ -30,7 +30,7 @@ const OrbitPage: FC = () => {
             <Breadcrumbs/>
             <div className="card-sub">
                 <div className="card-content-sub">
-                    <img src={`data:image/png;base64, ${orbit?.Image}`} className="card_image" alt="картинка" />
+                    <img src={`${orbit?.ImageURL}`} className="card_image" alt="картинка" />
                     <div className="right-content-sub">
                         <p>Статус: {orbit?.IsAvailable ? 'Доступна' : 'Недоступна'}</p>
                         <p>Апогей: {orbit?.Apogee}</p>

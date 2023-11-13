@@ -16,5 +16,6 @@ export default defineConfig({
        }
       }
   },
+  base: "orbits",
   plugins: [react()],
 })

@@ -64,7 +64,7 @@ const OrbitsPage: FC = () => {
                 {orbits.map((orbit, index) => (
                     <OrbitCard
                         key={index}
-                        imageUrl={orbit.Image}
+                        imageUrl={orbit.ImageURL}
                         orbitName={orbit.Name}
                         orbitStatus={orbit.IsAvailable}
                         orbitDetailed={`/orbits/${orbit.Name}`}
