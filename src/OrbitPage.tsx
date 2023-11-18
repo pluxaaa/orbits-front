@@ -13,7 +13,6 @@ const OrbitPage: FC = () => {
     const { orbit_name } = useParams();
 
     useEffect(() => {
-        console.log("orbit_name: ", orbit_name)
 
         const loadOrbit = async () => {
             const result = await getOrbitByName(String(orbit_name))
@@ -30,7 +29,7 @@ const OrbitPage: FC = () => {
             <Breadcrumbs/>
             <div className="card-sub">
                 <div className="card-content-sub">
-                    <img src={`${orbit?.ImageURL}`} className="card_image" alt="картинка" />
+                <img src={orbit?.ImageURL || '/DEFAULT.jpg'} className="card_image"/>
                     <div className="right-content-sub">
                         <p>Статус: {orbit?.IsAvailable ? 'Доступна' : 'Недоступна'}</p>
                         <p>Апогей: {orbit?.Apogee}</p>

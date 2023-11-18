@@ -5,6 +5,7 @@ import { getAllOrbits } from './modules/get-all-orbits';
 import OrbitCard from './components/OrbitCard';
 import NavigationMain from './components/NavigationMain';
 import Breadcrumbs from './components/Breadcrumbs';
+import SearchForm from './components/SearchForm';
 
 
 const OrbitsPage: FC = () => {
@@ -36,6 +37,7 @@ const OrbitsPage: FC = () => {
                 orbit.Name === orbitName ? { ...orbit, IsAvailable: newStatus } : orbit
             )
         );
+        setOrbits((orbits) => orbits.filter((orbit) => orbit.Name !== orbitName));
     };
 
     const handleSearchSubmit = (e: React.FormEvent) => {
@@ -47,19 +49,11 @@ const OrbitsPage: FC = () => {
         <div>
             <NavigationMain/>
             <Breadcrumbs/>
-            <div className="search-form">
-                <form onSubmit={handleSearchSubmit}>
-                    <input
-                        type="text"
-                        id="orbit_search"
-                        name="orbit_name"
-                        placeholder="Введите название"
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                    />
-                    <input type="submit" className="button" value="Поиск"/>
-                </form>
-            </div>
+            <SearchForm
+                searchText={searchText}
+                onSearchTextChange={setSearchText}
+                onSearchSubmit={handleSearchSubmit}
+            />
             <div className="card_group">
                 {orbits.map((orbit, index) => (
                     <OrbitCard
