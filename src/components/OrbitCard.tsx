@@ -1,7 +1,8 @@
 import { FC, useState } from 'react';
 import { Button, Card } from 'react-bootstrap';
-import { changeOrbitStatus } from '../modules/change-orbit-status';
 import { useNavigate } from 'react-router-dom';
+
+import { changeOrbitStatus } from '../modules/change-orbit-status';
 
 interface Props {
     imageUrl: string;
