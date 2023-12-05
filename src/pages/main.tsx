@@ -9,6 +9,8 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import NavigationMain from '../components/NavigationMain';
 import OrbitsAll from './OrbitsAll';
 import OrbitDetailed from './OrbitDetailed';
+import LoginPage from './loginPage';
+import LogoutPage from './logoutPage';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -16,6 +18,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <NavigationMain />
       <Breadcrumbs />
       <Routes>
+        <Route path="/login" Component={LoginPage} />
+        <Route path="/logout" Component={LogoutPage} />
         <Route path="/orbits" Component={OrbitsAll} />
         <Route path="/orbits/:orbit_name" Component={OrbitDetailed} />
       </Routes>

@@ -38,9 +38,9 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
                     className="card_image"
                     src={imageUrl}
                     onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                        (e.target as HTMLImageElement).src = '/public/DEFAULT.jpg';
+                        (e.target as HTMLImageElement).src = '/DEFAULT.jpg';
                     }}
-                    alt={`DEFAULT.jpg`}
+                    alt={`/DEFAULT.jpg`}
                 />
             </div>
             <Card.Body>
