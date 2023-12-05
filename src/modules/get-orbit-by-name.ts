@@ -8,5 +8,15 @@ export const getOrbitByName = async  (orbitName = ''): Promise<Orbit> => {
             'Content-Type': 'application/json'
         }
     })
-        .then((response) => response.json());
+        .then((response) => response.json())
+        .catch(() => ({
+            "ID": 1,
+            "Name": "Нет информации",
+            "IsAvailable": false,
+            "Apogee": "Нет информации",
+            "Perigee": "Нет информации",
+            "Inclination": "Нет информации",
+            "Description": "Нет информации",
+            "ImageURL": "./DEFAULT.jpg"
+        }));
 }

@@ -21,6 +21,7 @@ const OrbitsAll: FC = () => {
     const loadOrbits = async () => {
       try {
         const result = await getAllOrbits(orbitName);
+        console.log(result)
         setOrbits(result);
       } catch (error) {
         console.error("Ошибка при загрузке объектов:", error);
