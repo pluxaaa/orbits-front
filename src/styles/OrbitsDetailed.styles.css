@@ -1,0 +1,45 @@
+.card-sub {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 20px;
+    display: flex; /* Make it a flex container */
+    align-items: flex-start; /* Align items to the start (top) */
+    box-shadow: 0 2px 4px rgb(0, 18, 70);
+}
+
+.card_image {
+    width: 400px;
+    height: 300px;
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.right-content-sub {
+    flex: 1;
+    text-align: left;
+    margin-left: 20px;
+}
+
+.right-content-sub p {
+    margin-top: 10px;
+}
+
+.button-det {
+    background-color: #0E3E8DFF;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 20px;
+    margin-left:20px;
+    font-family: "Century Gothic", sans-serif;
+    font-size: 16px;
+}
+
+.button-det:hover {
+    background-color: #001246;
+}

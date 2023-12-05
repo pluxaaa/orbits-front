@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 
-import '../styles/style.css';
+import '../styles/OrbitsDetailed.styles.css';
 
 import { useParams } from 'react-router-dom';
 
@@ -33,7 +33,7 @@ const OrbitDetailed: FC = () => {
           <p>Описание: {orbit?.Description}</p>
         </div>
       </div>
-      <a className="button page_button" href="../orbits">Назад</a>
+      <a className="button-det" href="../orbits">Назад</a>
     </div>
   );
 }

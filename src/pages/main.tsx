@@ -5,12 +5,12 @@ import { Routes, Route } from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import Breadcrumbs from '../components/Breadcrumbs';
-import NavigationMain from '../components/NavigationMain';
+import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs';
+import NavigationMain from '../components/NavigationMain/NavigationMain';
 import OrbitsAll from './OrbitsAll';
 import OrbitDetailed from './OrbitDetailed';
-import LoginPage from './loginPage';
-import LogoutPage from './logoutPage';
+import LoginPage from './LoginPage';
+import LogoutPage from './LogoutPage';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

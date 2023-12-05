@@ -1,5 +1,8 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import { loginUser } from '../modules/login';
+
+import '../styles/LoginPage.styles.css';
+
 
 const LoginPage: FC = () => {
     const [login, setLogin] = useState('');
@@ -25,11 +28,11 @@ const LoginPage: FC = () => {
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       <div className="form-group">
         <label htmlFor="login">Логин:</label>
-        <input type="text" id="login" value={login} onChange={(e) => setLogin(e.target.value)} placeholder="Введите логин" />
+        <input className="input-login" type="text" id="login" value={login} onChange={(e) => setLogin(e.target.value)} placeholder="Введите логин" />
       </div>
       <div className="form-group">
         <label htmlFor="password">Пароль:</label>
-        <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Введите пароль" />
+        <input className="input-login" type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Введите пароль" />
       </div>
       <button onClick={handleLogin}>Войти</button>
     </div>
