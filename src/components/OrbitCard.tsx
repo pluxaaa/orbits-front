@@ -1,5 +1,7 @@
 import { FC, useState } from 'react';
 import { Button, Card } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+
 import { changeOrbitStatus } from '../modules/change-orbit-status';
 
 interface Props {
@@ -13,24 +15,33 @@ interface Props {
 
 const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed, onStatusChange }) => {
     const [isStatusChanging, setIsStatusChanging] = useState(false);
+    const navigate = useNavigate();
 
-    const handleStatusChange = () => {
-        setIsStatusChanging(true); //рендер 1 => return (...)
-        changeOrbitStatus(orbitName)
-            .then(() => {
-                setIsStatusChanging(false); //рендер 2 (если успех) => return (...)
-                onStatusChange(orbitName, !orbitStatus);
-            })
-            .catch((error) => {
-                console.error('Ошибка при изменении статуса орбиты:', error);
-                setIsStatusChanging(false); //рендер 2 (если не успех) => return (...)
-            });
+    const handleStatusChange = async () => {
+        setIsStatusChanging(true);
+
+        try {
+            await changeOrbitStatus(orbitName);
+            onStatusChange(orbitName, !orbitStatus);
+        } catch (error) {
+            console.error('Error changing orbit status:', error);
+        } finally {
+            setIsStatusChanging(false);
+            navigate('/orbits');
+        }
     };
 
     return (
         <Card className='card'>
             <div className="image-container">
-                <Card.Img className="card_image" src={`data:image/png;base64, ${imageUrl}`} />
+                <Card.Img
+                    className="card_image"
+                    src={imageUrl}
+                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                        (e.target as HTMLImageElement).src = '/public/DEFAULT.jpg';
+                    }}
+                    alt={`DEFAULT.jpg`}
+                />
             </div>
             <Card.Body>
                 <div className='card_title'>
@@ -44,7 +55,7 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
                     onClick={handleStatusChange}
                     disabled={isStatusChanging}
                 >
-                    {isStatusChanging ? 'Изменение...' : 'Изменить статус'}
+                    {isStatusChanging ? 'Удаление...' : 'Удалить'}
                 </Button>
             </Card.Body>
         </Card>
@@ -52,3 +63,4 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
 };
 
 export default OrbitCard;
+

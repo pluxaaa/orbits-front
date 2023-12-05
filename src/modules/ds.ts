@@ -6,5 +6,5 @@ export interface Orbit {
     Perigee: string,
     Inclination: string,
     Description: string,
-    Image: string
+    ImageURL: string
 }
