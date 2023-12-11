@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
 import store, { useAppDispatch } from '../store/store';
 import { logoutUser } from '../modules/auth-actions';
 import '../styles/ProfilePage.styles.css';
@@ -13,7 +12,7 @@ const ProfilePage: FC = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const sendLogout = async () => {
+    const handleLogout = async () => {
         if (userToken != null) {
             dispatch(logoutUser(userToken));
             navigate('/orbits/');
@@ -29,7 +28,7 @@ const ProfilePage: FC = () => {
                 <>
                     <h1> Аккаунт </h1>
                     <p>Имя пользователя: {userName}</p>
-                    <button onClick={sendLogout}> Выйти из системы </button>
+                    <button onClick={handleLogout}> Выйти из системы </button>
                 </>
             }
         </div>
