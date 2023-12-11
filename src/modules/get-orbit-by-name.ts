@@ -1,15 +1,19 @@
-import {Orbit} from './ds'
+import axios from 'axios';
+import { Orbit } from './ds';
 
-export const getOrbitByName = async  (orbitName = ''): Promise<Orbit> => {
-    return fetch('/api/orbits/' + String(orbitName),{
-        method: 'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-    })
-        .then((response) => response.json())
-        .catch(() => ({
+export const getOrbitByName = async (orbitName = ''): Promise<Orbit> => {
+    try {
+        const response = await axios.get(`/api/orbits/${encodeURIComponent(orbitName)}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error('Ошибка при получении орбит:', error);
+        return {
             "ID": 1,
             "Name": "Нет информации",
             "IsAvailable": false,
@@ -18,5 +22,6 @@ export const getOrbitByName = async  (orbitName = ''): Promise<Orbit> => {
             "Inclination": "Нет информации",
             "Description": "Нет информации",
             "ImageURL": "./DEFAULT.jpg"
-        }));
-}
+        };
+    }
+};
