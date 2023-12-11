@@ -51,11 +51,11 @@ const AuthPage: FC = () => {
     }
 
     useEffect(() => {
-        if (Object.keys(userInfo).length !== 0) navigate('/profile')
+      if (success) {
+        navigate('/profile');
+      }
     }, [navigate, userInfo, success])
 
-
-    
     return (
         <>
           <Modal show={success && showRegisterModal && !loading} onHide={handleRegisterModalClose}>
