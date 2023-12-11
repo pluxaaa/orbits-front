@@ -1,12 +1,12 @@
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 
-import '../styles/style.css';
+import '../styles/OrbitsAll.styles.css';
 
 import { Orbit } from '../modules/ds';
 import { getAllOrbits } from '../modules/get-all-orbits';
 
-import OrbitCard from '../components/OrbitCard';
-import SearchForm from '../components/SearchForm';
+import OrbitCard from '../components/OrbitCard/OrbitCard';
+import SearchForm from '../components/SearchForm/SearchForm';
 
 const OrbitsAll: FC = () => {
   const [orbits, setOrbits] = useState<Orbit[]>([]);
