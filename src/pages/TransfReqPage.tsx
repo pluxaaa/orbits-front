@@ -7,6 +7,7 @@ import store from '../store/store'
 import { getTransfReqs } from '../modules/get-all-requests'
 import { TransferRequest } from '../modules/ds'
 
+
 const TransfReq: FC = () => {
     const {userToken, userRole, userName} = useSelector((state: ReturnType<typeof store.getState>) => state.auth)
 
@@ -17,10 +18,10 @@ const TransfReq: FC = () => {
             if (userToken !== undefined) {
                 const result = (await getTransfReqs(userToken?.toString(), '')).filter((item) => {
                     if (userRole === '1') {
-                        return item.Client.Name === userName;
+                        return item.Client?.Name === userName;
                     } else {
                         console.log(userName)
-                        return item.Moder.Name === userName;
+                        return item.Moder?.Name === userName;
                     }
                   });
                 setTransfReqs(result)
