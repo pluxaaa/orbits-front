@@ -2,11 +2,10 @@ import { FC, useState } from 'react';
 import { Button, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
 import "./OrbitCard.styles.css"
-
+import cartSlice from '../../store/cartSlice'
 import { changeOrbitStatus } from '../../modules/change-orbit-status';
-import store from '../../store/store'
+import store, { useAppDispatch } from '../../store/store'
 
 interface Props {
     imageUrl: string;
@@ -20,14 +19,19 @@ interface Props {
 const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed, onStatusChange }) => {
     const [isStatusChanging, setIsStatusChanging] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useAppDispatch()
 
-    const { userRole } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
+    const { userRole, userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
+
+    const handleAddOrbitToCart = () => {
+        dispatch(cartSlice.actions.addOrbit(orbitName))
+    }
 
     const handleStatusChange = async () => {
         setIsStatusChanging(true);
 
         try {
-            await changeOrbitStatus(orbitName);
+            await changeOrbitStatus(userToken?.toString(), orbitName);
             onStatusChange(orbitName, !orbitStatus);
         } catch (error) {
             console.error('Ошибка при изменении статуса орбиты:', error);
@@ -64,7 +68,10 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
                 >
                     {isStatusChanging ? 'Удаление...' : 'Удалить'}
                 </Button>
-            )}
+                )}
+                {userRole =='1' && (
+                <Button className='button' onClick={handleAddOrbitToCart}> Добавить</Button>
+                )}
             </Card.Body>
         </Card>
     );
