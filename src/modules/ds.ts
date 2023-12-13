@@ -18,12 +18,12 @@ export interface User {
 
 export interface TransferRequest {
     ID: number,
-    ClientRefer: string,
-    Client: User,
-    ModerRefer: string,
-    Moder: User,
+    ClientRefer?: string,
+    Client?: User,
+    ModerRefer?: string,
+    Moder?: User,
     Status: string,
-    DateCreated: string,
-    DateProcessed: string,
-    DateFinished: string,
+    DateCreated?: string,
+    DateProcessed?: string,
+    DateFinished?: string,
 }

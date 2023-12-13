@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux'
-import { Col, Row, Modal, Button } from 'react-bootstrap'
+import { Modal } from 'react-bootstrap'
 import '../styles/OrbitsAll.styles.css';
 import { Orbit } from '../modules/ds';
 import { getAllOrbits } from '../modules/get-all-orbits';
