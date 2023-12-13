@@ -1,6 +1,7 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
-export const setRequestOrbits = async(request_id = 0, orbit_names: string[], userToken='') : Promise<string> => {
+export const setRequestOrbits = async(request_id = 0, orbit_names: string[], userToken='')
+ : Promise<AxiosResponse> => {
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -15,5 +16,5 @@ export const setRequestOrbits = async(request_id = 0, orbit_names: string[], use
         },
         config
     )
-    .then((response) => response.data)
+    .then((response) => response)
 }

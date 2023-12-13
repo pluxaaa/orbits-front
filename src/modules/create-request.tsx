@@ -1,13 +1,13 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
-export const createRequest = async(orbits: string[], userToken: string): Promise<string> => {
+export const createRequest = async(orbits: string[], userToken: string): Promise<AxiosResponse> => {
     const config = {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + userToken,
         },
       }
-    return axios.put(
+    return axios.post(
         '/api/transfer_requests/create',
         {
           'orbits': orbits,
@@ -15,5 +15,5 @@ export const createRequest = async(orbits: string[], userToken: string): Promise
         config
 
     )
-    .then((response) => response.data);
+    .then((response) => response);
 }
