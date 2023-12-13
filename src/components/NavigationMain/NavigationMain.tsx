@@ -1,3 +1,4 @@
+// Import necessary modules
 import React, { FC, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
@@ -25,9 +26,9 @@ const NavigationMain: FC = () => {
             <Navbar.Brand className="navbar-logo" href="/orbits">
                 ORBIT TRANSFER
             </Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="navbar-blocks mr-auto">
+            <Navbar.Toggle aria-controls="navbar-nav" />
+            <Navbar.Collapse id="navbar-nav">
+                <Nav className="mr-auto">
                     <Nav.Link className="navbar-block" href="/orbits">
                         Список орбит
                     </Nav.Link>

@@ -41,9 +41,9 @@ const AuthPage: FC = () => {
     }
 
     const sendLogin = async () => {
-      setShowRegisterModal(false)
-        dispatch(loginUser({login: login, password: password}));
-    }
+      await dispatch(loginUser({ login: login, password: password }));
+      window.location.reload()
+    };
 
     const sendRegister = async () => {
         setShowRegisterModal(true)

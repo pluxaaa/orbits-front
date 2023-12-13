@@ -7,7 +7,7 @@ import store from '../store/store'
 import { getTransfReqs } from '../modules/get-all-requests'
 import { TransferRequest } from '../modules/ds'
 
-const TransfReqPage: FC = () => {
+const TransfReq: FC = () => {
     const {userToken, userRole, userName} = useSelector((state: ReturnType<typeof store.getState>) => state.auth)
 
     const [transfReqs, setTransfReqs] = useState<TransferRequest[]>([])
@@ -25,7 +25,6 @@ const TransfReqPage: FC = () => {
                   });
                 setTransfReqs(result)
             }
-
         }
 
         loadTransfReqs()
@@ -56,4 +55,4 @@ const TransfReqPage: FC = () => {
     )
 }
 
-export default TransfReqPage
+export default TransfReq
