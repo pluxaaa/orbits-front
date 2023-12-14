@@ -2,14 +2,17 @@ import { FC } from 'react'
 import { useSelector } from 'react-redux';
 import { Button, Card } from 'react-bootstrap';
 import store from '../../store/store'
+import "./TransfReqCard.styles.css"
 
 interface transfReqProps {
+    id: number,
     status: string,
     dateCreated?: string,
+    dateProcessed?: string,
     dateFinished?: string,
 }
 
-const TransfReqCard: FC<transfReqProps> = ({ status, dateCreated, dateFinished }) => {
+const TransfReqCard: FC<transfReqProps> = ({ status, dateCreated, dateProcessed, dateFinished, id }) => {
     const { userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
 
     const formatDate = (dateString: string | undefined) => {
@@ -33,30 +36,56 @@ const TransfReqCard: FC<transfReqProps> = ({ status, dateCreated, dateFinished }
     };
 
     return (
-        <Card>
-            <Card.Body>
-                <p>Статус: {status}</p>
-                <p>Создана: {formatDate(dateCreated)}</p>
-                {dateFinished !== undefined &&
-                    <p>Завршена: {formatDate(dateFinished)}</p>
-                }
-            </Card.Body>
-            <Card.Footer>
-                {userRole === '1' && status === 'Черновик' &&
-                    <>
-                        <Button variant="primary">Изменить</Button>{' '}
-                        <Button variant="danger">Отменить</Button>
-                    </>
-                }
-                {userRole === '1' && status !== 'Черновик' &&
-                    <Button variant="info">Просмотр</Button>
-                }
-                {userRole === '2' &&
-                    <Button variant="primary">Изменить</Button>
-                }
-            </Card.Footer>
+        <Card className="card">
+          <Card.Body className="card_body">
+            <p>Статус: {status}</p>
+            <p>Создана: {formatDate(dateCreated)}</p>
+            {dateProcessed !== 'N/A' && dateProcessed && (
+              <p>Отправлена: {formatDate(dateProcessed)}</p>
+            )}
+            {dateFinished !== 'N/A' && dateFinished && (
+              <p>Завршена: {formatDate(dateFinished)}</p>
+            )}
+          </Card.Body>
+          <Card.Footer className="card_footer">
+            {userRole === '1' && status === 'Черновик' && (
+              <div>
+                <Button
+                  onClick={() => (window.location.href = `/transfer_requests/${id}`)}
+                  variant="primary"
+                  className="button button_primary"
+                >
+                  Изменить
+                </Button>
+                <div></div>
+                <Button variant="danger" className="button button_danger">
+                  Отменить
+                </Button>
+              </div>
+            )}
+            {userRole === '1' && status !== 'Черновик' && (
+              <Button
+                onClick={() => (window.location.href = `/transfer_requests/${id}`)}
+                variant="info"
+                className="button button_info"
+              >
+                Просмотр
+              </Button>
+            )}
+            {userRole === '2' && (
+              <Button
+                onClick={() => (window.location.href = `/transfer_requests/${id}`)}
+                variant="primary"
+                className="button button_primary"
+              >
+                Изменить
+              </Button>
+            )}
+          </Card.Footer>
         </Card>
-    );
+      );
+      
+      
 }
 
 export default TransfReqCard;
