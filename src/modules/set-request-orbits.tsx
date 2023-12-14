@@ -8,6 +8,7 @@ export const setRequestOrbits = async(request_id = 0, orbit_names: string[], use
             'Authorization': 'Bearer ' + userToken,
         },
     }
+    console.log("setRequestOrbits: ", orbit_names)
     return axios.put(
         '/api/transfer_requests/set_orbits',
         {

@@ -13,7 +13,7 @@ import AuthPage from './AuthPage';
 import Profile from './ProfilePage';
 import TransfReq from './TransfReqPage';
 import TransfReqDet from './TransfReqDetPage';
-import TransfToOrbit from './TransfToOrbPage';
+import Cart from './CartPage';
 
 import store from '../store/store';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -30,7 +30,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/orbits/:orbit_name" Component={OrbitDetailed} />
           <Route path="/transfer_requests" Component={TransfReq} />
           <Route path="/transfer_requests/:req_id" Component={TransfReqDet} />
-          <Route path="/transfer_to_orbits" Component={TransfToOrbit} />
+          <Route path="/cart" Component={Cart} />
           <Route path="/auth" Component={AuthPage} />
           <Route path="/profile" Component={Profile} />
         </Routes>

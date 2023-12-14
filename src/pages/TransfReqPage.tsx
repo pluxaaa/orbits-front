@@ -2,7 +2,7 @@ import { FC, useState, useEffect } from 'react'
 import { useSelector } from 'react-redux/es/hooks/useSelector'
 import { Row, Col } from 'react-bootstrap'
 
-import TransfReqCard from '../components//TransfReqCard/TransfReqCard'
+import TransfReqCard from '../components/TransfReqCard/TransfReqCard'
 import store from '../store/store'
 import { getTransfReqs } from '../modules/get-all-requests'
 import { TransferRequest } from '../modules/ds'
@@ -45,8 +45,10 @@ const TransfReq: FC = () => {
                 {transfReqs.map((item, index) => (
                     <Col key={index}> 
                         <TransfReqCard {...{
+                            id: item.ID,
                             status: item.Status,
                             dateCreated: item.DateCreated,
+                            dateProcessed: item.DateProcessed,
                             dateFinished: item.DateFinished,
                         }}></TransfReqCard>
                     </Col>

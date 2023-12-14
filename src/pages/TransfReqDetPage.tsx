@@ -1,39 +1,41 @@
-import { FC, useEffect, useState, useRef } from "react";
+import React, { FC, useEffect, useState, useRef } from "react";
 import { useSelector } from 'react-redux';
-import { Form, FormControl, FormGroup, Button, FormSelect, 
-    ListGroup, ListGroupItem, FormLabel } from "react-bootstrap";
+import { Form, FormGroup, Button, ListGroup, ListGroupItem, Modal } from "react-bootstrap";
+import Select from 'react-select';
 import { getDetailedReq } from '../modules/get-detailed-req';
-import { TransferRequest, Orbit } from "../modules/ds";
-import store from '../store/store';
+import { TransferRequest } from "../modules/ds";
+import store, { useAppDispatch } from '../store/store';
 import { getRequestOrbits } from "../modules/get-request-orbits";
 import { setRequestOrbits } from "../modules/set-request-orbits";
 import { changeReqStatus } from "../modules/change-req-status";
+import { Orbit } from '../modules/ds';
+import { getAllOrbits } from "../modules/get-all-orbits";
+import "../styles/TransfReqDetPage.styles.css";
+import cartSlice from "../store/cartSlice";
 
-interface InputChangeInterface {
-    target: HTMLInputElement;
-  }
 
 const TransfReqDetPage: FC = () => {
-    const newOrbitInputRef = useRef<any>(null)
-
-    const [orbitNames, setOrbitNames] = useState<string[]>()
-    const [newOrbit, setNewOrbit] = useState('')
-    const statusRef = useRef<any>(null)
-
-    const { userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
-
+    const newOrbitInputRef = useRef<any>(null);
+    const dispatch = useAppDispatch()
+    const [orbitNames, setOrbitNames] = useState<string[]>();
+    const [newOrbit, setNewOrbit] = useState('');
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false);
+    const { userToken, userRole } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
     const [reqId, setReqId] = useState(0);
     const [req, setReq] = useState<TransferRequest | undefined>();
+    const [options, setOptions] = useState<Orbit[]>([]);
+    const [selectedOrbit, setSelectedOrbit] = useState<Orbit | null>(null);
 
     useEffect(() => {
         const pathname = window.location.pathname;
         const parts = pathname.split('/');
         const reqIdString = parts[parts.length - 1];
-    
+
         if (reqIdString) {
             setReqId(+reqIdString);
         }
-    
+
         const loadReq = async () => {
             try {
                 const loadedReq = await getDetailedReq(userToken?.toString(), String(reqIdString));
@@ -43,122 +45,200 @@ const TransfReqDetPage: FC = () => {
             }
 
             if (userToken === null) {
-                return
+                return;
             }
 
-            const orbits = await getRequestOrbits(+reqIdString, userToken)
-            var orbitNames: string[] = []
-            for (let orbit of orbits) {
-                orbitNames.push(orbit.Name)
+            const orbits = await getRequestOrbits(+reqIdString, userToken);
+            var orbitNames: string[] = [];
+            if (orbits) {
+                for (let orbit of orbits) {
+                    orbitNames.push(orbit.Name);
+                }
+                setOrbitNames(orbitNames);
+                localStorage.setItem("orbits", orbitNames.join(","));
             }
-            setOrbitNames(orbitNames)
+        };
 
-        }
-    
+        const fetchOrbits = async () => {
+            const orbits = await getAllOrbits();
+            setOptions(orbits);
+        };
+
         loadReq();
+        fetchOrbits();
     }, [userToken]);
 
     const removeOrbit = (removedOrbitName: string) => {
         return (event: React.MouseEvent) => {
             if (!orbitNames) {
-                return
+                return;
             }
 
-            setOrbitNames(orbitNames.filter(function(orbitName) {
-                return orbitName !== removedOrbitName
-            }))
+            dispatch(cartSlice.actions.removeOrbit(removedOrbitName))
+            setOrbitNames(orbitNames.filter(function (orbitName) {
+                return orbitName !== removedOrbitName;
+            }));
 
-            event.preventDefault()
-        }
-    }
+            event.preventDefault();
+        };
+    };
 
     const addOrbit = () => {
-        if (!orbitNames || !newOrbit) {
-            return
+        if (!selectedOrbit || !selectedOrbit.Name || !orbitNames) {
+            return;
+        }
+    
+        const orbitNameToAdd = selectedOrbit.Name;
+    
+        if (orbitNames.includes(orbitNameToAdd)) {
+            console.error('Орбита уже добавлена:', orbitNameToAdd);
+            return;
         }
 
-        setOrbitNames(orbitNames.concat([newOrbit]))
-        setNewOrbit('')
-
+        dispatch(cartSlice.actions.addOrbit(orbitNameToAdd))
+        setOrbitNames([...orbitNames, orbitNameToAdd]);
+    
+        setNewOrbit('');
+    
         if (newOrbitInputRef.current != null) {
-            newOrbitInputRef.current.value = ""
+            newOrbitInputRef.current.value = '';
         }
-    }
+    };
+    
 
-    const handleNewOrbitChange = (event: InputChangeInterface) => {
-        setNewOrbit(event.target.value)
-    }
+    const handleErrorClose = () => {
+        setShowError(false);
+    };
 
-    const sendChanges = async() => {
+    const handleSuccessClose = () => {
+        setShowSuccess(false);
+        if (req?.Status != 'Черновик') {
+            window.location.href = '/orbits';
+        }
+    };
+
+    const sendChanges = async (status: string) => {
         if (!userToken) {
             return;
         }
 
-        var req_id = 0
-        var status = ''
+        var req_id = 0;
 
         if (req?.ID !== undefined) {
-            req_id = req?.ID
-        }
-        if (statusRef.current != null) {
-            status = statusRef.current.value
+            req_id = req?.ID;
         }
 
         const editResult = await changeReqStatus(userToken, {
             ID: req_id,
             Status: status,
-        })
-        console.log(editResult)
-
+        });
+        console.log(editResult);
 
         if (!orbitNames || !userToken) {
             return;
         }
-        const regionsResult = await setRequestOrbits(req?.ID, orbitNames, userToken)
-        console.log(regionsResult)
 
-    }
-
-    return(
-        <>
-        <h1>Редактирование заявки на трансфер #{reqId}</h1>
-        <h4>Орбиты:</h4>
-        <ListGroup style={{width: '500px'}}>
-            {orbitNames?.map((orbitName, orbitID) => (
-                <ListGroupItem key={orbitID}> {orbitName}
-                    <span className="pull-right button-group" style={{float: 'right'}}>
-                        <Button variant="danger" onClick={removeOrbit(orbitName)}>Удалить</Button>
-                    </span>
-                </ListGroupItem>
-            ))
+        if (status !== 'Удалена') {
+            const orbitsResult = await setRequestOrbits(req?.ID, orbitNames, userToken);
+            if (orbitsResult.status === 201) {
+                setShowSuccess(true);
+            } else {
+                setShowError(true);
             }
-        </ListGroup>
-        <span>
-            <input ref={newOrbitInputRef} onChange={handleNewOrbitChange}></input>
-            <Button onClick={addOrbit}>Добавить</Button>
-        </span>
-        <h4>Характеристики:</h4>
-        <Form>
-            <FormGroup>
-                <label htmlFor="statusInput">Статус</label>
-                <FormSelect id="statusInput" defaultValue={req?.Status} ref={statusRef}>
-                    <option>Черновик</option>
-                    <option>Удалена</option>
-                    <option>На рассмотрении</option>
-                    <option>Завершена</option>
-                    <option>Отклонена</option>
-                </FormSelect>
-            </FormGroup>
-        </Form>
-        <Button onClick={sendChanges}> Сохранить изменения</Button>
-        <p></p>
-        <Button href='/transfer_requests'>К заявкам</Button>
-        <p></p>
-        <Button href='/orbits'>К орбитам</Button>
-        <p></p>
-        </>
-    )
+            console.log(orbitsResult);
+            if (status != 'Черновик'){
+                localStorage.setItem("orbits", '')
+                window.location.href = '/orbits';
+            }
+        } else {
+            localStorage.setItem("orbits", '')
+            setOrbitNames([]);
+        }
+    };
 
-}
+    return (
+        <div className="container">
+            <Modal show={showError} onHide={handleErrorClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Произошла ошибка, заявка не была обновлена</Modal.Title>
+                </Modal.Header>
+                <Modal.Footer>
+                    <Button variant="danger" onClick={handleErrorClose}>
+                        Закрыть
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showSuccess} onHide={handleSuccessClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Обновление заявки прошло успешно!</Modal.Title>
+                </Modal.Header>
+                <Modal.Footer>
+                    <Button variant="success" onClick={handleSuccessClose}>
+                        Закрыть
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <h1>Заявка на трансфер #{req?.ID}</h1>
+            <p>Статус: {req?.Status}</p>
+            <h4>Орбиты:</h4>
+            <ListGroup className="list-group" style={{ width: '500px' }}>
+                {orbitNames?.map((orbitName, orbitID) => (
+                    <ListGroupItem key={orbitID} className="list-group-item">
+                        {orbitName}
+                        {req?.Status === 'Черновик' && (
+                            <span className="button-group">
+                                <Button variant="danger" onClick={removeOrbit(orbitName)}>Удалить</Button>
+                            </span>
+                        )}
+                    </ListGroupItem>
+                ))}
+            </ListGroup>
+            {req?.Status === 'Черновик' && (
+                <div className="input-group">
+                    <Select
+                        options={options.map(option => ({ value: option.Name, label: option.Name }))}
+                        value={selectedOrbit ? { value: selectedOrbit.Name, label: selectedOrbit.Name } : null}
+                        onChange={(value) => setSelectedOrbit(options.find(option => option.Name === value?.value) || null)}
+                        isSearchable
+                        placeholder="Выберите орбиту..."
+                    />
+                    <Button onClick={addOrbit} className="button">Добавить</Button>
+                </div>
+            )}
+            <Form>
+                {req?.Status === 'Черновик' && (
+                    <Button onClick={() => sendChanges('Черновик')} className="button">Сохранить изменения</Button>
+                )}
+                <FormGroup className="form-group">
+                    {userRole === '1' && req?.Status === 'Черновик' && (
+                        <>
+                            <div>
+                                <Button className="common-button" variant="primary" onClick={() => sendChanges('На рассмотрении')}>Сформировать</Button>
+                            </div>
+                            <div>
+                                <Button className="common-button" variant="danger" onClick={() => sendChanges('Удалена')}>Удалить</Button>
+                            </div>
+                        </>
+                    )}
+
+                    {userRole === '2' && req?.Status === 'На рассмотрении' && (
+                        <>
+                            <div>
+                                <Button className="common-button" variant="warning" onClick={() => sendChanges('Отклонена')}>Отклонить</Button>
+                            </div>
+                            <div>
+                                <Button className="common-button" variant="success" onClick={() => sendChanges('Оказана')}>Одобрить</Button>
+                            </div>
+                        </>
+                    )}
+                </FormGroup>
+            </Form>
+            <div className="button-container">
+                <Button href='/transfer_requests' className="button">К заявкам</Button>
+                <Button href='/orbits' className="button">К орбитам</Button>
+            </div>
+        </div>
+    );
+};
 
 export default TransfReqDetPage;

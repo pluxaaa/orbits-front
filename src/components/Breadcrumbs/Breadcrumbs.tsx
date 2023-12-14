@@ -10,7 +10,8 @@ const endpointToLabel: EndpointToLabelMap = {
   'profile': 'Личный кабинет',
   'auth': 'Вход',
   'transfer_requests': 'Заявки на трансфер',
-  'transfer_to_orbits' : 'Оформление заявки на трансфер'
+  'transfer_to_orbits' : 'Оформление заявки на трансфер',
+  'cart' : 'Корзина'
 };
 
 function Breadcrumbs() {

@@ -1,52 +1,69 @@
 import { FC, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {useSelector } from "react-redux/es/hooks/useSelector";
-import { Button, ListGroup, ListGroupItem, Form, FormGroup, Modal, FormControl } from "react-bootstrap";
+import { Button, ListGroup, ListGroupItem, Modal } from "react-bootstrap";
 import cartSlice from "../store/cartSlice";
 import store, { useAppDispatch } from "../store/store";
 import { createRequest } from "../modules/create-request";
+import "../styles/CartPage.styles.css"
 
 interface InputChangeInterface {
     target: HTMLInputElement;
 }
 
-const TransfToOrbit: FC = () => {
+const Cart: FC = () => {
     const [showSuccess, setShowSuccess] = useState(false)
     const [showError, setShowError] = useState(false)
     
     const dispatch = useAppDispatch()
+    const navigate = useNavigate()
     
     const {userToken} = useSelector((state: ReturnType<typeof store.getState> ) => state.auth)
     const {orbits} = useSelector((state: ReturnType<typeof store.getState>) => state.cart)
 
-    const deleteFromCart = (regionName = '') => {
+    const deleteFromCart = (orbitName = '') => {
         return (event: React.MouseEvent) => {
-            dispatch(cartSlice.actions.removeOrbit(regionName))
+            dispatch(cartSlice.actions.removeOrbit(orbitName))
             event.preventDefault()
         }
     }
 
     const addOrbit = async () => {
         if (orbits === undefined || userToken === null) {
-            return
+            return;
         }
-
-        const result = await createRequest(orbits, userToken)
-        if (result.status == 201) {
-            setShowSuccess(true)
-        } else {
-            setShowError(true)
+    
+        try {
+            const result = await createRequest(orbits, userToken);
+    
+            if (result.status === 201) {
+                const reqID = result.data;
+    
+                setShowSuccess(true);
+                setTimeout(() => {
+                    setShowSuccess(false);
+                    navigate(`/transfer_requests/${reqID}`);
+                }, 3000);
+            } else {
+                setShowError(true);
+            }
+        } catch (error) {
+            console.error("Ошибка при создании заявки:", error);
+            setShowError(true);
         }
-    }
+    };
+    
 
     const handleErrorClose = () => {
         setShowError(false)
     }
     const handleSuccessClose = () => {
         setShowSuccess(false)
+        //window.location.href = `/transfer_requests/${}`;
     }
 
     return (
-        <>
+        <div className="cart-container">
             <Modal show = {showError} onHide={handleErrorClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Не получилось добавить орбиту</Modal.Title>
@@ -63,7 +80,7 @@ const TransfToOrbit: FC = () => {
                 </Modal.Header>
                 <Modal.Footer>
                     <Button variant="success" onClick={handleSuccessClose}>
-                      Закрыть
+                      Перенаправление...
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -74,22 +91,22 @@ const TransfToOrbit: FC = () => {
                 <h4>Вы ещё не выбрали ни одной орбиты</h4>
             }
             <ListGroup style={{width: '500px'}}>
-                {orbits?.map((regionName, regionID) => (
-                    <ListGroupItem key={regionID}> {regionName}
+                {orbits?.map((orbitName, orbitID) => (
+                    <ListGroupItem key={orbitID}> {orbitName}
                         <span className="pull-right button-group" style={{float: 'right'}}>
-                            <Button variant="danger" onClick={deleteFromCart(regionName)}>Удалить</Button>
+                            <Button variant="danger" onClick={deleteFromCart(orbitName)}>Удалить</Button>
                         </span>
                     </ListGroupItem>
                 ))
                 }
             </ListGroup>
-            <p></p>
-            <Button onClick={addOrbit}>Оформить</Button>
-            <p></p>
-            <Button href="/orbits">Домой</Button>
-        </>
+            {orbits?.length !== 0 &&
+                <button onClick={addOrbit}>Оформить</button>
+            }
+            <button onClick={() => navigate("/orbits")}>К орбитам</button>
+        </div>
     )
 
 }
 
-export default TransfToOrbit;
+export default Cart;

@@ -8,6 +8,7 @@ export const changeReqStatus = async (userToken = '', request: TransferRequest):
       'Authorization': 'Bearer ' + userToken,
     },
   }
+  console.log("changeReqStatus: ", request)
   return axios.put(
     '/api/transfer_requests/change_status',
     {
