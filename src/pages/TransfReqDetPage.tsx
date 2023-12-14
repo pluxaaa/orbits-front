@@ -12,6 +12,7 @@ import { Orbit } from '../modules/ds';
 import { getAllOrbits } from "../modules/get-all-orbits";
 import "../styles/TransfReqDetPage.styles.css";
 import cartSlice from "../store/cartSlice";
+import { AxiosError } from 'axios';
 
 
 const TransfReqDetPage: FC = () => {
@@ -26,6 +27,7 @@ const TransfReqDetPage: FC = () => {
     const [req, setReq] = useState<TransferRequest | undefined>();
     const [options, setOptions] = useState<Orbit[]>([]);
     const [selectedOrbit, setSelectedOrbit] = useState<Orbit | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const pathname = window.location.pathname;
@@ -39,9 +41,14 @@ const TransfReqDetPage: FC = () => {
         const loadReq = async () => {
             try {
                 const loadedReq = await getDetailedReq(userToken?.toString(), String(reqIdString));
+                setError(null);
                 setReq(loadedReq);
             } catch (error) {
-                console.error("Ошибка загрузки заявки:", error);
+                if ((error as AxiosError).message === '403') {
+                    setError("403 Доступ запрещен");
+                } else {
+                    setError("500 Ошибка загрузки заявки");
+                }
             }
 
             if (userToken === null) {
@@ -67,6 +74,14 @@ const TransfReqDetPage: FC = () => {
         loadReq();
         fetchOrbits();
     }, [userToken]);
+
+    if (error) {
+        return (
+          <div style={{ textAlign: 'center', fontSize: '2em', margin: 'auto' }}>
+            {error}
+          </div>
+        );
+      }
 
     const removeOrbit = (removedOrbitName: string) => {
         return (event: React.MouseEvent) => {
@@ -213,10 +228,12 @@ const TransfReqDetPage: FC = () => {
                     {userRole === '1' && req?.Status === 'Черновик' && (
                         <>
                             <div>
-                                <Button className="common-button" variant="primary" onClick={() => sendChanges('На рассмотрении')}>Сформировать</Button>
+                                <Button className="common-button" variant="primary" 
+                                onClick={() => sendChanges('На рассмотрении')}>Сформировать</Button>
                             </div>
                             <div>
-                                <Button className="common-button" variant="danger" onClick={() => sendChanges('Удалена')}>Удалить</Button>
+                                <Button className="common-button" variant="danger" 
+                                onClick={() => sendChanges('Удалена')}>Отменить</Button>
                             </div>
                         </>
                     )}
@@ -224,10 +241,12 @@ const TransfReqDetPage: FC = () => {
                     {userRole === '2' && req?.Status === 'На рассмотрении' && (
                         <>
                             <div>
-                                <Button className="common-button" variant="warning" onClick={() => sendChanges('Отклонена')}>Отклонить</Button>
+                                <Button className="common-button" variant="warning" 
+                                onClick={() => sendChanges('Отклонена')}>Отклонить</Button>
                             </div>
                             <div>
-                                <Button className="common-button" variant="success" onClick={() => sendChanges('Оказана')}>Одобрить</Button>
+                                <Button className="common-button" variant="success" 
+                                onClick={() => sendChanges('Оказана')}>Одобрить</Button>
                             </div>
                         </>
                     )}

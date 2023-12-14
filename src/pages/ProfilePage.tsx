@@ -22,7 +22,9 @@ const Profile: FC = () => {
     return (
         <div className="profile-container">
             {!isUserPresent &&
-                <h1>Вы не зашли в систему!</h1>
+                <h3 style={{ textAlign: 'center', fontSize: '2em', margin: 'auto', padding: 100 }}> 
+                    Вам необходимо войти в систему! 
+                </h3>
             }
             {isUserPresent &&
                 <>

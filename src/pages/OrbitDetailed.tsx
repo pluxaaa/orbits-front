@@ -1,30 +1,58 @@
+// OrbitDetailed.tsx
 import { FC, useEffect, useState } from 'react';
-
-import '../styles/OrbitsDetailed.styles.css';
-
 import { useParams } from 'react-router-dom';
-
 import { getOrbitByName } from '../modules/get-orbit-by-name';
 import { Orbit } from '../modules/ds';
+import { AxiosError } from 'axios';
+import '../styles/OrbitsDetailed.styles.css';
 
 const OrbitDetailed: FC = () => {
-  const [orbit, setOrbit] = useState<Orbit>()
+  const [orbit, setOrbit] = useState<Orbit | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const { orbit_name } = useParams();
 
   useEffect(() => {
     const loadOrbit = async () => {
-      const result = await getOrbitByName(String(orbit_name))
-      setOrbit(result)
-    }
+      try {
+        const result = await getOrbitByName(String(orbit_name));
+        setOrbit(result);
+        setError(null);
+      } catch (error) {
+        console.error('Ошибка при получении орбит:', error);
+        if ((error as AxiosError).message === '404') {
+          setError("404 Орбита не найдена");
+        } else {
+          setError('Произошла ошибка при загрузке орбиты');
+        }
+      }
+    };
 
-    loadOrbit()
+    loadOrbit();
   }, [orbit_name]);
+
+  if (error) {
+    return (
+      <div style={{ textAlign: 'center', fontSize: '2em', margin: 'auto' }}>
+        {error}
+      </div>
+    );
+  }
+
+  if (!orbit) {
+    return <div>Загрузка...</div>;
+  }
 
   return (
     <div>
       <div className="card-sub">
-        <img src={orbit?.ImageURL || '/DEFAULT.jpg'} className="card_image" />
+        <img
+          src={orbit?.ImageURL || '/DEFAULT.jpg'}
+          className="card_image"
+          onError={(e) => {
+            e.currentTarget.src = '/DEFAULT.jpg';
+          }}
+        />
         <div className="right-content-sub">
           <p>Статус: {orbit?.IsAvailable ? 'Доступна' : 'Недоступна'}</p>
           <p>Апогей: {orbit?.Apogee}</p>
@@ -36,6 +64,6 @@ const OrbitDetailed: FC = () => {
       <a className="button-det" href="../orbits">Назад</a>
     </div>
   );
-}
+};
 
 export default OrbitDetailed;

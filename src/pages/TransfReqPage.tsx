@@ -35,8 +35,9 @@ const TransfReq: FC = () => {
     return (
         <>
             {!userToken &&
-                <h3> Вам необходимо войти в систему! </h3>
-
+                <h3 style={{ textAlign: 'center', fontSize: '2em', margin: 'auto', padding: 100 }}> 
+                Вам необходимо войти в систему! 
+                </h3>
             }
             {userToken && transfReqs.length == 0 &&
                 <h3> Заявки не найдены</h3>
