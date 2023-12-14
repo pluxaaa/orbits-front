@@ -73,7 +73,7 @@ const NavigationMain: FC = () => {
                                 <NavDropdown.Item
                                     className="navbar-block"
                                     onClick={() => {
-                                        navigate('/cart');
+                                        window.location.href = '/cart';
                                         setShowDropdown(false);
                                     }}
                                 >

@@ -9,12 +9,11 @@ export const getTransfReqs = async (userToken = '', status = ''): Promise<Transf
         },
     }
     return axios.get(
-        `/api/transfer_requests` + status,
+        `/api/transfer_requests?status=` + status,
         config,
     )
     .then((response) => {
         const { data } = response
-        console.log(data)
         return data;
     }) 
 

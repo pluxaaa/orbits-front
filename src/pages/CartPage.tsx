@@ -43,7 +43,7 @@ const Cart: FC = () => {
                 setTimeout(() => {
                     setShowSuccess(false);
                     navigate(`/transfer_requests/${reqID}`);
-                }, 3000);
+                }, 2000);
             } else {
                 setShowError(true);
             }

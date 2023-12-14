@@ -6,9 +6,9 @@ export const getAllOrbits = async (orbitName = ''): Promise<Orbit[]> => {
     const response = await axios.get(`/api/orbits?orbit_name=${encodeURIComponent(orbitName)}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching orbits:', error);
+    console.error('Ошибка при получении орбит:', error);
     return [{
-      "ID": 1,
+      "ID": 0,
       "Name": "Нет информации",
       "IsAvailable": false,
       "Apogee": "Нет информации",
