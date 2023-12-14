@@ -19,13 +19,16 @@ interface Props {
 const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed, onStatusChange }) => {
     const [isStatusChanging, setIsStatusChanging] = useState(false);
     const navigate = useNavigate();
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
 
     const { userRole, userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
 
     const handleAddOrbitToCart = () => {
-        dispatch(cartSlice.actions.addOrbit(orbitName))
+        dispatch(cartSlice.actions.addOrbit(orbitName));
     }
+
+    // Проверка есть ли орбита в локалстораж
+    const isOrbitInCart = localStorage.getItem('orbits')?.split(',').includes(orbitName);
 
     const handleStatusChange = async () => {
         setIsStatusChanging(true);
@@ -60,17 +63,23 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
                 </div>
                 <Button className='button' href={orbitDetailed}> Подробнее </Button>
                 <div></div>
-                {userRole =='2' && (
-                <Button
-                    className='button'
-                    onClick={handleStatusChange}
-                    disabled={isStatusChanging}
-                >
-                    {isStatusChanging ? 'Удаление...' : 'Удалить'}
-                </Button>
+                {userRole === '2' && (
+                    <Button
+                        className='button'
+                        onClick={handleStatusChange}
+                        disabled={isStatusChanging}
+                    >
+                        {isStatusChanging ? 'Удаление...' : 'Удалить'}
+                    </Button>
                 )}
-                {userRole =='1' && (
-                <Button className='button' onClick={handleAddOrbitToCart}> Добавить</Button>
+                {userRole === '1' && (
+                    <Button
+                        className='button'
+                        onClick={handleAddOrbitToCart}
+                        disabled={isOrbitInCart}
+                    >
+                        {isOrbitInCart ? 'Добавлено' : 'Добавить'}
+                    </Button>
                 )}
             </Card.Body>
         </Card>
@@ -78,4 +87,3 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
 };
 
 export default OrbitCard;
-

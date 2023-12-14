@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { TransferRequest } from './ds';
 
 export const getDetailedReq = async (userToken = '', req_id = ''): Promise<TransferRequest> => {
@@ -16,7 +16,11 @@ export const getDetailedReq = async (userToken = '', req_id = ''): Promise<Trans
         console.log(data);
         return data;
     } catch (error) {
-        console.error("Ошибка при выполени запроса:", error);
-        throw error;
+        if ((error as AxiosError).response && (error as AxiosError).response?.status === 403) {
+            throw new Error('403');
+        } else {
+            console.error("Ошибка при выполени запроса:", error);
+            throw error;
+        }
     }
 };

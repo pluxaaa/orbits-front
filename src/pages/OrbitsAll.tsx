@@ -8,11 +8,14 @@ import store, { useAppDispatch } from '../store/store';
 import cartSlice from '../store/cartSlice';
 import OrbitCard from '../components/OrbitCard/OrbitCard';
 import SearchForm from '../components/SearchForm/SearchForm';
+import { getTransfReqs } from '../modules/get-all-requests';
+import { getRequestOrbits } from '../modules/get-request-orbits';
 
 const OrbitsAll: FC = () => {
   const [orbits, setOrbits] = useState<Orbit[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const dispatch = useAppDispatch()
+  const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth)
 
   const { added } = useSelector((state: ReturnType<typeof store.getState>) => state.cart)
 
@@ -21,6 +24,31 @@ const OrbitsAll: FC = () => {
     const urlParams = new URLSearchParams(queryString);
     var orbitName = urlParams.get('orbit_name') || '';
     setSearchText(orbitName);
+
+    //попытка получить заявку черновик для текущего клиента
+    const loadTransfReqs = async () => {
+      if (userToken !== undefined && userToken !== '') {
+        const result = (await getTransfReqs(userToken?.toString(), 'Черновик')).filter((item) => {
+          if (userRole === '1') {
+            return item.Client?.Name === userName;
+          } else {
+            return [];
+          }
+        });
+        console.log(result)
+        if (result[0].ID) {
+          const orbits = await getRequestOrbits(result[0].ID, userToken?.toString());
+          var orbitNames: string[] = [];
+          if (orbits) {
+            for (let orbit of orbits) {
+              orbitNames.push(orbit.Name);
+            }
+            localStorage.setItem("orbits", orbitNames.join(","));
+          }
+        }
+      }
+    }
+    loadTransfReqs()
 
     const loadOrbits = async () => {
       try {
@@ -44,13 +72,13 @@ const OrbitsAll: FC = () => {
     setOrbits((orbits) => orbits.filter((orbit) => orbit.Name !== orbitName));
   };
 
-  const handleModalClose= () => {
+  const handleModalClose = () => {
     dispatch(cartSlice.actions.disableAdded())
-}
+  }
 
   return (
     <div>
-      <Modal show = {added} onHide={handleModalClose}>
+      <Modal show={added} onHide={handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Орбита добавлена в заявку</Modal.Title>
         </Modal.Header>
