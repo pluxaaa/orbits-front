@@ -15,7 +15,7 @@ import cartSlice from "../store/cartSlice";
 import { AxiosError } from 'axios';
 
 
-const TransfReqDetPage: FC = () => {
+const TransfReqDet: FC = () => {
     const newOrbitInputRef = useRef<any>(null);
     const dispatch = useAppDispatch()
     const [orbitNames, setOrbitNames] = useState<string[]>();
@@ -260,4 +260,4 @@ const TransfReqDetPage: FC = () => {
     );
 };
 
-export default TransfReqDetPage;
+export default TransfReqDet;

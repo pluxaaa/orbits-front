@@ -1,9 +1,15 @@
 import axios from 'axios';
 import { Orbit } from './ds';
 
-export const getAllOrbits = async (orbitName = ''): Promise<Orbit[]> => {
+export const getAllOrbits = async (orbitName = '', orbitIncl = '', orbitIsCircle = ''): Promise<Orbit[]> => {
   try {
-    const response = await axios.get(`/api/orbits?orbit_name=${encodeURIComponent(orbitName)}`);
+    const queryParams = new URLSearchParams({
+      orbit_name: orbitName,
+      orbit_incl: orbitIncl,
+      is_circle: orbitIsCircle,
+    });
+
+    const response = await axios.get(`/api/orbits?${queryParams.toString()}`);
     return response.data;
   } catch (error) {
     console.error('Ошибка при получении орбит:', error);

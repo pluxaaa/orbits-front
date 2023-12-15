@@ -14,7 +14,7 @@ interface InputChangeInterface {
   }
   
 
-const AuthPage: FC = () => {
+const Auth: FC = () => {
 
     const {loading, userInfo, error, success} = useSelector(
         (state: ReturnType<typeof store.getState> ) => state.auth
@@ -91,4 +91,4 @@ const AuthPage: FC = () => {
       );
     };
     
-    export default AuthPage;
+    export default Auth;

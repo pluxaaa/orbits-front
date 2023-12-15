@@ -7,12 +7,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Breadcrumbs from '../components/Breadcrumbs/Breadcrumbs';
 import NavigationMain from '../components/NavigationMain/NavigationMain';
-import OrbitsAll from './OrbitsAll';
-import OrbitDetailed from './OrbitDetailed';
-import AuthPage from './AuthPage';
+import OrbitsAll from './OrbitsAllPage';
+import OrbitDetailed from './OrbitDetPage';
+import Auth from './AuthPage';
 import Profile from './ProfilePage';
-import TransfReq from './TransfReqPage';
-import TransfReqDet from './TransfReqDetPage';
+import TransfReq from './RequestsAllPage';
+import TransfReqDet from './RequestDetPage';
 import Cart from './CartPage';
 
 import store from '../store/store';
@@ -31,7 +31,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/transfer_requests" Component={TransfReq} />
           <Route path="/transfer_requests/:req_id" Component={TransfReqDet} />
           <Route path="/cart" Component={Cart} />
-          <Route path="/auth" Component={AuthPage} />
+          <Route path="/auth" Component={Auth} />
           <Route path="/profile" Component={Profile} />
         </Routes>
       </BrowserRouter>
