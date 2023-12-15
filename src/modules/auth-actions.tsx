@@ -25,7 +25,6 @@ export const registerUser = createAsyncThunk(
         return;
       }
 
-    // return custom error message from backend if present
       if (error.response && error.response.data.message) {
         return rejectWithValue(error.response.data.message)
       } else {
@@ -52,6 +51,10 @@ export const loginUser = createAsyncThunk(
       localStorage.setItem('userName', data.login)
       localStorage.setItem('userToken', data.access_token)
       localStorage.setItem('userRole', data.role)
+      localStorage.setItem("requestStatus", '')
+      localStorage.setItem("orbitName", '')
+      localStorage.setItem("OrbitIncl", '')
+      localStorage.setItem("orbitIsCircle", '')
       return data
     } catch (error) {
       if (!axios.isAxiosError(error)) {
@@ -74,6 +77,11 @@ export const loginUser = createAsyncThunk(
         localStorage.setItem('userName', '')
         localStorage.setItem('userRole', '0')
         localStorage.setItem('orbits', '')
+        localStorage.setItem("requestStatus", '')
+        localStorage.setItem("orbitName", '')
+        localStorage.setItem("OrbitIncl", '')
+        localStorage.setItem("orbitIsCircle", '')
+
         const config = {
           headers: {
             'Content-Type': 'application/json',
@@ -86,7 +94,7 @@ export const loginUser = createAsyncThunk(
           config
         )
 
-
+        window.location.reload()
         return data;
       } catch (error) {
         if (!axios.isAxiosError(error)) {

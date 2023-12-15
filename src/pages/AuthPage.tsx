@@ -14,7 +14,7 @@ interface InputChangeInterface {
   }
   
 
-const AuthPage: FC = () => {
+const Auth: FC = () => {
 
     const {loading, userInfo, error, success} = useSelector(
         (state: ReturnType<typeof store.getState> ) => state.auth
@@ -52,7 +52,8 @@ const AuthPage: FC = () => {
 
     useEffect(() => {
       if (success) {
-        navigate('/profile');
+        navigate('/orbits');
+        window.location.reload()
       }
     }, [navigate, userInfo, success])
 
@@ -91,4 +92,4 @@ const AuthPage: FC = () => {
       );
     };
     
-    export default AuthPage;
+    export default Auth;

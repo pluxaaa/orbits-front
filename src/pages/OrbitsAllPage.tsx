@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux'
+import { useNavigate } from "react-router-dom";
 import { Modal } from 'react-bootstrap'
 import '../styles/OrbitsAll.styles.css';
 import { Orbit } from '../modules/ds';
@@ -7,24 +8,29 @@ import { getAllOrbits } from '../modules/get-all-orbits';
 import store, { useAppDispatch } from '../store/store';
 import cartSlice from '../store/cartSlice';
 import OrbitCard from '../components/OrbitCard/OrbitCard';
-import SearchForm from '../components/SearchForm/SearchForm';
 import { getTransfReqs } from '../modules/get-all-requests';
 import { getRequestOrbits } from '../modules/get-request-orbits';
+import filtersSlice from "../store/filtersSlice";
+import OrbitFilter from '../components/OrbitFilter/OrbitFilter';
 
 const OrbitsAll: FC = () => {
   const [orbits, setOrbits] = useState<Orbit[]>([]);
-  const [searchText, setSearchText] = useState<string>('');
   const dispatch = useAppDispatch()
+  const navigate = useNavigate();
   const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth)
-
   const { added } = useSelector((state: ReturnType<typeof store.getState>) => state.cart)
 
-  useEffect(() => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    var orbitName = urlParams.get('orbit_name') || '';
-    setSearchText(orbitName);
+  const { orbitIncl } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
+  const [incl, setIncl] = useState(orbitIncl);
 
+  const { orbitName } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
+  const [name, setName] = useState(orbitName);
+
+  const { orbitIsCircle } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
+  const [isCircle, setIsCircle] = useState(orbitIsCircle);
+
+
+  useEffect(() => {
     //попытка получить заявку черновик для текущего клиента
     const loadTransfReqs = async () => {
       if (userToken !== undefined && userToken !== '') {
@@ -52,7 +58,7 @@ const OrbitsAll: FC = () => {
 
     const loadOrbits = async () => {
       try {
-        const result = await getAllOrbits(orbitName);
+        const result = await getAllOrbits(name?.toString(), incl?.toString(), isCircle?.toString());
         console.log(result)
         setOrbits(result);
       } catch (error) {
@@ -62,6 +68,39 @@ const OrbitsAll: FC = () => {
 
     loadOrbits();
   }, []);
+
+  const applyFilters = async () => {
+    try {
+      const data = await getAllOrbits(name?.toString(), incl?.toString(), isCircle?.toString());
+      dispatch(filtersSlice.actions.setOrbitName(name));
+      dispatch(filtersSlice.actions.setOrbitIncl(incl));
+      dispatch(filtersSlice.actions.setOrbitIsCircle(isCircle));
+
+      setOrbits(data);
+
+      navigate('/orbits', { state: { data } });
+    } catch (error) {
+      console.error("Ошибка при получении орбит:", error);
+    }
+  };
+
+  const clearFilters = async () => {
+    setName('');
+    setIncl('');
+    setIsCircle('');
+
+    dispatch(filtersSlice.actions.setOrbitName(''));
+    dispatch(filtersSlice.actions.setOrbitIncl(''));
+    dispatch(filtersSlice.actions.setOrbitIsCircle(''));
+
+    try {
+      const data = await getAllOrbits();
+      setOrbits(data);
+    } catch (error) {
+      console.error("Error loading all orbits:", error);
+    }
+
+  };
 
   const handleStatusChange = (orbitName: string, newStatus: boolean) => {
     setOrbits((orbits) =>
@@ -88,12 +127,15 @@ const OrbitsAll: FC = () => {
           </button>
         </Modal.Footer>
       </Modal>
-      <SearchForm
-        searchText={searchText}
-        onSearchTextChange={setSearchText}
-        onSearchSubmit={(searchText) => {
-          window.location.href = `/orbits?orbit_name=${searchText}`;
-        }}
+      <OrbitFilter
+        name={name}
+        incl={incl}
+        isCircle={isCircle}
+        setName={setName}
+        setIncl={setIncl}
+        setIsCircle={setIsCircle}
+        applyFilters={applyFilters}
+        clearFilters={clearFilters}
       />
       <div className="card_group">
         {orbits.map((orbit, index) => (

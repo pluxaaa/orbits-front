@@ -15,7 +15,7 @@ import cartSlice from "../store/cartSlice";
 import { AxiosError } from 'axios';
 
 
-const TransfReqDetPage: FC = () => {
+const TransfReqDet: FC = () => {
     const newOrbitInputRef = useRef<any>(null);
     const dispatch = useAppDispatch()
     const [orbitNames, setOrbitNames] = useState<string[]>();
@@ -62,7 +62,9 @@ const TransfReqDetPage: FC = () => {
                     orbitNames.push(orbit.Name);
                 }
                 setOrbitNames(orbitNames);
-                localStorage.setItem("orbits", orbitNames.join(","));
+                if (req?.Status == 'Черновик'){
+                    localStorage.setItem("orbits", orbitNames.join(","));
+                }
             }
         };
 
@@ -260,4 +262,4 @@ const TransfReqDetPage: FC = () => {
     );
 };
 
-export default TransfReqDetPage;
+export default TransfReqDet;
