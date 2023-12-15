@@ -52,7 +52,8 @@ const Auth: FC = () => {
 
     useEffect(() => {
       if (success) {
-        navigate('/profile');
+        navigate('/orbits');
+        window.location.reload()
       }
     }, [navigate, userInfo, success])
 

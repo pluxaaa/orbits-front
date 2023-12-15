@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux'
 import { useNavigate } from "react-router-dom";
-import { Modal, Form, FormLabel, FormControl, FormCheck, Row, Col, Button } from 'react-bootstrap'
+import { Modal } from 'react-bootstrap'
 import '../styles/OrbitsAll.styles.css';
 import { Orbit } from '../modules/ds';
 import { getAllOrbits } from '../modules/get-all-orbits';
@@ -15,7 +15,6 @@ import OrbitFilter from '../components/OrbitFilter/OrbitFilter';
 
 const OrbitsAll: FC = () => {
   const [orbits, setOrbits] = useState<Orbit[]>([]);
-  const [searchText, setSearchText] = useState<string>('');
   const dispatch = useAppDispatch()
   const navigate = useNavigate();
   const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth)
@@ -32,11 +31,6 @@ const OrbitsAll: FC = () => {
 
 
   useEffect(() => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    var orbitName = urlParams.get('orbit_name') || '';
-    setSearchText(orbitName);
-
     //попытка получить заявку черновик для текущего клиента
     const loadTransfReqs = async () => {
       if (userToken !== undefined && userToken !== '') {
@@ -64,7 +58,7 @@ const OrbitsAll: FC = () => {
 
     const loadOrbits = async () => {
       try {
-        const result = await getAllOrbits(orbitName);
+        const result = await getAllOrbits(name?.toString(), incl?.toString(), isCircle?.toString());
         console.log(result)
         setOrbits(result);
       } catch (error) {

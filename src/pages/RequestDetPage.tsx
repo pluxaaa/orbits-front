@@ -62,7 +62,9 @@ const TransfReqDet: FC = () => {
                     orbitNames.push(orbit.Name);
                 }
                 setOrbitNames(orbitNames);
-                localStorage.setItem("orbits", orbitNames.join(","));
+                if (req?.Status == 'Черновик'){
+                    localStorage.setItem("orbits", orbitNames.join(","));
+                }
             }
         };
 
