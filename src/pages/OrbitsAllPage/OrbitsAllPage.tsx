@@ -8,7 +8,7 @@ import { getAllOrbits } from '../../modules/get-all-orbits';
 import filtersSlice from "../../store/filtersSlice";
 import store, { useAppDispatch } from '../../store/store';
 import './OrbitsAll.styles.css';
-import loadTransfReq from '../../modules/loadRequest';
+import loadTransfReq from '../../modules/load-reqs';
 import cartSlice from '../../store/cartSlice';
 
 const OrbitsAll: FC = () => {

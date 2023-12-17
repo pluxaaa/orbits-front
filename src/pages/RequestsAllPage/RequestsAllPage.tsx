@@ -22,7 +22,7 @@ const TransfReq: FC = () => {
     useEffect(() => {
         const loadTransfReqs = async () => {
             if (userToken !== undefined) {
-                const result = (await getTransfReqs(userToken?.toString(), '')).filter((item) => {
+                const result = (await getTransfReqs(userToken?.toString(), 'client')).filter((item) => {
                     if (userRole === '1') {
                         return item.Client?.Name === userName;
                     } else {
@@ -43,10 +43,6 @@ const TransfReq: FC = () => {
             const data = await getTransfReqs(userToken?.toString(), status?.toString());
             let result = []
             dispatch(filtersSlice.actions.setRequestStatus(status));
-
-            if (status === "Все") {
-                setStatus("");
-            }
 
             result = data.filter((item) => {
                 if (userRole === '1') {

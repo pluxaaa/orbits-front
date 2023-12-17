@@ -13,19 +13,15 @@ import cartSlice from "../../store/cartSlice";
 import store, { useAppDispatch } from '../../store/store';
 import "./RequestDetPage.styles.css";
 
-
 const TransfReqDet: FC = () => {
-    const newOrbitInputRef = useRef<any>(null);
-    const dispatch = useAppDispatch()
     const [orbitNames, setOrbitNames] = useState<string[]>();
-    const [newOrbit, setNewOrbit] = useState('');
+    const [orbits, setOrbits] = useState<Orbit[]>();
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
     const { userToken, userRole } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
     const [reqId, setReqId] = useState(0);
     const [req, setReq] = useState<TransferRequest | undefined>();
     const [options, setOptions] = useState<Orbit[]>([]);
-    const [selectedOrbit, setSelectedOrbit] = useState<Orbit | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -54,13 +50,14 @@ const TransfReqDet: FC = () => {
             }
 
             const orbits = await getRequestOrbits(+reqIdString, userToken);
+            setOrbits(orbits)
             var orbitNames: string[] = [];
             if (orbits) {
                 for (let orbit of orbits) {
                     orbitNames.push(orbit.Name);
                 }
-                setOrbitNames(orbitNames);
-                if (req?.Status == 'Черновик'){
+                setOrbitNames(orbitNames)
+                if (req?.Status == 'Черновик') {
                     localStorage.setItem("orbits", orbitNames.join(","));
                 }
             }
@@ -77,49 +74,11 @@ const TransfReqDet: FC = () => {
 
     if (error) {
         return (
-          <div style={{ textAlign: 'center', fontSize: '2em', margin: 'auto' }}>
-            {error}
-          </div>
+            <div style={{ textAlign: 'center', fontSize: '2em', margin: 'auto' }}>
+                {error}
+            </div>
         );
-      }
-
-    const removeOrbit = (removedOrbitName: string) => {
-        return (event: React.MouseEvent) => {
-            if (!orbitNames) {
-                return;
-            }
-
-            dispatch(cartSlice.actions.removeOrbit(removedOrbitName))
-            setOrbitNames(orbitNames.filter(function (orbitName) {
-                return orbitName !== removedOrbitName;
-            }));
-
-            event.preventDefault();
-        };
-    };
-
-    const addOrbit = () => {
-        if (!selectedOrbit || !selectedOrbit.Name || !orbitNames) {
-            return;
-        }
-    
-        const orbitNameToAdd = selectedOrbit.Name;
-    
-        if (orbitNames.includes(orbitNameToAdd)) {
-            console.error('Орбита уже добавлена:', orbitNameToAdd);
-            return;
-        }
-
-        dispatch(cartSlice.actions.addOrbit(orbitNameToAdd))
-        setOrbitNames([...orbitNames, orbitNameToAdd]);
-    
-        setNewOrbit('');
-    
-        if (newOrbitInputRef.current != null) {
-            newOrbitInputRef.current.value = '';
-        }
-    };
-    
+    }
 
     const handleErrorClose = () => {
         setShowError(false);
@@ -147,7 +106,6 @@ const TransfReqDet: FC = () => {
             ID: req_id,
             Status: status,
         });
-        console.log(editResult);
 
         if (!orbitNames || !userToken) {
             return;
@@ -161,12 +119,13 @@ const TransfReqDet: FC = () => {
                 setShowError(true);
             }
             console.log(orbitsResult);
-            if (status != 'Черновик'){
+            if (status != 'Черновик') {
                 localStorage.setItem("orbits", '')
                 window.location.href = '/orbits';
             }
         } else {
             localStorage.setItem("orbits", '')
+            setOrbits([])
             setOrbitNames([]);
         }
     };
@@ -196,57 +155,32 @@ const TransfReqDet: FC = () => {
             <h1>Заявка на трансфер #{req?.ID}</h1>
             <p>Статус: {req?.Status}</p>
             <h4>Орбиты:</h4>
-            <ListGroup className="list-group" style={{ width: '500px' }}>
-                {orbitNames?.map((orbitName, orbitID) => (
-                    <ListGroupItem key={orbitID} className="list-group-item">
-                        {orbitName}
-                        {req?.Status === 'Черновик' && (
-                            <span className="button-group">
-                                <Button variant="danger" onClick={removeOrbit(orbitName)}>Удалить</Button>
-                            </span>
+            <ListGroup className="list-group" style={{ width: '300px' }}>
+                {orbits?.map((orbit) => (
+                    <ListGroupItem key={orbit.ID} className="list-group-item">
+                        {orbit.Name}
+                        {orbit.ImageURL && (
+                            <img
+                                src={orbit.ImageURL}
+                                alt={`Image for ${orbit.Name}`}
+                                style={{ width: '75px', height: '75px', position: 'absolute', right: '0' }}
+                            />
                         )}
+                        <div style={{ width: '75px', height: '75px' }}></div>
                     </ListGroupItem>
                 ))}
             </ListGroup>
-            {req?.Status === 'Черновик' && (
-                <div className="input-group">
-                    <Select
-                        options={options.map(option => ({ value: option.Name, label: option.Name }))}
-                        value={selectedOrbit ? { value: selectedOrbit.Name, label: selectedOrbit.Name } : null}
-                        onChange={(value) => setSelectedOrbit(options.find(option => option.Name === value?.value) || null)}
-                        isSearchable
-                        placeholder="Выберите орбиту..."
-                    />
-                    <Button onClick={addOrbit} className="button">Добавить</Button>
-                </div>
-            )}
             <Form>
-                {req?.Status === 'Черновик' && (
-                    <Button onClick={() => sendChanges('Черновик')} className="button">Сохранить изменения</Button>
-                )}
                 <FormGroup className="form-group">
-                    {userRole === '1' && req?.Status === 'Черновик' && (
-                        <>
-                            <div>
-                                <Button className="common-button" variant="primary" 
-                                onClick={() => sendChanges('На рассмотрении')}>Сформировать</Button>
-                            </div>
-                            <div>
-                                <Button className="common-button" variant="danger" 
-                                onClick={() => sendChanges('Удалена')}>Отменить</Button>
-                            </div>
-                        </>
-                    )}
-
                     {userRole === '2' && req?.Status === 'На рассмотрении' && (
                         <>
                             <div>
-                                <Button className="common-button" variant="warning" 
-                                onClick={() => sendChanges('Отклонена')}>Отклонить</Button>
+                                <Button className="common-button" variant="warning"
+                                    onClick={() => sendChanges('Отклонена')}>Отклонить</Button>
                             </div>
                             <div>
-                                <Button className="common-button" variant="success" 
-                                onClick={() => sendChanges('Оказана')}>Одобрить</Button>
+                                <Button className="common-button" variant="success"
+                                    onClick={() => sendChanges('Оказана')}>Одобрить</Button>
                             </div>
                         </>
                     )}

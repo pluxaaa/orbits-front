@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { Button, Card } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import store from '../../store/store';
 import "./TransfReqCard.styles.css";
 
@@ -14,6 +15,7 @@ interface transfReqProps {
 
 const TransfReqCard: FC<transfReqProps> = ({ status, dateCreated, dateProcessed, dateFinished, id }) => {
     const { userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
+    const navigate = useNavigate()
 
     const formatDate = (dateString: string | undefined) => {
         if (!dateString) {
@@ -40,41 +42,25 @@ const TransfReqCard: FC<transfReqProps> = ({ status, dateCreated, dateProcessed,
           <Card.Body className="card_body">
             <p>Статус: {status}</p>
             <p>Создана: {formatDate(dateCreated)}</p>
-            {dateProcessed !== 'N/A' && dateProcessed && (
+            {dateProcessed !== 'Н/Д' && dateProcessed && (
               <p>Отправлена: {formatDate(dateProcessed)}</p>
             )}
-            {dateFinished !== 'N/A' && dateFinished && (
+            {dateFinished !== 'Н/Д' && dateFinished && (
               <p>Завршена: {formatDate(dateFinished)}</p>
             )}
           </Card.Body>
           <Card.Footer className="card_footer">
-            {userRole === '1' && status === 'Черновик' && (
-              <div>
-                <Button
-                  onClick={() => (window.location.href = `/transfer_requests/${id}`)}
-                  variant="primary"
-                  className="button button_primary"
-                >
-                  Изменить
-                </Button>
-                <div></div>
-                <Button variant="danger" className="button button_danger">
-                  Отменить
-                </Button>
-              </div>
-            )}
-            {userRole === '1' && status !== 'Черновик' && (
+            {userRole === '1' && (
               <Button
-                onClick={() => (window.location.href = `/transfer_requests/${id}`)}
-                variant="info"
-                className="button button_info"
+                onClick={() => (navigate(`/transfer_requests/${id}`))}
+                className="button"
               >
                 Просмотр
               </Button>
             )}
             {userRole === '2' && (
               <Button
-                onClick={() => (window.location.href = `/transfer_requests/${id}`)}
+                onClick={() => (navigate(`/transfer_requests/${id}`))}
                 variant="primary"
                 className="button button_primary"
               >

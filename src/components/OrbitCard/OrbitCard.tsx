@@ -6,6 +6,8 @@ import { changeOrbitStatus } from '../../modules/change-orbit-status';
 import cartSlice from '../../store/cartSlice';
 import store, { useAppDispatch } from '../../store/store';
 import "./OrbitCard.styles.css";
+import { createOrbitTransferReq } from '../../modules/create-req-mm';
+import { deleteOrbitTransfer } from '../../modules/delete-req-mm';
 
 interface Props {
     imageUrl: string;
@@ -23,18 +25,9 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
 
     const { userRole, userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
 
-    // Проверка есть ли орбита в локалстораж
     const isOrbitInCart = useSelector((state: ReturnType<typeof store.getState>) =>
         state.cart.orbits?.includes(orbitName)
     );
-
-    const handleAddOrbitToCart = () => {
-        if (isOrbitInCart) {
-            dispatch(cartSlice.actions.removeOrbit(orbitName));
-        } else {
-            dispatch(cartSlice.actions.addOrbit(orbitName));
-        }
-    };
 
     const handleStatusChange = async () => {
         setIsStatusChanging(true);
@@ -43,12 +36,31 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
             await changeOrbitStatus(userToken?.toString(), orbitName);
             onStatusChange(orbitName, !orbitStatus);
         } catch (error) {
-            console.error('Ошибка при изменении статуса орбиты:', error);
+            console.error('Error changing orbit status:', error);
         } finally {
             setIsStatusChanging(false);
             navigate('/orbits');
         }
     };
+
+    const handleCreateRequest = async () => {
+        try {
+            if(!userToken){
+                return
+            }
+            if (isOrbitInCart) {
+                const response = await deleteOrbitTransfer(orbitName, localStorage.getItem("reqID"), userToken);
+                dispatch(cartSlice.actions.removeOrbit(orbitName));
+            } else {
+                const response = await createOrbitTransferReq(orbitName, userToken);
+                localStorage.setItem("reqID", response.data)
+                dispatch(cartSlice.actions.addOrbit(orbitName));
+            }
+        } catch (error) {
+            console.error('Ошибка:', error);
+        }
+    };
+
 
     return (
         <Card className='card'>
@@ -68,7 +80,6 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
                     <Card.Title> Статус: {orbitStatus ? "Доступна" : "Недоступна"} </Card.Title>
                 </div>
                 <Button className='button' href={orbitDetailed}> Подробнее </Button>
-                <div></div>
                 {userRole === '2' && (
                     <Button
                         className='button-card'
@@ -79,14 +90,16 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
                     </Button>
                 )}
                 {userRole === '1' && (
-                    <Button
-                        className="button-add"
-                        onClick={handleAddOrbitToCart}
-                        disabled={isStatusChanging}
-                        variant={isOrbitInCart ? 'danger' : 'success'}
-                    >
-                        {isOrbitInCart ? 'Удалить' : 'Добавить'}
-                    </Button>
+                    <>
+                        <div style={{ width: '1px', height: '1px' }}></div>
+                        <Button
+                            className='button-add'
+                            onClick={handleCreateRequest}
+                            variant={isOrbitInCart ? 'danger' : 'success'}
+                        >
+                            {isOrbitInCart ? 'Удалить' : 'Добавить'}
+                        </Button>
+                    </>
                 )}
             </Card.Body>
         </Card>
