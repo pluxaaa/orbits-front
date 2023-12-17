@@ -1,8 +1,8 @@
-import { FC } from 'react'
-import { useSelector } from 'react-redux';
+import { FC } from 'react';
 import { Button, Card } from 'react-bootstrap';
-import store from '../../store/store'
-import "./TransfReqCard.styles.css"
+import { useSelector } from 'react-redux';
+import store from '../../store/store';
+import "./TransfReqCard.styles.css";
 
 interface transfReqProps {
     id: number,

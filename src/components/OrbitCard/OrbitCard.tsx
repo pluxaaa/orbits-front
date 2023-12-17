@@ -1,11 +1,11 @@
 import { FC, useState } from 'react';
 import { Button, Card } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import "./OrbitCard.styles.css"
-import cartSlice from '../../store/cartSlice'
+import { useNavigate } from 'react-router-dom';
 import { changeOrbitStatus } from '../../modules/change-orbit-status';
-import store, { useAppDispatch } from '../../store/store'
+import cartSlice from '../../store/cartSlice';
+import store, { useAppDispatch } from '../../store/store';
+import "./OrbitCard.styles.css";
 
 interface Props {
     imageUrl: string;
@@ -23,12 +23,18 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
 
     const { userRole, userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
 
-    const handleAddOrbitToCart = () => {
-        dispatch(cartSlice.actions.addOrbit(orbitName));
-    }
-
     // Проверка есть ли орбита в локалстораж
-    const isOrbitInCart = localStorage.getItem('orbits')?.split(',').includes(orbitName);
+    const isOrbitInCart = useSelector((state: ReturnType<typeof store.getState>) =>
+        state.cart.orbits?.includes(orbitName)
+    );
+
+    const handleAddOrbitToCart = () => {
+        if (isOrbitInCart) {
+            dispatch(cartSlice.actions.removeOrbit(orbitName));
+        } else {
+            dispatch(cartSlice.actions.addOrbit(orbitName));
+        }
+    };
 
     const handleStatusChange = async () => {
         setIsStatusChanging(true);
@@ -65,7 +71,7 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
                 <div></div>
                 {userRole === '2' && (
                     <Button
-                        className='button'
+                        className='button-card'
                         onClick={handleStatusChange}
                         disabled={isStatusChanging}
                     >
@@ -74,11 +80,12 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
                 )}
                 {userRole === '1' && (
                     <Button
-                        className='button'
+                        className="button-add"
                         onClick={handleAddOrbitToCart}
-                        disabled={isOrbitInCart}
+                        disabled={isStatusChanging}
+                        variant={isOrbitInCart ? 'danger' : 'success'}
                     >
-                        {isOrbitInCart ? 'Добавлено' : 'Добавить'}
+                        {isOrbitInCart ? 'Удалить' : 'Добавить'}
                     </Button>
                 )}
             </Card.Body>

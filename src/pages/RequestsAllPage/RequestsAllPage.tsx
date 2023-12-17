@@ -1,13 +1,14 @@
-import { FC, useState, useEffect } from 'react'
-import { useSelector } from 'react-redux/es/hooks/useSelector'
+import { FC, useEffect, useState } from 'react';
+import { Col, Row } from "react-bootstrap";
+import { useSelector } from 'react-redux/es/hooks/useSelector';
 import { useNavigate } from "react-router-dom";
-import { Row, Col } from "react-bootstrap";
-import TransfReqCard from '../components/TransfReqCard/TransfReqCard'
-import store, { useAppDispatch } from '../store/store'
-import { getTransfReqs } from '../modules/get-all-requests'
-import { TransferRequest } from '../modules/ds'
-import filtersSlice from "../store/filtersSlice";
-import RequestFilter from '../components/RequestFilter/RequestFilter';
+import RequestFilter from '../../components/RequestFilter/RequestFilter';
+import TransfReqCard from '../../components/TransfReqCard/TransfReqCard';
+import { TransferRequest } from '../../modules/ds';
+import { getTransfReqs } from '../../modules/get-all-requests';
+import filtersSlice from "../../store/filtersSlice";
+import store, { useAppDispatch } from '../../store/store';
+import "./RequestsAllPage.styles.css";
 
 const TransfReq: FC = () => {
     const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth)

@@ -1,11 +1,11 @@
 import { FC, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {useSelector } from "react-redux/es/hooks/useSelector";
 import { Button, ListGroup, ListGroupItem, Modal } from "react-bootstrap";
-import cartSlice from "../store/cartSlice";
-import store, { useAppDispatch } from "../store/store";
-import { createRequest } from "../modules/create-request";
-import "../styles/CartPage.styles.css"
+import { useSelector } from "react-redux/es/hooks/useSelector";
+import { useNavigate } from "react-router-dom";
+import { createRequest } from "../../modules/create-request";
+import cartSlice from "../../store/cartSlice";
+import store, { useAppDispatch } from "../../store/store";
+import "./CartPage.styles.css";
 
 interface InputChangeInterface {
     target: HTMLInputElement;

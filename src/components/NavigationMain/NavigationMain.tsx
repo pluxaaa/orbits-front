@@ -1,11 +1,11 @@
-// Import necessary modules
 import React, { FC, useState } from 'react';
+import { Nav, NavDropdown, Navbar } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import store, { useAppDispatch } from '../../store/store';
 import { logoutUser } from '../../modules/auth-actions';
+import store, { useAppDispatch } from '../../store/store';
 import './NavigationMain.styles.css';
+import CartButton from '../CartButton/CartButton';
 
 const NavigationMain: FC = () => {
     const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
@@ -22,75 +22,49 @@ const NavigationMain: FC = () => {
     };
 
     return (
-        <Navbar className="navbar" expand="lg">
-            <Navbar.Brand className="navbar-logo" href="/orbits">
-                ORBIT TRANSFER
-            </Navbar.Brand>
-            <Navbar.Toggle aria-controls="navbar-nav" />
-            <Navbar.Collapse id="navbar-nav">
-                <Nav className="mr-auto">
-                    <Nav.Link className="navbar-block" href="/orbits">
-                        Список орбит
-                    </Nav.Link>
-                </Nav>
-                <Nav>
-                    {!userToken && (
-                        <Nav.Link className="navbar-block" href="/auth">
-                            Вход
-                        </Nav.Link>
-                    )}
-                    {userToken && (
-                        <NavDropdown
-                            className="nav-dropdown"
-                            title={userName}
-                            id="basic-nav-dropdown"
-                            show={showDropdown}
-                            onMouseEnter={() => setShowDropdown(true)}
-                            onMouseLeave={() => setShowDropdown(false)}
-                            align={{ lg: 'end' }}
-                        >
-                            <NavDropdown.Item
-                                className="navbar-block"
-                                onClick={() => {
-                                    navigate('/profile');
-                                    setShowDropdown(false);
-                                }}
+        <Navbar expand="md">
+            <Navbar.Brand className="logo" href="/orbits">ORBIT TRANSFER</Navbar.Brand>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+                <span><Nav.Link href="/orbits">Список орбит</Nav.Link></span>
+                {userToken &&<CartButton />}
+                <Nav className="ml-auto">
+                    {userToken &&
+                        <>
+                            <Nav.Link href="/transfer_requests">Заявки</Nav.Link>
+                            <NavDropdown
+                                className="nav-dropdown"
+                                title={userName}
+                                id="basic-nav-dropdown"
+                                show={showDropdown}
+                                onMouseEnter={() => setShowDropdown(true)}
+                                onMouseLeave={() => setShowDropdown(false)}
+                                align={{ lg: 'end' }}
                             >
-                                Личный кабинет
-                            </NavDropdown.Item>
-                            {(userRole === '2' || userRole === '1') && (
                                 <NavDropdown.Item
                                     className="navbar-block"
                                     onClick={() => {
-                                        navigate('/transfer_requests');
+                                        navigate('/profile');
                                         setShowDropdown(false);
                                     }}
                                 >
-                                    Заявки
+                                    Личный кабинет
                                 </NavDropdown.Item>
-                            )}
-                            {userRole == '1' &&
                                 <NavDropdown.Item
                                     className="navbar-block"
                                     onClick={() => {
-                                        window.location.href = '/cart';
+                                        handleLogout();
                                         setShowDropdown(false);
                                     }}
                                 >
-                                    Корзина
+                                    Выйти
                                 </NavDropdown.Item>
-                            }
-                            <NavDropdown.Item
-                                className="navbar-block"
-                                onClick={() => {
-                                    handleLogout();
-                                    setShowDropdown(false);
-                                }}
-                            >
-                                Выйти
-                            </NavDropdown.Item>
-                        </NavDropdown>
-                    )}
+                            </NavDropdown>
+                        </>}
+                    {!userToken &&
+                        <>
+                            <Nav.Link href="/auth">Вход</Nav.Link>
+                        </>}
                 </Nav>
             </Navbar.Collapse>
         </Navbar>

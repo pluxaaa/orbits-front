@@ -1,10 +1,9 @@
-// OrbitDetailed.tsx
+import { AxiosError } from 'axios';
 import { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getOrbitByName } from '../modules/get-orbit-by-name';
-import { Orbit } from '../modules/ds';
-import { AxiosError } from 'axios';
-import '../styles/OrbitsDetailed.styles.css';
+import { Orbit } from '../../modules/ds';
+import { getOrbitByName } from '../../modules/get-orbit-by-name';
+import './OrbitsDetailed.styles.css';
 
 const OrbitDetailed: FC = () => {
   const [orbit, setOrbit] = useState<Orbit | null>(null);
