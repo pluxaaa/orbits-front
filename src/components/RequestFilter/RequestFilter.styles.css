@@ -1,0 +1,46 @@
+.request-filter-container {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-left:10px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    font-family: "Century Gothic", sans-serif;
+    width: 40%;
+  }
+  
+  .request-filter-form {
+    display: flex;
+    align-items: center;
+  }
+  
+  .request-filter-label {
+    margin-right: 10px;
+    font-weight: bold;
+  }
+  
+  .request-filter-select {
+    width: 150px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: "Century Gothic", sans-serif;
+  }
+  
+  .request-filter-button {
+    margin-left: 40px;
+    margin-top: 0;
+    padding: 8px 15px;
+    background-color: #0E3E8DFF;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: "Century Gothic", sans-serif;
+  
+    &:hover {
+      background-color: #001246;
+    }
+  }
+  

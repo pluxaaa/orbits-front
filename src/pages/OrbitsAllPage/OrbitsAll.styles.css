@@ -48,7 +48,7 @@ body {
 
 .search-form input[type="text"] {
     padding: 10px;
-    border: 2px solid #0E3E8DFF;
+    border: 2px solid rgb(14, 62, 141);
     border-radius: 5px;
     font-size: 16px;
     outline: none;

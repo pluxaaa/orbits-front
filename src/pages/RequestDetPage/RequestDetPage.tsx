@@ -1,18 +1,17 @@
-import React, { FC, useEffect, useState, useRef } from "react";
-import { useSelector } from 'react-redux';
-import { Form, FormGroup, Button, ListGroup, ListGroupItem, Modal } from "react-bootstrap";
-import Select from 'react-select';
-import { getDetailedReq } from '../modules/get-detailed-req';
-import { TransferRequest } from "../modules/ds";
-import store, { useAppDispatch } from '../store/store';
-import { getRequestOrbits } from "../modules/get-request-orbits";
-import { setRequestOrbits } from "../modules/set-request-orbits";
-import { changeReqStatus } from "../modules/change-req-status";
-import { Orbit } from '../modules/ds';
-import { getAllOrbits } from "../modules/get-all-orbits";
-import "../styles/TransfReqDetPage.styles.css";
-import cartSlice from "../store/cartSlice";
 import { AxiosError } from 'axios';
+import React, { FC, useEffect, useRef, useState } from "react";
+import { Button, Form, FormGroup, ListGroup, ListGroupItem, Modal } from "react-bootstrap";
+import { useSelector } from 'react-redux';
+import Select from 'react-select';
+import { changeReqStatus } from "../../modules/change-req-status";
+import { Orbit, TransferRequest } from "../../modules/ds";
+import { getAllOrbits } from "../../modules/get-all-orbits";
+import { getDetailedReq } from '../../modules/get-detailed-req';
+import { getRequestOrbits } from "../../modules/get-request-orbits";
+import { setRequestOrbits } from "../../modules/set-request-orbits";
+import cartSlice from "../../store/cartSlice";
+import store, { useAppDispatch } from '../../store/store';
+import "./RequestDetPage.styles.css";
 
 
 const TransfReqDet: FC = () => {

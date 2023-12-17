@@ -1,5 +1,6 @@
 import React from 'react';
-import { Form, Row, Col, FormControl, FormLabel, FormCheck, Button } from 'react-bootstrap';
+import { Button, Col, Form, FormCheck, FormControl, FormLabel, Row } from 'react-bootstrap';
+import './OrbitFilter.styles.css';
 
 interface OrbitFilterProps {
   name: string | null;
@@ -23,22 +24,15 @@ const OrbitFilter: React.FC<OrbitFilterProps> = ({
   clearFilters,
 }) => {
   return (
-    <Form>
+    <Form className="orbit-filter-container">
       <Row>
         <Col>
-          <FormLabel>Название орбиты:</FormLabel>
           <FormControl
+            placeholder='Название орбиты'
             type="text"
             value={name?.toString()}
             onChange={(e) => setName(e.target.value)}
-          />
-        </Col>
-        <Col>
-          <FormCheck
-            type="checkbox"
-            label="Наклонная"
-            checked={incl === "1"}
-            onChange={() => setIncl(incl === "1" ? "" : "1")}
+            className="orbit-input"
           />
         </Col>
       </Row>
@@ -47,25 +41,40 @@ const OrbitFilter: React.FC<OrbitFilterProps> = ({
           <FormCheck
             type="checkbox"
             label="Круговая"
-            checked={isCircle === "1"}
-            onChange={() => setIsCircle(isCircle === "1" ? "" : "1")}
+            checked={isCircle === '1'}
+            onChange={() => setIsCircle(isCircle === '1' ? '' : '1')}
           />
           <FormCheck
             type="checkbox"
             label="Эллиптическая"
-            checked={isCircle === "0"}
-            onChange={() => setIsCircle(isCircle === "0" ? "" : "0")}
+            checked={isCircle === '0'}
+            onChange={() => setIsCircle(isCircle === '0' ? '' : '0')}
+          />
+        </Col>
+        <Col>
+          <FormCheck
+            type="checkbox"
+            label="Наклонная"
+            checked={incl === '1'}
+            onChange={() => setIncl(incl === '1' ? '' : '1')}
           />
         </Col>
       </Row>
-      <Col>
-        <Button onClick={applyFilters}>Поиск</Button>
-      </Col>
-      <Col>
-        <Button variant="secondary" onClick={clearFilters}>Очистить</Button>
-      </Col>
+      <Row className="orbit-buttons">
+        <Col>
+          <Button className="orbit-button" onClick={applyFilters}>
+            Поиск
+          </Button>
+        </Col>
+        <Col>
+          <Button variant="secondary" className="orbit-button" onClick={clearFilters}>
+            Очистить
+          </Button>
+        </Col>
+      </Row>
     </Form>
   );
+  
 };
 
 export default OrbitFilter;

@@ -1,13 +1,13 @@
-import {FC, useEffect, useState} from 'react'
+import { FC, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import {Button, Spinner, Modal} from 'react-bootstrap'
+import { Button, Modal, Spinner } from 'react-bootstrap';
 
-import '../styles/AuthPage.styles.css';
+import './AuthPage.styles.css';
 
-import store, { useAppDispatch } from '../store/store'
-import { loginUser, registerUser } from '../modules/auth-actions';
+import { loginUser, registerUser } from '../../modules/auth-actions';
+import store, { useAppDispatch } from '../../store/store';
 
 interface InputChangeInterface {
     target: HTMLInputElement;
