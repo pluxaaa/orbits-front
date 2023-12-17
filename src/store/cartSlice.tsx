@@ -1,49 +1,65 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const orbits = localStorage.getItem('orbits')
-    ? localStorage.getItem('orbits')?.split(',')
-    : [];
-
-const initialState = {
-    orbits,
-    added: false
+interface CartState {
+  orbits: string[] | undefined;
+  added: boolean;
 }
 
+const initialState: CartState = {
+  orbits: localStorage.getItem('orbits')
+    ? localStorage.getItem('orbits')?.split(',')
+    : [],
+  added: false,
+};
+
 const cartSlice = createSlice({
-    name: 'cart',
-    initialState,
-    reducers:{
-        addOrbit(state, {payload}) {
-            if (state.orbits == null) {
-                state.orbits = []
-            }
+  name: 'cart',
+  initialState,
+  reducers: {
+    addOrbit(state, { payload }: PayloadAction<string>) {
+      console.log("addOrbit slice");
+      if (!state.orbits) {
+        state.orbits = [];
+      }
 
-            if (state.orbits.indexOf(payload.toString()) === -1) {
-                state.orbits.push(payload.toString())
-                localStorage.setItem('orbits', state.orbits.toString())
-            }
-            state.added = true
-            
-        },
-        removeOrbit(state, {payload}) {
-            if (state.orbits == null) {
-                state.orbits = []
-            }
+      if (state.orbits.indexOf(payload) === -1) {
+        state.orbits.push(payload);
+        localStorage.setItem('orbits', state.orbits.toString());
+      }
+      state.added = true;
+    },
+    removeOrbit(state, { payload }: PayloadAction<string>) {
+      if (!state.orbits) {
+        state.orbits = [];
+      }
 
-            if (state.orbits.length == 0) {
-                return
-            }
-            
-            const orbitIndex = state.orbits.indexOf(payload.toString())
-            if (orbitIndex > -1) {
-                state.orbits.splice(orbitIndex, 1)
-                localStorage.setItem('orbits', state.orbits.toString())
-            }
-        },
-        disableAdded(state) {
-            state.added = false
+      if (state.orbits.length === 0) {
+        return;
+      }
+
+      const orbitIndex = state.orbits.indexOf(payload);
+      if (orbitIndex > -1) {
+        state.orbits.splice(orbitIndex, 1);
+        localStorage.setItem('orbits', state.orbits.toString());
+      }
+    },
+    disableAdded(state) {
+      state.added = false;
+    },
+    setOrbits(state, { payload }: PayloadAction<string[]>) {
+      if (!state.orbits) {
+        state.orbits = [];
+      }
+
+      payload.forEach((orbit) => {
+        if (state.orbits && state.orbits.indexOf(orbit) === -1) {
+          state.orbits.push(orbit);
         }
-    }
-})
+      });
 
-export default cartSlice
+      localStorage.setItem('orbits', state.orbits.toString());
+    },
+  },
+});
+
+export default cartSlice;

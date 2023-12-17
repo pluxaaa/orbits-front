@@ -1,17 +1,15 @@
 import { FC, useEffect, useState } from 'react';
-import { Modal } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import OrbitCard from '../../components/OrbitCard/OrbitCard';
 import OrbitFilter from '../../components/OrbitFilter/OrbitFilter';
 import { Orbit } from '../../modules/ds';
 import { getAllOrbits } from '../../modules/get-all-orbits';
-import { getTransfReqs } from '../../modules/get-all-requests';
-import { getRequestOrbits } from '../../modules/get-request-orbits';
-import cartSlice from '../../store/cartSlice';
 import filtersSlice from "../../store/filtersSlice";
 import store, { useAppDispatch } from '../../store/store';
 import './OrbitsAll.styles.css';
+import loadTransfReq from '../../modules/loadRequest';
+import cartSlice from '../../store/cartSlice';
 
 const OrbitsAll: FC = () => {
   const [orbits, setOrbits] = useState<Orbit[]>([]);
@@ -32,34 +30,22 @@ const OrbitsAll: FC = () => {
 
   useEffect(() => {
     //попытка получить заявку черновик для текущего клиента
-    const loadTransfReqs = async () => {
-      if (userToken !== undefined && userToken !== '') {
-        const result = (await getTransfReqs(userToken?.toString(), 'Черновик')).filter((item) => {
-          if (userRole === '1') {
-            return item.Client?.Name === userName;
-          } else {
-            return [];
-          }
-        });
-        console.log(result)
-        if (result[0].ID) {
-          const orbits = await getRequestOrbits(result[0].ID, userToken?.toString());
-          var orbitNames: string[] = [];
-          if (orbits) {
-            for (let orbit of orbits) {
-              orbitNames.push(orbit.Name);
-            }
-            localStorage.setItem("orbits", orbitNames.join(","));
-          }
+    const fetchData = async () => {
+      const orbitsData = await loadTransfReq(userToken?.toString(), userRole?.toString(), userName?.toString());
+      var orbitNames: string[] = [];
+      if (orbitsData) {
+        for (let orbit of orbitsData) {
+          orbitNames.push(orbit.Name);
         }
+        dispatch(cartSlice.actions.setOrbits(orbitNames));
       }
-    }
-    loadTransfReqs()
+    };
+
+    fetchData();
 
     const loadOrbits = async () => {
       try {
         const result = await getAllOrbits(name?.toString(), incl?.toString(), isCircle?.toString());
-        console.log(result)
         setOrbits(result);
       } catch (error) {
         console.error("Ошибка при загрузке объектов:", error);
