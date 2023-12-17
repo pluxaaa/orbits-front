@@ -10,86 +10,125 @@ import { loginUser, registerUser } from '../../modules/auth-actions';
 import store, { useAppDispatch } from '../../store/store';
 
 interface InputChangeInterface {
-    target: HTMLInputElement;
-  }
-  
+  target: HTMLInputElement;
+}
+
 
 const Auth: FC = () => {
 
-    const {loading, userInfo, error, success} = useSelector(
-        (state: ReturnType<typeof store.getState> ) => state.auth
-    )
+  const { loading, userInfo, error, success } = useSelector(
+    (state: ReturnType<typeof store.getState>) => state.auth
+  )
 
-    const dispatch = useAppDispatch()
-    const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
-    const [login, setLogin] = useState('')
-    const [password, setPassword] = useState('')
+  const [login, setLogin] = useState('')
+  const [password, setPassword] = useState('')
 
-    const [showRegisterModal, setShowRegisterModal] = useState(true)
+  const [showRegisterModal, setShowRegisterModal] = useState(true)
 
-    const handleRegisterModalClose = () => {
-        setShowRegisterModal(false)
-    }
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-    const handleLoginChange = (event: InputChangeInterface) => {
-        setLogin(event.target.value)
-    }
+  const handleRegisterModalClose = () => {
+    setShowRegisterModal(false)
+  }
 
-    const handlePasswordChange = (event: InputChangeInterface) => {
-        setPassword(event.target.value)
-    }
+  const handleLoginChange = (event: InputChangeInterface) => {
+    setLogin(event.target.value)
+  }
 
-    const sendLogin = async () => {
-      await dispatch(loginUser({ login: login, password: password }));
+  const handlePasswordChange = (event: InputChangeInterface) => {
+    setPassword(event.target.value)
+  }
+
+  const handleModalClose = () => {
+    setShowErrorModal(false);
+  };
+
+  const sendLogin = async () => {
+    setShowRegisterModal(false)
+    await dispatch(loginUser({ login: login, password: password }));
+    if (success) {
+      navigate('/orbits');
       window.location.reload()
-    };
-
-    const sendRegister = async () => {
-        setShowRegisterModal(true)
-        dispatch(registerUser({login: login, password: password}));
     }
+  };
 
-    useEffect(() => {
-      if (success) {
-        navigate('/orbits');
-        window.location.reload()
-      }
-    }, [navigate, userInfo, success])
+  const sendRegister = async () => {
+    await dispatch(registerUser({ login: login, password: password }));
 
-    return (
-        <>
-          <Modal show={success && showRegisterModal && !loading} onHide={handleRegisterModalClose}>
-            <Modal.Header closeButton>
-              <Modal.Title>Регистрация прошла успешно!</Modal.Title>
-            </Modal.Header>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={handleRegisterModalClose}>
-                Закрыть
-              </Button>
-            </Modal.Footer>
-          </Modal>
-    
-          <div className="login-card">
-            <h1>Вход</h1>
-            <div className="form-group">
-              <label>Логин:</label>
-              <input className="input-login" value={login} onChange={handleLoginChange} />
-            </div>
-            <div className="form-group">
-              <label>Пароль:</label>
-              <input className="input-login" type="password" value={password} onChange={handlePasswordChange} />
-            </div>
-            <button onClick={sendLogin} disabled={loading}>
-              Войти
-            </button>
-            <button onClick={sendRegister} disabled={loading}>
-              Регистрация
-            </button>
-            {loading ? <Spinner /> : ''}
-          </div>
-        </>
-      );
-    };
-    
-    export default Auth;
+    if (success) {
+      setShowRegisterModal(true);
+      handleRegisterModalClose();
+    }
+  };
+
+
+  useEffect(() => {
+    if (error) {
+      setErrorMessage(error);
+      setShowErrorModal(true);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (success){
+      const sendLogin = async () => await dispatch(loginUser({ login: login, password: password }));
+      sendLogin()
+    }
+    if (success && !showRegisterModal) {
+      navigate('/orbits');
+      window.location.reload()
+    }
+  }, [showRegisterModal, success])
+
+
+  return (
+    <>
+      <Modal show={showErrorModal} onHide={handleModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Ошибка</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{errorMessage}</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleModalClose}>
+            Закрыть
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={success && showRegisterModal && !loading} onHide={handleRegisterModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Регистрация прошла успешно!</Modal.Title>
+        </Modal.Header>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleRegisterModalClose}>
+            Закрыть
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <div className="login-card">
+        <h1>Вход</h1>
+        <div className="form-group">
+          <label>Логин:</label>
+          <input className="input-login" value={login} onChange={handleLoginChange} />
+        </div>
+        <div className="form-group">
+          <label>Пароль:</label>
+          <input className="input-login" type="password" value={password} onChange={handlePasswordChange} />
+        </div>
+        <button onClick={sendLogin} disabled={loading}>
+          Войти
+        </button>
+        <button onClick={sendRegister} disabled={loading}>
+          Регистрация
+        </button>
+        {loading ? <Spinner /> : ''}
+      </div>
+    </>
+  );
+};
+
+export default Auth;

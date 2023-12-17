@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Nav, NavDropdown, Navbar } from 'react-bootstrap';
+import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logoutUser } from '../../modules/auth-actions';
@@ -17,21 +18,21 @@ const NavigationMain: FC = () => {
     const handleLogout = () => {
         if (userToken) {
             dispatch(logoutUser(userToken));
-            navigate('/orbits/');
+            navigate('/orbits');
         }
     };
 
     return (
-        <Navbar expand="md">
-            <Navbar.Brand className="logo" href="/orbits">ORBIT TRANSFER</Navbar.Brand>
+        <Navbar expand="sm">
+            <NavLink className="logo" to="/orbits" style={{ textDecoration: 'none' }}>ORBIT TRANSFER</NavLink>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-                <span><Nav.Link href="/orbits">Список орбит</Nav.Link></span>
-                {userToken &&<CartButton />}
+                <span><NavLink to="/orbits" className="nav-link">Список орбит</NavLink></span>
+                {userToken &&<CartButton/>}
                 <Nav className="ml-auto">
                     {userToken &&
                         <>
-                            <Nav.Link href="/transfer_requests">Заявки</Nav.Link>
+                            <NavLink to="/transfer_requests" className="nav-link">Заявки</NavLink>
                             <NavDropdown
                                 className="nav-dropdown"
                                 title={userName}
@@ -39,7 +40,7 @@ const NavigationMain: FC = () => {
                                 show={showDropdown}
                                 onMouseEnter={() => setShowDropdown(true)}
                                 onMouseLeave={() => setShowDropdown(false)}
-                                align={{ lg: 'end' }}
+                                align={{ sm: 'end' }}
                             >
                                 <NavDropdown.Item
                                     className="navbar-block"
@@ -63,7 +64,7 @@ const NavigationMain: FC = () => {
                         </>}
                     {!userToken &&
                         <>
-                            <Nav.Link href="/auth">Вход</Nav.Link>
+                            <NavLink to="/auth" className='nav-link'>Вход</NavLink>
                         </>}
                 </Nav>
             </Navbar.Collapse>

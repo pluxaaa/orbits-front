@@ -24,6 +24,7 @@ body {
 
 .common-button {
     width: 150px; /* Adjust the width as needed */
+    display: flex;
   }
 
 .card {

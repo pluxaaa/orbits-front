@@ -13,9 +13,9 @@ export const getDetailedReq = async (userToken = '', req_id = ''): Promise<Trans
     try {
         const response = await axios.get(`/api/transfer_requests/${encodeURIComponent(req_id)}`, config);
         const { data } = response;
-        console.log(data);
         return data;
     } catch (error) {
+        console.log(error)
         if ((error as AxiosError).response && (error as AxiosError).response?.status === 403) {
             throw new Error('403');
         } else {

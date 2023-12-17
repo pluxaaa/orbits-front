@@ -36,7 +36,6 @@ const TransfReqDet: FC = () => {
         if (reqIdString) {
             setReqId(+reqIdString);
         }
-
         const loadReq = async () => {
             try {
                 const loadedReq = await getDetailedReq(userToken?.toString(), String(reqIdString));
