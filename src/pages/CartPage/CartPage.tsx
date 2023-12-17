@@ -1,11 +1,12 @@
-import { FC, useState, useEffect } from "react";
-import { Button, ListGroup, ListGroupItem, Modal } from "react-bootstrap";
+import { FC, useState } from "react";
+import { Button, ListGroup, ListGroupItem, Modal, Col, Row  } from "react-bootstrap";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { useNavigate } from "react-router-dom";
-import { createRequest } from "../../modules/create-request";
+import { deleteOrbitTransfer } from "../../modules/delete-req-mm";
 import cartSlice from "../../store/cartSlice";
 import store, { useAppDispatch } from "../../store/store";
 import "./CartPage.styles.css";
+import { changeReqStatus } from "../../modules/change-req-status";
 
 const Cart: FC = () => {
     const [showSuccess, setShowSuccess] = useState(false);
@@ -20,29 +21,68 @@ const Cart: FC = () => {
 
     const deleteFromCart = (orbitName = '') => {
         return (event: React.MouseEvent) => {
+            if (!userToken) {
+                return
+            }
+            const response = deleteOrbitTransfer(orbitName, localStorage.getItem("reqID"), userToken);
             dispatch(cartSlice.actions.removeOrbit(orbitName));
             event.preventDefault();
         };
     };
 
-    const addOrbit = async () => {
-        if (!orbits || userToken === null) {
+    const sendRequest = async () => {
+        if (!userToken) {
             return;
         }
 
-        try {
-            const result = await createRequest(orbits, userToken);
+        const reqIDString: string | null = localStorage.getItem("reqID");
+        const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
 
-            if (result.status === 201) {
-                setRedirectUrl(`/transfer_requests/${result.data}`);
-                setShowSuccess(true);
-            } else {
-                setShowError(true);
-            }
-        } catch (error) {
-            console.error("Ошибка при создании заявки:", error);
-            setShowError(true);
+        const editResult = await changeReqStatus(userToken, {
+            ID: reqID,
+            Status: "На рассмотрении",
+        });
+
+        localStorage.setItem("reqID", "")
+
+        const storedOrbitsString: string[] | undefined = localStorage.getItem('orbits')?.split(',');
+        if (storedOrbitsString) {
+
+            storedOrbitsString.forEach((orbitName: string) => {
+                dispatch(cartSlice.actions.removeOrbit(orbitName));
+            });
+
+            localStorage.setItem("orbits", "");
         }
+        setRedirectUrl(`/transfer_requests/${reqID}`)
+        setShowSuccess(true)
+    };
+
+    const deleteRequest = async () => {
+        if (!userToken) {
+            return;
+        }
+
+        const reqIDString: string | null = localStorage.getItem("reqID");
+        const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
+
+        const response = await changeReqStatus(userToken, {
+            ID: reqID,
+            Status: "Удалена",
+        });
+
+        localStorage.setItem("reqID", "")
+
+        const storedOrbitsString: string[] | undefined = localStorage.getItem('orbits')?.split(',');
+        if (storedOrbitsString) {
+
+            storedOrbitsString.forEach((orbitName: string) => {
+                dispatch(cartSlice.actions.removeOrbit(orbitName));
+            });
+
+            localStorage.setItem("orbits", "");
+        }
+        navigate(`/orbits`)
     };
 
     const handleErrorClose = () => {
@@ -72,11 +112,14 @@ const Cart: FC = () => {
             </Modal>
             <Modal show={showSuccess} onHide={handleSuccessClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Заявка сохранена</Modal.Title>
+                    <Modal.Title>Заявка отправлена</Modal.Title>
                 </Modal.Header>
                 <Modal.Footer>
                     <Button variant="success" onClick={handleSuccessClose}>
                         Просмотр
+                    </Button>
+                    <Button onClick={() => (navigate(`/orbits`))} variant="primary" className="button">
+                        К орбитам
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -94,7 +137,27 @@ const Cart: FC = () => {
                     </ListGroupItem>
                 ))}
             </ListGroup>
-            {orbits?.length !== 0 && <button onClick={addOrbit}>Сохранить</button>}
+            {orbits?.length !== 0 && (
+                <>
+                <Row>
+                <Col>
+                <Button className="common-button" 
+                        variant="success" 
+                        onClick={sendRequest} disabled={orbits.length === 0}>
+                        Сформировать
+                </Button>
+                </Col>
+                <Col>
+                <Button className="common-button" 
+                        variant="danger" 
+                        onClick={deleteRequest}
+                        disabled={orbits.length === 0}>
+                        Отменить
+                </Button>
+                </Col>
+                </Row>
+                </>
+            )}
             <button onClick={() => navigate("/orbits")}>К орбитам</button>
         </div>
     );

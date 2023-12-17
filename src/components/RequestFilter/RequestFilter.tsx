@@ -1,5 +1,3 @@
-// RequestFilter.jsx
-
 import React, { FC } from 'react';
 import { Button, Col, Form, FormLabel, FormSelect, Row } from 'react-bootstrap';
 import { useSelector } from 'react-redux/es/hooks/useSelector';
@@ -29,10 +27,8 @@ const RequestFilter: FC<RequestFilterProps> = ({ status, setStatus, applyFilters
                                 value={status?.toString()}
                                 onChange={(e) => setStatus(e.target.value)}
                             >
-                                <option value=''>Все</option>
-                                <option>Черновик</option>
+                                <option value="client">Все</option>
                                 <option value="На рассмотрении">Сформирована</option>
-                                <option>Удалена</option>
                                 <option>Оказана</option>
                                 <option>Отклонена</option>
                             </FormSelect>

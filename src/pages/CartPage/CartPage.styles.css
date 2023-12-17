@@ -1,32 +1,35 @@
-/* CartPage.styles.css */
-
-/* Center the modal */
 .modal {
     display: flex;
     align-items: center;
     justify-content: center;
   }
   
-  /* Center the content inside the modal */
   .modal-dialog {
     max-width: 80vw;
     margin: auto;
   }
+
+  .common-button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: block;
+    margin-top: 10px;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+  }
   
-  /* Center the ListGroup */
   .list-group {
     text-align: center;
     margin: 0 auto;
   }
   
-  /* Center the buttons */
   .button-group {
     display: flex;
     align-items: center;
     justify-content: center;
   }
   
-  /* Center the entire Cart component */
   .cart-container {
     display: flex;
     flex-direction: column;
@@ -34,7 +37,6 @@
     justify-content: center;
   }
   
-  /* Optional: Add some spacing between elements */
   .cart-container > * {
     margin-bottom: 20px;
   }

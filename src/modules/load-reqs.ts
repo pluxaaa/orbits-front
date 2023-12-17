@@ -10,8 +10,8 @@ const loadTransfReq = async (userToken: string | undefined, userRole: string | u
         return [];
       }
     });
-
     if (result[0]?.ID) {
+      localStorage.setItem("reqID", result[0].ID.toString());
       const orbitsData = await getRequestOrbits(result[0].ID, userToken);
       return orbitsData;
     }
