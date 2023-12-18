@@ -48,11 +48,9 @@ const OrbitDetailed: FC = () => {
     <div>
       <div className="card-sub">
         <img
-          src={orbit?.ImageURL || '/DEFAULT.jpg'}
+          src={orbit?.ImageURL}
           className="card_image"
-          onError={(e) => {
-            e.currentTarget.src = '/DEFAULT.jpg';
-          }}
+          onError={(e) => {e.currentTarget.src = '/DEFAULT.jpg'}}
         />
         <div className="right-content-sub">
           <p>Статус: {orbit?.IsAvailable ? 'Доступна' : 'Недоступна'}</p>
