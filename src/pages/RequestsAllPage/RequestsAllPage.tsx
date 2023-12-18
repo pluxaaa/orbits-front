@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import RequestFilter from '../../components/RequestFilter/RequestFilter';
 import TransfReqCard from '../../components/TransfReqCard/TransfReqCard';
 import { TransferRequest } from '../../modules/ds';
-import { getTransfReqs } from '../../modules/get-all-requests';
+import getRequestByStatus from '../../modules/get-req-by-status';
 import filtersSlice from "../../store/filtersSlice";
 import store, { useAppDispatch } from '../../store/store';
 import "./RequestsAllPage.styles.css";
@@ -18,45 +18,30 @@ const TransfReq: FC = () => {
     const [transfReqs, setTransfReqs] = useState<TransferRequest[]>([])
     const [status, setStatus] = useState(requestStatus);
 
-
     useEffect(() => {
-        const loadTransfReqs = async () => {
-            if (userToken !== undefined) {
-                const result = (await getTransfReqs(userToken?.toString(), 'client')).filter((item) => {
-                    if (userRole === '1') {
-                        return item.Client?.Name === userName;
-                    } else {
-                        console.log(userName)
-                        return item.Moder?.Name === userName;
-                    }
-                });
+        const loadValidRequests = async () => {
+                const result = (await getRequestByStatus(userToken?.toString(), userRole, userName, 'client'))
+                if (!result){
+                    return
+                }
                 setTransfReqs(result)
-            }
         }
-
-        loadTransfReqs()
-
+        loadValidRequests()
     }, []);
 
     const applyFilters = async () => {
         try {
-            const data = await getTransfReqs(userToken?.toString(), status?.toString());
-            let result = []
             dispatch(filtersSlice.actions.setRequestStatus(status));
-
-            result = data.filter((item) => {
-                if (userRole === '1') {
-                    console.log(item.Client?.Name, "==", userName)
-                    return item.Client?.Name === userName;
-                } else {
-                    console.log(userName)
-                    return item.Moder?.Name === userName;
-                }
-            });
-
-            setTransfReqs(result);
+            
+        if (status != undefined){
+            const result = (await getRequestByStatus(userToken?.toString(), userRole, userName, status?.toString()))
+            if (!result){
+                return
+            }
+            setTransfReqs(result)
 
             navigate('/transfer_requests', { state: { result } });
+        }
         } catch (error) {
             console.error("Ошибка при получении заявок:", error);
         }

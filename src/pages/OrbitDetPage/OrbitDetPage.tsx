@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios';
 import { FC, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { Orbit } from '../../modules/ds';
 import { getOrbitByName } from '../../modules/get-orbit-by-name';
@@ -8,6 +9,7 @@ import './OrbitsDetailed.styles.css';
 const OrbitDetailed: FC = () => {
   const [orbit, setOrbit] = useState<Orbit | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate()
 
   const { orbit_name } = useParams();
 
@@ -60,7 +62,7 @@ const OrbitDetailed: FC = () => {
           <p>Описание: {orbit?.Description}</p>
         </div>
       </div>
-      <a className="button-det" href="../orbits">Назад</a>
+      <button className="button-det" onClick={() => (navigate(`/orbits/`))}>Назад</button>
     </div>
   );
 };
