@@ -123,6 +123,13 @@ const Cart: FC = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            {!userToken && (<>
+                <h3> Вам необходимо войти в систему </h3>
+                <Button onClick={() => (navigate(`/auth`))} variant="primary" className="button">
+                    Войти
+                </Button>
+            </>)}
+            {userToken && (<>
             {orbits?.length !== 0 && <h3>Выбранные орбиты:</h3>}
             {orbits?.length === 0 && <h4>Вы ещё не выбрали ни одной орбиты</h4>}
             <ListGroup style={{ width: '500px' }}>
@@ -159,6 +166,7 @@ const Cart: FC = () => {
                 </>
             )}
             <button onClick={() => navigate("/orbits")}>К орбитам</button>
+            </>)}
         </div>
     );
 };

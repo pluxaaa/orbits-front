@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { Col, Row, Table } from "react-bootstrap";
+import { Col, Row, Table, Button } from "react-bootstrap";
 import { useSelector } from 'react-redux/es/hooks/useSelector';
 import { useNavigate } from "react-router-dom";
 import RequestFilter from '../../components/RequestFilter/RequestFilter';
@@ -66,22 +66,26 @@ const TransfReq: FC = () => {
 
     return (
         <>
-            {!userToken &&
-                <h3 style={{ textAlign: 'center', fontSize: '2em', margin: 'auto', padding: 100 }}>
-                    Вам необходимо войти в систему!
-                </h3>
-            }
+            {!userToken && (<>
+                <div style={{ textAlign: 'center', marginTop: '50px' }}>
+                    <h3>Вам необходимо войти в систему</h3>
+                    <Button className='button' onClick={() => (navigate(`/auth`))} variant="primary" style={{ marginTop: '10px' }}>
+                        Войти
+                    </Button>
+                </div>
+            </>)}
             {userToken && transfReqs.length === 0 &&
                 <h3> Заявки не найдены</h3>
             }
-            <RequestFilter
-                status={status}
-                setStatus={setStatus}
-                applyFilters={applyFilters}>
-            </RequestFilter>
-            <Table striped bordered hover responsive className="custom-table">
-                {userToken && transfReqs.length !== 0 && (
-                    <>
+            {userToken && transfReqs.length !== 0 && (
+                <>
+                    <RequestFilter
+                        status={status}
+                        setStatus={setStatus}
+                        applyFilters={applyFilters}>
+                    </RequestFilter>
+                    <Table striped bordered hover responsive className="custom-table">
+
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -108,8 +112,8 @@ const TransfReq: FC = () => {
                                 </tr>
                             ))}
                         </tbody>
-                    </>)}
-            </Table>
+                    </Table>
+                </>)}
         </>
     )
 }
