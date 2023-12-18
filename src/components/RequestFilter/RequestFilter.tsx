@@ -28,7 +28,7 @@ const RequestFilter: FC<RequestFilterProps> = ({ status, setStatus, applyFilters
                                 onChange={(e) => setStatus(e.target.value)}
                             >
                                 <option value="client">Все</option>
-                                <option value="На рассмотрении">Сформирована</option>
+                                <option value="На рассмотрении">На рассмотрении</option>
                                 <option>Оказана</option>
                                 <option>Отклонена</option>
                             </FormSelect>

@@ -35,7 +35,6 @@ const filtersSlice = createSlice({
             localStorage.setItem('OrbitIncl', payload)
         },
         setOrbitName(state, {payload}) {
-            console.log('setOrbitName got orbitName: ' + payload)
             state.orbitName = payload
             localStorage.setItem('orbitName', payload)
         },

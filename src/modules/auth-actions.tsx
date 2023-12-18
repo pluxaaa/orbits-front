@@ -26,10 +26,8 @@ export const registerUser = createAsyncThunk(
       }
 
       if (error.response && error.response.data.message) {
-        console.log("1", rejectWithValue(error.response.data.message))
         return rejectWithValue(error.response.data.message)
       } else {
-        console.log("2", rejectWithValue(error.message))
         return rejectWithValue(error.message)
       }
     }
@@ -64,10 +62,8 @@ export const loginUser = createAsyncThunk(
       }
 
       if (error.response && error.response.data.message) {
-        console.log("1", rejectWithValue(error.response.data.message))
         return rejectWithValue(error.response.data.message)
       } else {
-        console.log("2", rejectWithValue(error.message))
         return rejectWithValue(error.message)
       }
     }
@@ -108,10 +104,8 @@ export const logoutUser = createAsyncThunk(
       }
 
       if (error.response && error.response.data.message) {
-        console.log("1", rejectWithValue(error.response.data.message))
         return rejectWithValue(error.response.data.message)
       } else {
-        console.log("2", rejectWithValue(error.message))
         return rejectWithValue(error.message)
       }
     }

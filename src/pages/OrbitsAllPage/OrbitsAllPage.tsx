@@ -6,10 +6,11 @@ import OrbitFilter from '../../components/OrbitFilter/OrbitFilter';
 import { Orbit } from '../../modules/ds';
 import { getAllOrbits } from '../../modules/get-all-orbits';
 import filtersSlice from "../../store/filtersSlice";
+import cartSlice from '../../store/cartSlice';
 import store, { useAppDispatch } from '../../store/store';
 import './OrbitsAll.styles.css';
-import loadTransfReq from '../../modules/load-reqs';
-import cartSlice from '../../store/cartSlice';
+import { getRequestOrbits } from '../../modules/get-request-orbits';
+import getRequestByStatus from '../../modules/get-req-by-status';
 
 const OrbitsAll: FC = () => {
   const [orbits, setOrbits] = useState<Orbit[]>([]);
@@ -29,19 +30,25 @@ const OrbitsAll: FC = () => {
 
 
   useEffect(() => {
-    //попытка получить заявку черновик для текущего клиента
-    const fetchData = async () => {
-      const orbitsData = await loadTransfReq(userToken?.toString(), userRole?.toString(), userName?.toString());
-      var orbitNames: string[] = [];
-      if (orbitsData) {
-        for (let orbit of orbitsData) {
-          orbitNames.push(orbit.Name);
-        }
-        dispatch(cartSlice.actions.setOrbits(orbitNames));
+    const loadDraftRequest = async () => {
+      const result = (await getRequestByStatus(userToken?.toString(), userRole, userName, 'Черновик'))
+      if (!result) {
+        return
       }
-    };
+      if (result[0]?.ID) {
+        localStorage.setItem("reqID", result[0].ID.toString());
+        const orbitsData = await getRequestOrbits(result[0].ID, userToken?.toString());
+        var orbitNames: string[] = [];
+        if (orbitsData) {
+          for (let orbit of orbitsData) {
+            orbitNames.push(orbit.Name);
+          }
+          dispatch(cartSlice.actions.setOrbits(orbitNames));
+        }
+      };
+    }
+    loadDraftRequest()
 
-    fetchData();
 
     const loadOrbits = async () => {
       try {
@@ -116,7 +123,6 @@ const OrbitsAll: FC = () => {
             imageUrl={orbit.ImageURL}
             orbitName={orbit.Name}
             orbitStatus={orbit.IsAvailable}
-            orbitDetailed={`/orbits/${orbit.Name}`}
             changeStatus={`/orbits/change_status/${orbit.Name}`}
             onStatusChange={handleStatusChange}
           />

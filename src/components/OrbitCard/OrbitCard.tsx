@@ -13,12 +13,11 @@ interface Props {
     imageUrl: string;
     orbitName: string;
     orbitStatus: boolean;
-    orbitDetailed: string;
     changeStatus: string;
     onStatusChange: (orbitName: string, newStatus: boolean) => void;
 }
 
-const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed, onStatusChange }) => {
+const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange }) => {
     const [isStatusChanging, setIsStatusChanging] = useState(false);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -79,7 +78,7 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, orbitDetailed,
                     <Card.Title> {orbitName} </Card.Title>
                     <Card.Title> Статус: {orbitStatus ? "Доступна" : "Недоступна"} </Card.Title>
                 </div>
-                <Button className='button' href={orbitDetailed}> Подробнее </Button>
+                <Button className='button' onClick={() => (navigate(`/orbits/${encodeURIComponent(orbitName)}`))}> Подробнее </Button>
                 {userRole === '2' && (
                     <Button
                         className='button-card'

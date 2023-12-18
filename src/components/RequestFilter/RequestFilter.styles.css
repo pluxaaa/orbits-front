@@ -6,7 +6,7 @@
     background-color: #f9f9f9;
     border-radius: 5px;
     font-family: "Century Gothic", sans-serif;
-    width: 40%;
+    width: 500px;
   }
   
   .request-filter-form {
@@ -25,6 +25,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     font-family: "Century Gothic", sans-serif;
+    width: 190px;
   }
   
   .request-filter-button {

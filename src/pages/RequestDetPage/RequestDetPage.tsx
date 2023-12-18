@@ -1,17 +1,15 @@
 import { AxiosError } from 'axios';
-import React, { FC, useEffect, useRef, useState } from "react";
-import { Button, Form, FormGroup, ListGroup, ListGroupItem, Modal } from "react-bootstrap";
+import React, { FC, useEffect, useState } from "react";
+import { Button, Col, Form, FormGroup, ListGroup, ListGroupItem, Modal, Row } from "react-bootstrap";
 import { useSelector } from 'react-redux';
-import Select from 'react-select';
 import { changeReqStatus } from "../../modules/change-req-status";
 import { Orbit, TransferRequest } from "../../modules/ds";
 import { getAllOrbits } from "../../modules/get-all-orbits";
 import { getDetailedReq } from '../../modules/get-detailed-req';
 import { getRequestOrbits } from "../../modules/get-request-orbits";
-import { setRequestOrbits } from "../../modules/set-request-orbits";
-import cartSlice from "../../store/cartSlice";
-import store, { useAppDispatch } from '../../store/store';
+import store from '../../store/store';
 import "./RequestDetPage.styles.css";
+import { useNavigate } from 'react-router-dom';
 
 const TransfReqDet: FC = () => {
     const [orbitNames, setOrbitNames] = useState<string[]>();
@@ -23,6 +21,7 @@ const TransfReqDet: FC = () => {
     const [req, setReq] = useState<TransferRequest | undefined>();
     const [options, setOptions] = useState<Orbit[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate()
 
     useEffect(() => {
         const pathname = window.location.pathname;
@@ -46,6 +45,7 @@ const TransfReqDet: FC = () => {
             }
 
             if (userToken === null) {
+                console.log("ERROR userToken null")
                 return;
             }
 
@@ -57,9 +57,6 @@ const TransfReqDet: FC = () => {
                     orbitNames.push(orbit.Name);
                 }
                 setOrbitNames(orbitNames)
-                if (req?.Status == 'Черновик') {
-                    localStorage.setItem("orbits", orbitNames.join(","));
-                }
             }
         };
 
@@ -87,7 +84,7 @@ const TransfReqDet: FC = () => {
     const handleSuccessClose = () => {
         setShowSuccess(false);
         if (req?.Status != 'Черновик') {
-            window.location.href = '/orbits';
+            navigate('/orbits/');
         }
     };
 
@@ -96,38 +93,15 @@ const TransfReqDet: FC = () => {
             return;
         }
 
-        var req_id = 0;
-
-        if (req?.ID !== undefined) {
-            req_id = req?.ID;
+        if (req?.ID === undefined){
+            console.log("ERROR req.ID undef")
+            return
         }
 
         const editResult = await changeReqStatus(userToken, {
-            ID: req_id,
+            ID: req?.ID,
             Status: status,
         });
-
-        if (!orbitNames || !userToken) {
-            return;
-        }
-
-        if (status !== 'Удалена') {
-            const orbitsResult = await setRequestOrbits(req?.ID, orbitNames, userToken);
-            if (orbitsResult.status === 201) {
-                setShowSuccess(true);
-            } else {
-                setShowError(true);
-            }
-            console.log(orbitsResult);
-            if (status != 'Черновик') {
-                localStorage.setItem("orbits", '')
-                window.location.href = '/orbits';
-            }
-        } else {
-            localStorage.setItem("orbits", '')
-            setOrbits([])
-            setOrbitNames([]);
-        }
     };
 
     return (
@@ -161,8 +135,8 @@ const TransfReqDet: FC = () => {
                         {orbit.Name}
                         {orbit.ImageURL && (
                             <img
-                                src={orbit.ImageURL}
-                                alt={`Image for ${orbit.Name}`}
+                                src={orbit?.ImageURL}
+                                onError={(e) => { e.currentTarget.src = '/DEFAULT.jpg' }}
                                 style={{ width: '75px', height: '75px', position: 'absolute', right: '0' }}
                             />
                         )}
@@ -186,10 +160,20 @@ const TransfReqDet: FC = () => {
                     )}
                 </FormGroup>
             </Form>
-            <div className="button-container">
-                <Button href='/transfer_requests' className="button">К заявкам</Button>
-                <Button href='/orbits' className="button">К орбитам</Button>
-            </div>
+            <Row>
+                <Col>
+                    <Button onClick={() => navigate(`/transfer_requests/`)}
+                     className="button">
+                        К заявкам
+                    </Button>
+                </Col>
+                <Col>
+                    <Button onClick={() => navigate(`/orbits/`)}
+                     className="button">
+                        К орбитам
+                    </Button>
+                </Col>
+            </Row>
         </div>
     );
 };
