@@ -29,6 +29,10 @@
     align-items: center;
     justify-content: center;
   }
+
+  .button {
+
+  }
   
   .cart-container {
     display: flex;

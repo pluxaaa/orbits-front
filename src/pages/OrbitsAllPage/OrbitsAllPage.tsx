@@ -10,6 +10,7 @@ import cartSlice from '../../store/cartSlice';
 import store, { useAppDispatch } from '../../store/store';
 import './OrbitsAll.styles.css';
 import { getRequestOrbits } from '../../modules/get-request-orbits';
+import { getOrbitOrder } from '../../modules/get-orbit-order';
 import getRequestByStatus from '../../modules/get-req-by-status';
 
 const OrbitsAll: FC = () => {
@@ -37,14 +38,20 @@ const OrbitsAll: FC = () => {
       }
       if (result[0]?.ID) {
         localStorage.setItem("reqID", result[0].ID.toString());
-        const orbitsData = await getRequestOrbits(result[0].ID, userToken?.toString());
-        var orbitNames: string[] = [];
-        if (orbitsData) {
-          for (let orbit of orbitsData) {
-            orbitNames.push(orbit.Name);
-          }
-          dispatch(cartSlice.actions.setOrbits(orbitNames));
-        }
+
+        const reqIDString: string | null = localStorage.getItem("reqID");
+        const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
+
+        const orbitOrder = await getOrbitOrder(reqID, userToken?.toString());
+        console.log("orbitOrder: ", orbitOrder)
+        
+        dispatch(cartSlice.actions.setOrbits(orbitOrder.map(orbit => orbit.orbit_name)));
+
+        const newVisitNumbers: { [orbit: string]: number } = {};
+        orbitOrder.forEach((orbit, index) => {
+          newVisitNumbers[orbit.orbit_name] = index + 1;
+        });
+        dispatch(cartSlice.actions.setVisitNumbers(newVisitNumbers));
       };
     }
     loadDraftRequest()

@@ -82,6 +82,7 @@ export const logoutUser = createAsyncThunk(
       localStorage.setItem("OrbitIncl", '')
       localStorage.setItem("orbitIsCircle", '')
       localStorage.setItem("reqID", '')
+      localStorage.setItem("visitNumbers", '{}')
 
 
       const config = {
