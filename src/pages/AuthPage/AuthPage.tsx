@@ -6,7 +6,7 @@ import { Button, Modal, Spinner } from 'react-bootstrap';
 
 import './AuthPage.styles.css';
 
-import { loginUser, registerUser } from '../../modules/auth-actions';
+import { loginUser, registerUser } from '../../modules/authMethods';
 import store, { useAppDispatch } from '../../store/store';
 
 interface InputChangeInterface {

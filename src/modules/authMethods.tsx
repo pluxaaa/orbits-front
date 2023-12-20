@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
 interface AuthInterface {
@@ -82,7 +82,7 @@ export const logoutUser = createAsyncThunk(
       localStorage.setItem("OrbitIncl", '')
       localStorage.setItem("orbitIsCircle", '')
       localStorage.setItem("reqID", '')
-      localStorage.setItem("visitNumbers", '{}')
+      localStorage.setItem("transfersOrder", '{}')
 
 
       const config = {

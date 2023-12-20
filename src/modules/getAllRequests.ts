@@ -1,4 +1,4 @@
-import axios, {AxiosError} from 'axios';
+import axios from 'axios';
 import { TransferRequest } from './ds';
 
 export const getTransfReqs = async (userToken = '', status = '', dateStart = '', dateFin = ''): Promise<TransferRequest[]> => {

@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { Orbit } from '../../modules/ds';
-import { getOrbitByName } from '../../modules/get-orbit-by-name';
+import { getOrbitByName } from '../../modules/getOrbitByName';
 import './OrbitsDetailed.styles.css';
 
 const OrbitDetailed: FC = () => {

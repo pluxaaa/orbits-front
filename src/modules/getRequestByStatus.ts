@@ -1,4 +1,4 @@
-import { getTransfReqs } from "./get-all-requests";
+import { getTransfReqs } from "./getAllRequests";
 
 const getRequestByStatus = async (
     userToken: string | undefined, 

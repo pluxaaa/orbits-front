@@ -1,13 +1,13 @@
 import { FC, useState } from 'react';
-import { Button, Card } from 'react-bootstrap';
+import { Button, Card, Row } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { changeOrbitStatus } from '../../modules/change-orbit-status';
+import { changeOrbitStatus } from '../../modules/changeOrbitStatus';
 import cartSlice from '../../store/cartSlice';
 import store, { useAppDispatch } from '../../store/store';
 import "./OrbitCard.styles.css";
-import { createOrbitTransferReq } from '../../modules/create-req-mm';
-import { deleteOrbitTransfer } from '../../modules/delete-req-mm';
+import { createOrbitTransferReq } from '../../modules/createOrbitTransferRequest';
+import { deleteOrbitTransfer } from '../../modules/deleteTransferToOrbit';
 
 interface Props {
     imageUrl: string;
@@ -35,7 +35,7 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
             await changeOrbitStatus(userToken?.toString(), orbitName);
             onStatusChange(orbitName, !orbitStatus);
         } catch (error) {
-            console.error('Error changing orbit status:', error);
+            console.error('Ошибка при удалении орбиты:', error);
         } finally {
             setIsStatusChanging(false);
             navigate('/orbits');
@@ -79,15 +79,6 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
                     <Card.Title> Статус: {orbitStatus ? "Доступна" : "Недоступна"} </Card.Title>
                 </div>
                 <Button className='button' onClick={() => (navigate(`/orbits/${encodeURIComponent(orbitName)}`))}> Подробнее </Button>
-                {userRole === '2' && (
-                    <Button
-                        className='button-card'
-                        onClick={handleStatusChange}
-                        disabled={isStatusChanging}
-                    >
-                        {isStatusChanging ? 'Удаление...' : 'Удалить'}
-                    </Button>
-                )}
                 {userRole === '1' && (
                     <>
                         <div style={{ width: '1px', height: '1px' }}></div>
@@ -100,6 +91,20 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
                         </Button>
                     </>
                 )}
+                <Row>
+                {userRole === '2' && (
+                    <>
+                    <div style={{marginTop:"5px"}}></div>
+                    <Button
+                        className='button'
+                        onClick={handleStatusChange}
+                        disabled={isStatusChanging}
+                    >
+                        {isStatusChanging ? 'Удаление...' : 'Удалить'}
+                    </Button>
+                    </>
+                )}
+                </Row>
             </Card.Body>
         </Card>
     );

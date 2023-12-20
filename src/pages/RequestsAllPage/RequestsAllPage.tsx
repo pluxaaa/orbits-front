@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux/es/hooks/useSelector';
 import { useNavigate } from "react-router-dom";
 import RequestFilter from '../../components/RequestFilter/RequestFilter';
 import { TransferRequest } from '../../modules/ds';
-import getRequestByStatus from '../../modules/get-req-by-status';
+import getRequestByStatus from '../../modules/getRequestByStatus';
 import filtersSlice from "../../store/filtersSlice";
 import store, { useAppDispatch } from '../../store/store';
 import "./RequestsAllPage.styles.css"
@@ -75,7 +75,7 @@ const TransfReq: FC = () => {
                 </div>
             </>)}
             {userToken && transfReqs.length === 0 &&
-                <h3> Заявки не найдены</h3>
+                <h3 style={{ textAlign: 'center', marginTop: '20px' }}> Заявки не найдены</h3>
             }
             {userToken && transfReqs.length !== 0 && (
                 <>

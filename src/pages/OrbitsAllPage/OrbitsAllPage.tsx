@@ -4,21 +4,19 @@ import { useNavigate } from "react-router-dom";
 import OrbitCard from '../../components/OrbitCard/OrbitCard';
 import OrbitFilter from '../../components/OrbitFilter/OrbitFilter';
 import { Orbit } from '../../modules/ds';
-import { getAllOrbits } from '../../modules/get-all-orbits';
+import { getAllOrbits } from '../../modules/getAllOrbits';
 import filtersSlice from "../../store/filtersSlice";
 import cartSlice from '../../store/cartSlice';
 import store, { useAppDispatch } from '../../store/store';
 import './OrbitsAll.styles.css';
-import { getRequestOrbits } from '../../modules/get-request-orbits';
-import { getOrbitOrder } from '../../modules/get-orbit-order';
-import getRequestByStatus from '../../modules/get-req-by-status';
+import { getOrbitOrder } from '../../modules/getOrbitOrder';
+import getRequestByStatus from '../../modules/getRequestByStatus';
 
 const OrbitsAll: FC = () => {
   const [orbits, setOrbits] = useState<Orbit[]>([]);
   const dispatch = useAppDispatch()
   const navigate = useNavigate();
   const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth)
-  const { added } = useSelector((state: ReturnType<typeof store.getState>) => state.cart)
 
   const { orbitIncl } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
   const [incl, setIncl] = useState(orbitIncl);
@@ -43,15 +41,14 @@ const OrbitsAll: FC = () => {
         const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
 
         const orbitOrder = await getOrbitOrder(reqID, userToken?.toString());
-        console.log("orbitOrder: ", orbitOrder)
         
         dispatch(cartSlice.actions.setOrbits(orbitOrder.map(orbit => orbit.orbit_name)));
 
-        const newVisitNumbers: { [orbit: string]: number } = {};
+        const newTransfersOrder: { [orbit: string]: number } = {};
         orbitOrder.forEach((orbit, index) => {
-          newVisitNumbers[orbit.orbit_name] = index + 1;
+          newTransfersOrder[orbit.orbit_name] = index + 1;
         });
-        dispatch(cartSlice.actions.setVisitNumbers(newVisitNumbers));
+        dispatch(cartSlice.actions.setTransfersOrder(newTransfersOrder));
       };
     }
     loadDraftRequest()

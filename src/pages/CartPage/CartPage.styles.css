@@ -18,6 +18,10 @@
     font-size: 16px;
     color: white;
   }
+
+  .delete-button {
+    margin-left: auto;
+  }
   
   .list-group {
     text-align: center;
