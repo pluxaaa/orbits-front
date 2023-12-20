@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { logoutUser } from '../../modules/authMethods';
 import store, { useAppDispatch } from '../../store/store';
 import './NavigationMain.styles.css';
-import CartButton from '../CartButton/CartButton';
 
 const NavigationMain: FC = () => {
     const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
@@ -28,7 +27,6 @@ const NavigationMain: FC = () => {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <span><NavLink to="/orbits" className="nav-link">Список орбит</NavLink></span>
-                {userToken && userRole === '1' && <CartButton/>}
                 <Nav className="ml-auto">
                     {userToken &&
                         <>
