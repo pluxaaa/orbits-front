@@ -9,7 +9,6 @@ export const getOrbitByName = async (orbitName = ''): Promise<Orbit> => {
                 'Content-Type': 'application/json'
             }
         });
-
         return response.data;
     } catch (error) {
         console.error('Ошибка при получении орбит:', error);

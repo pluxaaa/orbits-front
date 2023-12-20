@@ -11,6 +11,7 @@ import store, { useAppDispatch } from '../../store/store';
 import './OrbitsAll.styles.css';
 import { getOrbitOrder } from '../../modules/getOrbitOrder';
 import getRequestByStatus from '../../modules/getRequestByStatus';
+import CartButton from '../../components/CartButton/CartButton';
 
 const OrbitsAll: FC = () => {
   const [orbits, setOrbits] = useState<Orbit[]>([]);
@@ -110,6 +111,7 @@ const OrbitsAll: FC = () => {
 
   return (
     <div>
+      {userToken && userRole === '1' && <CartButton/>}
       <OrbitFilter
         name={name}
         incl={incl}
