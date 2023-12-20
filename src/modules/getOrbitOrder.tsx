@@ -1,6 +1,9 @@
-import { OrbitOrder } from "./ds";
-
 import axios from "axios";
+
+interface OrbitOrder {
+    orbit_name: string;
+    visit_order: number;
+}
 
 export const getOrbitOrder = async (reqID: number, userToken = ''): Promise<OrbitOrder[]> => {
     const config = {

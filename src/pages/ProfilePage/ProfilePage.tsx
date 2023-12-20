@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logoutUser } from '../../modules/auth-actions';
+import { logoutUser } from '../../modules/authMethods';
 import store, { useAppDispatch } from '../../store/store';
 import './ProfilePage.styles.css';
 

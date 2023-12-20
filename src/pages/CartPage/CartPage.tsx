@@ -2,12 +2,13 @@ import { FC, useState } from "react";
 import { Button, ListGroup, ListGroupItem, Modal, Col, Row } from "react-bootstrap";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { useNavigate } from "react-router-dom";
-import { deleteOrbitTransfer } from "../../modules/delete-req-mm";
+import { deleteOrbitTransfer } from "../../modules/deleteTransferToOrbit";
 import cartSlice from "../../store/cartSlice";
 import store, { useAppDispatch } from "../../store/store";
-import { changeReqStatus } from "../../modules/change-req-status";
+import { changeReqStatus } from "../../modules/changeRequestStatus";
 import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
-import { updateVisitNumbers } from "../../modules/update-orbit-order";
+import { updateTransfersOrder } from "../../modules/updateTransfersOrder";
+import CartTable from "../../components/CartTable/CartTable";
 import "./CartPage.styles.css";
 
 const Cart: FC = () => {
@@ -20,7 +21,7 @@ const Cart: FC = () => {
 
     const { userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
     const orbits = useSelector((state: ReturnType<typeof store.getState>) => state.cart.orbits);
-    const visitNumbers = useSelector((state: ReturnType<typeof store.getState>) => state.cart.visitNumbers);
+    const transfersOrder = useSelector((state: ReturnType<typeof store.getState>) => state.cart.transfersOrder);
 
     const deleteFromCart = (orbitName = '') => {
         return (event: React.MouseEvent) => {
@@ -99,35 +100,35 @@ const Cart: FC = () => {
 
     const onDragEnd = async (result: DropResult) => {
         if (!result.destination) return;
-    
-        const newVisitNumbersOrder = Array.from(Object.entries(visitNumbers));
-        const [movedOrbit, movedNumber] = newVisitNumbersOrder.splice(result.source.index, 1)[0];
-        newVisitNumbersOrder.splice(result.destination.index, 0, [movedOrbit, movedNumber]);
-    
-        const newVisitNumbers: { [orbit: string]: number } = {};
-        newVisitNumbersOrder.forEach(([orbit, number], index) => {
-            newVisitNumbers[orbit] = index + 1;
+
+        const newTransfersOrderOrder = Array.from(Object.entries(transfersOrder));
+        const [movedOrbit, movedNumber] = newTransfersOrderOrder.splice(result.source.index, 1)[0];
+        newTransfersOrderOrder.splice(result.destination.index, 0, [movedOrbit, movedNumber]);
+
+        const newTransfersOrder: { [orbit: string]: number } = {};
+        newTransfersOrderOrder.forEach(([orbit, number], index) => {
+            newTransfersOrder[orbit] = index + 1;
         });
-    
+
         // сравнение нового состояния с предыдущим
-        const changedEntries = Object.entries(newVisitNumbers).filter(([orbit, number]) => {
-            return visitNumbers[orbit] !== number;
+        const changedEntries = Object.entries(newTransfersOrder).filter(([orbit, number]) => {
+            return transfersOrder[orbit] !== number;
         });
-    
+
         const changedData: { [orbit: string]: number } = {};
         changedEntries.forEach(([orbit, number]) => {
             changedData[orbit] = number;
         });
-    
-        dispatch(cartSlice.actions.setVisitNumbers(newVisitNumbers));
-    
+
+        dispatch(cartSlice.actions.setTransfersOrder(newTransfersOrder));
+
         const reqIDString: string | null = localStorage.getItem("reqID");
         const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
-    
+
         // отправляю только измененные записи
-        const response = await updateVisitNumbers(userToken?.toString(), reqID, changedData);
+        const response = await updateTransfersOrder(userToken?.toString(), reqID, changedData);
     };
-    
+
 
 
     return (
@@ -168,37 +169,7 @@ const Cart: FC = () => {
                     {orbits?.length !== 0 && <h3>Выбранные орбиты:</h3>}
                     {orbits?.length === 0 && <h4>Вы ещё не выбрали ни одной орбиты</h4>}
 
-                    <DragDropContext onDragEnd={onDragEnd}>
-                        <Droppable droppableId="visitNumbers">
-                            {(provided) => (
-                                <ListGroup
-                                    style={{ width: '500px' }}
-                                    ref={provided.innerRef}
-                                    {...provided.droppableProps}
-                                >
-                                    {Object.entries(visitNumbers).map(([orbitName, visitNumber], index) => (
-                                        <Draggable key={orbitName} draggableId={orbitName} index={index}>
-                                            {(provided, snapshot) => (
-                                                <ListGroupItem
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                >
-                                                    {orbitName}
-                                                    <span className="pull-right button-group" style={{ float: 'right' }}>
-                                                        <Button variant="danger" onClick={deleteFromCart(orbitName)}>
-                                                            Удалить
-                                                        </Button>
-                                                    </span>
-                                                </ListGroupItem>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                </ListGroup>
-                            )}
-                        </Droppable>
-                    </DragDropContext>
+                    <CartTable transfersOrder={transfersOrder} deleteFromCart={deleteFromCart} onDragEnd={onDragEnd} />
 
                     {orbits?.length !== 0 && (
                         <>

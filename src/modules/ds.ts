@@ -27,8 +27,3 @@ export interface TransferRequest {
     DateProcessed?: string,
     DateFinished?: string,
 }
-
-export interface OrbitOrder {
-    orbit_name: string;
-    visit_order: number;
-}

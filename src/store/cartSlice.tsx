@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface CartState {
   orbits: string[];
-  visitNumbers: { [orbit: string]: number };
+  transfersOrder: { [orbit: string]: number };
   added: boolean;
 }
 
@@ -10,8 +10,8 @@ const initialState: CartState = {
   orbits: localStorage.getItem('orbits')
     ? localStorage.getItem('orbits')?.split(',') || []
     : [],
-  visitNumbers: localStorage.getItem('visitNumbers')
-    ? JSON.parse(localStorage.getItem('visitNumbers') || '{}')
+  transfersOrder: localStorage.getItem('transfersOrder')
+    ? JSON.parse(localStorage.getItem('transfersOrder') || '{}')
     : {},
   added: false,
 };
@@ -24,10 +24,10 @@ const cartSlice = createSlice({
       if (!state.orbits.includes(payload)) {
         state.orbits.push(payload);
 
-        state.visitNumbers[payload] = state.orbits.length;
+        state.transfersOrder[payload] = state.orbits.length;
 
         localStorage.setItem('orbits', state.orbits.toString());
-        localStorage.setItem('visitNumbers', JSON.stringify(state.visitNumbers));
+        localStorage.setItem('transfersOrder', JSON.stringify(state.transfersOrder));
       }
       state.added = true;
     },
@@ -35,14 +35,14 @@ const cartSlice = createSlice({
       const orbitIndex = state.orbits.indexOf(payload);
       if (orbitIndex > -1) {
         const removedOrbit = state.orbits.splice(orbitIndex, 1)[0];
-        delete state.visitNumbers[removedOrbit];
+        delete state.transfersOrder[removedOrbit];
 
         state.orbits.forEach((orbit, index) => {
-          state.visitNumbers[orbit] = index + 1;
+          state.transfersOrder[orbit] = index + 1;
         });
 
         localStorage.setItem('orbits', state.orbits.toString());
-        localStorage.setItem('visitNumbers', JSON.stringify(state.visitNumbers));
+        localStorage.setItem('transfersOrder', JSON.stringify(state.transfersOrder));
       }
     },
     disableAdded(state) {
@@ -53,9 +53,9 @@ const cartSlice = createSlice({
       
       localStorage.setItem('orbits', state.orbits.toString());
     },
-    setVisitNumbers(state, { payload }: PayloadAction<{ [orbit: string]: number }>) {
-      state.visitNumbers = payload;
-      localStorage.setItem('visitNumbers', JSON.stringify(state.visitNumbers));
+    setTransfersOrder(state, { payload }: PayloadAction<{ [orbit: string]: number }>) {
+      state.transfersOrder = payload;
+      localStorage.setItem('transfersOrder', JSON.stringify(state.transfersOrder));
     },
   },
 });
