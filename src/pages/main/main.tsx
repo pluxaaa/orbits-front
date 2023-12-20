@@ -16,6 +16,7 @@ import NotFoundPage from './NotFoundPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Provider } from 'react-redux';
 import store from '../../store/store';
+import OrbitForm from '../../components/OrbitForm/OrbitForm';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
@@ -25,6 +26,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path="/orbits" Component={OrbitsAll} />
           <Route path="/orbits/:orbit_name" Component={OrbitDetailed} />
+          <Route path="/orbits/:orbit_name/edit" element={<OrbitForm />} />
+          <Route path="/orbits/add" element={<OrbitForm />} />
           <Route path="/transfer_requests" Component={TransfReq} />
           <Route path="/transfer_requests/:req_id" Component={TransfReqDet} />
           <Route path="/cart" Component={Cart} />
