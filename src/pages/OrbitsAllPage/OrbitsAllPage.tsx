@@ -1,18 +1,20 @@
 import { FC, useEffect, useState } from 'react';
+import { Button, Col } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
-import { Button } from 'react-bootstrap';
+import CartButton from '../../components/CartButton/CartButton';
 import OrbitCard from '../../components/OrbitCard/OrbitCard';
 import OrbitFilter from '../../components/OrbitFilter/OrbitFilter';
+import OrbitTable from '../../components/OrbitTable/OrbitTable';
+import { changeOrbitStatus } from '../../modules/changeOrbitStatus';
 import { Orbit } from '../../modules/ds';
 import { getAllOrbits } from '../../modules/getAllOrbits';
-import filtersSlice from "../../store/filtersSlice";
-import cartSlice from '../../store/cartSlice';
-import store, { useAppDispatch } from '../../store/store';
-import './OrbitsAll.styles.css';
 import { getOrbitOrder } from '../../modules/getOrbitOrder';
 import getRequestByStatus from '../../modules/getRequestByStatus';
-import CartButton from '../../components/CartButton/CartButton';
+import cartSlice from '../../store/cartSlice';
+import filtersSlice from "../../store/filtersSlice";
+import store, { useAppDispatch } from '../../store/store';
+import './OrbitsAll.styles.css';
 
 const OrbitsAll: FC = () => {
   const [orbits, setOrbits] = useState<Orbit[]>([]);
@@ -29,11 +31,13 @@ const OrbitsAll: FC = () => {
   const { orbitIsCircle } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
   const [isCircle, setIsCircle] = useState(orbitIsCircle);
 
+  const [isStatusChanging, setIsStatusChanging] = useState(false);
+
 
   useEffect(() => {
     const loadDraftRequest = async () => {
-      const result = (await getRequestByStatus(userToken?.toString(), 
-                      userRole, userName, 'Черновик', '', ''))
+      const result = (await getRequestByStatus(userToken?.toString(),
+        userRole, userName, 'Черновик', '', ''))
       if (!result) {
         return
       }
@@ -44,7 +48,7 @@ const OrbitsAll: FC = () => {
         const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
 
         const orbitOrder = await getOrbitOrder(reqID, userToken?.toString());
-        
+
         dispatch(cartSlice.actions.setOrbits(orbitOrder.map(orbit => orbit.orbit_name)));
 
         const newTransfersOrder: { [orbit: string]: number } = {};
@@ -102,20 +106,36 @@ const OrbitsAll: FC = () => {
 
   };
 
-  const handleStatusChange = (orbitName: string, newStatus: boolean) => {
-    setOrbits((orbits) =>
-      orbits.map((orbit) =>
-        orbit.Name === orbitName ? { ...orbit, IsAvailable: newStatus } : orbit
-      )
-    );
-    setOrbits((orbits) => orbits.filter((orbit) => orbit.Name !== orbitName));
+  const handleStatusChange = async (orbitName: string, newStatus: boolean) => {
+    setIsStatusChanging(true);
+
+    try {
+      await changeOrbitStatus(userToken?.toString(), orbitName);
+
+      setOrbits((orbits) =>
+        orbits.map((orbit) =>
+          orbit.Name === orbitName ? { ...orbit, IsAvailable: newStatus } : orbit
+        )
+      );
+
+      setOrbits((orbits) => orbits.filter((orbit) => orbit.Name !== orbitName));
+
+    } catch (error) {
+      console.error('Error while changing orbit status:', error);
+    } finally {
+      setIsStatusChanging(false);
+      navigate('/orbits');
+    }
   };
 
   return (
     <div>
-      {userToken && userRole === '1' && <CartButton/>}
-      {userToken && userRole === '2' && <Button 
-      onClick={() => (navigate(`/orbits/add`))} className='cart-button'> Новая орбита </Button>}
+      {userToken && userRole === '1' && <CartButton />}
+      {userToken && userRole === '2' && (
+        <Button onClick={() => navigate(`/orbits/add`)} className='cart-button'>
+          Новая орбита
+        </Button>
+      )}
       <OrbitFilter
         name={name}
         incl={incl}
@@ -126,20 +146,29 @@ const OrbitsAll: FC = () => {
         applyFilters={applyFilters}
         clearFilters={clearFilters}
       />
-      <div className="card_group">
-        {orbits.map((orbit, index) => (
-          <OrbitCard
-            key={index}
-            imageUrl={orbit.ImageURL}
-            orbitName={orbit.Name}
-            orbitStatus={orbit.IsAvailable}
-            changeStatus={`/orbits/change_status/${orbit.Name}`}
-            onStatusChange={handleStatusChange}
-          />
-        ))}
-      </div>
+      {userRole === '2' ? (
+        <OrbitTable
+          orbits={orbits}
+          handleStatusChange={handleStatusChange}
+          isStatusChanging={isStatusChanging} />
+      ) : (
+        <div className="card_group">
+          {orbits.map((orbit, index) => (
+            <div key={index} className="orbit-card">
+              <OrbitCard
+                imageUrl={orbit.ImageURL}
+                orbitName={orbit.Name}
+                orbitStatus={orbit.IsAvailable}
+                changeStatus={`/orbits/change_status/${orbit.Name}`}
+                onStatusChange={handleStatusChange}
+              />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
+
 };
 
 export default OrbitsAll;
