@@ -4,7 +4,7 @@ import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 interface DragAndDropListProps {
   transfersOrder: { [orbit: string]: number };
-  deleteFromCart: (orbitName: string) => (event: React.MouseEvent) => void;
+  deleteFromCart: (orbitName?: string) => (() => void) | undefined;
   onDragEnd: (result: any) => void;
 }
 
@@ -18,9 +18,9 @@ const CartTable: React.FC<DragAndDropListProps> = ({
       <Droppable droppableId="transfersOrder">
         {(provided) => (
           <ListGroup style={{ width: "500px" }} ref={provided.innerRef} {...provided.droppableProps}>
-            {Object.entries(transfersOrder).map(([orbitName, transferOrder], index) => (
+            {Object.entries(transfersOrder).map(([orbitName], index) => (
               <Draggable key={orbitName} draggableId={orbitName} index={index}>
-                {(provided, snapshot) => (
+                {(provided) => (
                   <ListGroupItem
                     ref={provided.innerRef}
                     {...provided.draggableProps}
@@ -31,6 +31,7 @@ const CartTable: React.FC<DragAndDropListProps> = ({
                       <Button variant="danger" onClick={deleteFromCart(orbitName)}>
                         Удалить
                       </Button>
+
                     </span>
                   </ListGroupItem>
                 )}

@@ -50,7 +50,6 @@ const cartSlice = createSlice({
     },
     setOrbits(state, { payload }: PayloadAction<string[]>) {
       state.orbits = Array.from(new Set([...state.orbits, ...payload]));
-      
       localStorage.setItem('orbits', state.orbits.toString());
     },
     setTransfersOrder(state, { payload }: PayloadAction<{ [orbit: string]: number }>) {

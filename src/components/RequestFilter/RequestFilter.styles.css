@@ -1,47 +1,66 @@
 .request-filter-container {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 20px;
-    margin-left:10px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-    font-family: "Century Gothic", sans-serif;
-    width: 500px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  font-family: "Century Gothic", sans-serif;
+  width: 400px;
+}
+
+.request-filter-form {
+  display: flex;
+  align-items: center;
+}
+
+.request-filter-label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.request-filter-select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-left: 63px;
+  font-family: "Century Gothic", sans-serif;
+  width: 190px;
+}
+
+.request-filter-button {
+  margin-left: 40px;
+  margin-top: 0;
+  padding: 8px 15px;
+  background-color: #0E3E8DFF;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: "Century Gothic", sans-serif;
+
+  &:hover {
+    background-color: #001246;
   }
-  
-  .request-filter-form {
+
+  .label-container {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    margin-bottom: 10px;
   }
-  
-  .request-filter-label {
-    margin-right: 10px;
+
+  .date-label {
+    margin-bottom: 5px;
     font-weight: bold;
   }
-  
-  .request-filter-select {
-    width: 150px;
+
+  .date-input {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    margin-bottom: 10px;
     font-family: "Century Gothic", sans-serif;
-    width: 190px;
+    width: 100%;
   }
-  
-  .request-filter-button {
-    margin-left: 40px;
-    margin-top: 0;
-    padding: 8px 15px;
-    background-color: #0E3E8DFF;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-family: "Century Gothic", sans-serif;
-  
-    &:hover {
-      background-color: #001246;
-    }
-  }
-  
+}

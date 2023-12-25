@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
+import { Button } from 'react-bootstrap';
 import OrbitCard from '../../components/OrbitCard/OrbitCard';
 import OrbitFilter from '../../components/OrbitFilter/OrbitFilter';
 import { Orbit } from '../../modules/ds';
@@ -31,7 +32,8 @@ const OrbitsAll: FC = () => {
 
   useEffect(() => {
     const loadDraftRequest = async () => {
-      const result = (await getRequestByStatus(userToken?.toString(), userRole, userName, 'Черновик'))
+      const result = (await getRequestByStatus(userToken?.toString(), 
+                      userRole, userName, 'Черновик', '', ''))
       if (!result) {
         return
       }
@@ -112,6 +114,8 @@ const OrbitsAll: FC = () => {
   return (
     <div>
       {userToken && userRole === '1' && <CartButton/>}
+      {userToken && userRole === '2' && <Button 
+      onClick={() => (navigate(`/orbits/add`))} className='cart-button'> Новая орбита </Button>}
       <OrbitFilter
         name={name}
         incl={incl}

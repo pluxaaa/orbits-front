@@ -1,12 +1,12 @@
 import { FC, useState } from "react";
-import { Button, ListGroup, ListGroupItem, Modal, Col, Row } from "react-bootstrap";
+import { Button, Modal, Col, Row } from "react-bootstrap";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { useNavigate } from "react-router-dom";
 import { deleteOrbitTransfer } from "../../modules/deleteTransferToOrbit";
 import cartSlice from "../../store/cartSlice";
 import store, { useAppDispatch } from "../../store/store";
 import { changeReqStatus } from "../../modules/changeRequestStatus";
-import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
+import { DropResult } from "react-beautiful-dnd";
 import { updateTransfersOrder } from "../../modules/updateTransfersOrder";
 import CartTable from "../../components/CartTable/CartTable";
 import "./CartPage.styles.css";
@@ -24,15 +24,22 @@ const Cart: FC = () => {
     const transfersOrder = useSelector((state: ReturnType<typeof store.getState>) => state.cart.transfersOrder);
 
     const deleteFromCart = (orbitName = '') => {
-        return (event: React.MouseEvent) => {
-            if (!userToken) {
-                return;
-            }
-            const response = deleteOrbitTransfer(orbitName, localStorage.getItem("reqID"), userToken);
-            dispatch(cartSlice.actions.removeOrbit(orbitName));
-            event.preventDefault();
+        if (!userToken) {
+          return;
+        }
+        return async ()  => {
+          await deleteOrbitTransfer(orbitName, localStorage.getItem("reqID"), userToken)
+            .then(() => {
+              dispatch(cartSlice.actions.removeOrbit(orbitName));
+              if (orbits.length === 1) {
+                deleteRequest()
+              }
+            })
+            .catch(() => {
+              setShowError(true);
+            });
         };
-    };
+      };
 
     const sendRequest = async () => {
         if (!userToken) {
@@ -42,20 +49,18 @@ const Cart: FC = () => {
         const reqIDString: string | null = localStorage.getItem("reqID");
         const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
 
-        const editResult = await changeReqStatus(userToken, {
+        await changeReqStatus(userToken, {
             ID: reqID,
             Status: "На рассмотрении",
         });
 
-        localStorage.setItem("reqID", "");
-
-        const storedOrbitsString: string[] | undefined = localStorage.getItem('orbits')?.split(',');
-        if (storedOrbitsString) {
-            storedOrbitsString.forEach((orbitName: string) => {
+        if (orbits) {
+            orbits.forEach((orbitName: string) => {
                 dispatch(cartSlice.actions.removeOrbit(orbitName));
             });
-            localStorage.setItem("orbits", "");
+            localStorage.setItem("reqID", "")
         }
+
         setRedirectUrl(`/transfer_requests/${reqID}`);
         setShowSuccess(true);
     };
@@ -68,21 +73,17 @@ const Cart: FC = () => {
         const reqIDString: string | null = localStorage.getItem("reqID");
         const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
 
-        const response = await changeReqStatus(userToken, {
+        await changeReqStatus(userToken, {
             ID: reqID,
             Status: "Удалена",
         });
 
-        localStorage.setItem("reqID", "");
-
-        const storedOrbitsString: string[] | undefined = localStorage.getItem('orbits')?.split(',');
-        if (storedOrbitsString) {
-            storedOrbitsString.forEach((orbitName: string) => {
+        if (orbits) {
+            orbits.forEach((orbitName: string) => {
                 dispatch(cartSlice.actions.removeOrbit(orbitName));
             });
-            localStorage.setItem("orbits", "");
+            localStorage.setItem("reqID", "")
         }
-        navigate(`/orbits`);
     };
 
     const handleErrorClose = () => {
@@ -126,7 +127,7 @@ const Cart: FC = () => {
         const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
 
         // отправляю только измененные записи
-        const response = await updateTransfersOrder(userToken?.toString(), reqID, changedData);
+        await updateTransfersOrder(userToken?.toString(), reqID, changedData);
     };
 
 
@@ -191,7 +192,7 @@ const Cart: FC = () => {
                                         onClick={deleteRequest}
                                         disabled={orbits.length === 0}
                                     >
-                                        Отменить
+                                        Очистить
                                     </Button>
                                 </Col>
                             </Row>

@@ -23,6 +23,7 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
     const dispatch = useAppDispatch();
 
     const { userRole, userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
+    const orbits = useSelector((state: ReturnType<typeof store.getState>) => state.cart.orbits);
 
     const isOrbitInCart = useSelector((state: ReturnType<typeof store.getState>) =>
         state.cart.orbits?.includes(orbitName)

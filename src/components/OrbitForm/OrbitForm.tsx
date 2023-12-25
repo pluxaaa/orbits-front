@@ -13,12 +13,12 @@ const OrbitForm: FC = () => {
     const navigate = useNavigate();
     const { orbit_name } = useParams();
     const [orbit, setOrbit] = useState<Orbit | null>(null);
-    const [orbitAdd, setOrbitAdd] = useState<string | null>();
     const [imageFile, setImageFile] = useState<File | null>(null);
     const { userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
 
     useEffect(() => {
         if (orbit_name && orbit_name !== 'add') {
+            localStorage.setItem("flag", "edit")
             getOrbitByName(orbit_name)
                 .then((response) => setOrbit(response))
                 .catch((error) => console.error('Ошибка при получении данных об орбите:', error));
@@ -33,7 +33,7 @@ const OrbitForm: FC = () => {
                 ImageURL: '',
                 IsAvailable: false
             });
-            setOrbitAdd("add");
+            localStorage.setItem("flag", "add")
         }
     }, []);
 
@@ -74,12 +74,12 @@ const OrbitForm: FC = () => {
             await handleImageUpload();
 
             if (orbit) {
-                if (orbit_name && orbit_name !== orbitAdd) {
-                    console.log("orbit image add: ", orbit?.ImageURL);
+                if (orbit_name && localStorage.getItem("flag") == "edit") {
+                    console.log("orbit image edit: ", orbit?.ImageURL);
                     const updatedOrbit = await editOrbit(userToken?.toString(), orbit);
                     setOrbit(updatedOrbit);
                 } else {
-                    console.log("orbit image edit: ", orbit?.ImageURL);
+                    console.log("orbit image add: ", orbit?.ImageURL);
                     const newOrbit = await addNewOrbit(userToken?.toString(), orbit);
                     setOrbit(newOrbit);
                     navigate(`/orbits/${newOrbit.Name}/edit`);
@@ -91,15 +91,21 @@ const OrbitForm: FC = () => {
     };
 
     return (
-        <Form onSubmit={handleOrbitSubmit} encType="multipart/form-data">
-            <Form.Group controlId="formOrbitImage">
-                <Form.Label>Изображение</Form.Label>
-                <Form.Control
-                    type="file"
-                    name="image"
-                    onChange={handleChange}
-                />
-            </Form.Group>
+            <Form onSubmit={handleOrbitSubmit} encType="multipart/form-data">
+                <Form.Group controlId="formOrbitImage">
+                    {orbit?.ImageURL && (
+                    <img
+                        src={orbit.ImageURL}
+                        alt={`Orbit ${orbit.Name} Image`}
+                        style={{ maxWidth: '40%', marginBottom: '10px' }}
+                    />
+                )}
+                    <Form.Control
+                        type="file"
+                        name="image"
+                        onChange={handleChange}
+                    />
+                </Form.Group>
             <Form.Group controlId="formOrbitName">
                 <Form.Label>Название орбиты</Form.Label>
                 <Form.Control
@@ -121,7 +127,7 @@ const OrbitForm: FC = () => {
                     onChange={handleChange}
                 />
             </Form.Group>
-            <Form.Group controlId="formOrbitApogee">
+            <Form.Group controlId="formOrbitPerigee">
                 <Form.Label>Перигей</Form.Label>
                 <Form.Control
                     type="text"
@@ -131,7 +137,7 @@ const OrbitForm: FC = () => {
                     onChange={handleChange}
                 />
             </Form.Group>
-            <Form.Group controlId="formOrbitApogee">
+            <Form.Group controlId="formOrbitIncl">
                 <Form.Label>Наклонение</Form.Label>
                 <Form.Control
                     type="text"
@@ -141,7 +147,7 @@ const OrbitForm: FC = () => {
                     onChange={handleChange}
                 />
             </Form.Group>
-            <Form.Group controlId="formOrbitApogee">
+            <Form.Group controlId="formOrbitDesc">
                 <Form.Label>Описание</Form.Label>
                 <Form.Control
                     type="text"
@@ -158,4 +164,4 @@ const OrbitForm: FC = () => {
     );
 };
 
-export default OrbitForm;
+export default OrbitForm
