@@ -12,17 +12,20 @@ import Pagination from '../../components/Pagination/Pagination';
 
 const TransfReq: FC = () => {
     const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
+    const { requestStatus } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
+    const { reqStartDate, reqFinDate } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { requestStatus } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
     const [transfReqs, setTransfReqs] = useState<TransferRequest[]>([]);
+    const [startDate, setStartDate] = useState(reqStartDate);
+    const [finDate, setFinDate] = useState(reqFinDate);
     const [status, setStatus] = useState(requestStatus);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5;
 
     useEffect(() => {
         const loadValidRequests = async () => {
-            const result = await getRequestByStatus(userToken?.toString(), userRole, userName, 'client');
+            const result = await getRequestByStatus(userToken?.toString(),
+                userRole, userName, 'client', reqStartDate, reqFinDate);
             if (result) {
                 setTransfReqs(result);
             }
@@ -35,10 +38,14 @@ const TransfReq: FC = () => {
             if (status === '') {
                 setStatus('client');
             }
+
+            dispatch(filtersSlice.actions.setReqStartDate(startDate));
+            dispatch(filtersSlice.actions.setReqFinDate(finDate));
             dispatch(filtersSlice.actions.setRequestStatus(status));
 
             if (status !== undefined && status !== null) {
-                const result = await getRequestByStatus(userToken?.toString(), userRole, userName, status?.toString());
+                const result = await getRequestByStatus(userToken?.toString(),
+                    userRole, userName, status, startDate, finDate);
                 if (result) {
                     setTransfReqs(result);
                     navigate('/transfer_requests', { state: { result } });
@@ -47,6 +54,27 @@ const TransfReq: FC = () => {
         } catch (error) {
             console.error('Ошибка при получении заявок:', error);
         }
+    };
+
+    const clearFilters = async () => {
+        setStatus('');
+        setStartDate('');
+        setFinDate('');
+
+        dispatch(filtersSlice.actions.setRequestStatus(''));
+        dispatch(filtersSlice.actions.setReqStartDate(''));
+        dispatch(filtersSlice.actions.setReqFinDate(''));
+
+        try {
+            const result = await getRequestByStatus(userToken?.toString(),
+                userRole, userName, 'client', '', '');
+            if (result) {
+                setTransfReqs(result);
+            }
+        } catch (error) {
+            console.error("Ошибка:", error);
+        }
+
     };
 
     const formatDate = (dateString: string | undefined) => {
@@ -69,10 +97,10 @@ const TransfReq: FC = () => {
         return new Intl.DateTimeFormat('ru-RU', options).format(date);
     };
 
+    const itemsPerPage = 5;
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = transfReqs.slice(indexOfFirstItem, indexOfLastItem);
-
     const pageCount = Math.ceil(transfReqs.length / itemsPerPage);
 
     const paginate = (pageNumber: number) => {
@@ -101,7 +129,16 @@ const TransfReq: FC = () => {
             )}
             {userToken && (
                 <>
-                    <RequestFilter status={status} setStatus={setStatus} applyFilters={applyFilters}></RequestFilter>
+                    <RequestFilter
+                        status={status}
+                        setStatus={setStatus}
+                        reqStartDate={startDate}
+                        setReqStartDate={setStartDate}
+                        reqFinDate={finDate}
+                        setReqFinDate={setFinDate}
+                        applyFilters={applyFilters}
+                        clearFilters={clearFilters}>
+                    </RequestFilter>
                     {transfReqs.length === 0 && <h3 style={{ textAlign: 'center', marginTop: '20px' }}> Заявки не найдены</h3>}
 
                     {transfReqs.length !== 0 && (

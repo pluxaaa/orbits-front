@@ -1,14 +1,18 @@
 import { AxiosError } from 'axios';
 import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { Orbit } from '../../modules/ds';
 import { getOrbitByName } from '../../modules/getOrbitByName';
 import './OrbitsDetailed.styles.css';
+import store from '../../store/store';
+import { useSelector } from 'react-redux';
 
 const OrbitDetailed: FC = () => {
   const [orbit, setOrbit] = useState<Orbit | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { userRole } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
   const navigate = useNavigate()
 
   const { orbit_name } = useParams();
@@ -60,7 +64,19 @@ const OrbitDetailed: FC = () => {
           <p>Описание: {orbit?.Description}</p>
         </div>
       </div>
+      <Row>
+      <Col>
       <button className="button-det" onClick={() => (navigate(`/orbits/`))}>Назад</button>
+      </Col>
+      {userRole == '2' && (<>
+                <Col>
+                <button onClick={() => navigate(`/orbits/${orbit?.Name}/edit`)}
+                        className="button-det">
+                        Изменить
+                    </button>
+                </Col>
+        </>)}
+      </Row>
     </div>
   );
 };

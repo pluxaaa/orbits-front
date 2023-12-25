@@ -5,12 +5,26 @@ import store from '../../store/store';
 import "./RequestFilter.styles.css"
 
 interface RequestFilterProps {
-  status: string | null | undefined;
-  setStatus: React.Dispatch<React.SetStateAction<string | string | null>>;
-  applyFilters: () => void;
+    status: string | null | undefined;
+    setStatus: React.Dispatch<React.SetStateAction<string | string | null>>;
+    reqStartDate: string | null | undefined;
+    setReqStartDate: React.Dispatch<React.SetStateAction<string | string | null>>;
+    reqFinDate: string | null | undefined;
+    setReqFinDate: React.Dispatch<React.SetStateAction<string | string | null>>;
+    applyFilters: () => void;
+    clearFilters: () => void;
 }
 
-const RequestFilter: FC<RequestFilterProps> = ({ status, setStatus, applyFilters }) => {
+const RequestFilter: FC<RequestFilterProps> = ({
+    status,
+    setStatus,
+    reqStartDate,
+    setReqStartDate,
+    reqFinDate,
+    setReqFinDate,
+    applyFilters,
+    clearFilters
+}) => {
     const { userRole } = useSelector((state: ReturnType<typeof store.getState>) => state.auth)
 
     return (
@@ -34,10 +48,38 @@ const RequestFilter: FC<RequestFilterProps> = ({ status, setStatus, applyFilters
                             </FormSelect>
                         </Col>
                     </Row>
-                    <Button className="request-filter-button" onClick={applyFilters}>Применить</Button>
                 </Form>
             }
+            {userRole === '2' &&
+                <div className="label-container">
+                    <Row>
+                        <Col>
+                            <label className="date-label">Дата начала:</label>
+                            <input
+                                type="date"
+                                className="date-input"
+                                value={reqStartDate?.toString()}
+                                onChange={(e) => setReqStartDate(e.target.value)}
+                            />
+                        </Col>
+                        <Col>
+                            <label className="date-label">Дата конца:</label>
+                            <input
+                                type="date"
+                                className="date-input"
+                                value={reqFinDate?.toString()}
+                                onChange={(e) => setReqFinDate(e.target.value)}
+                            />
+                        </Col>
+                    </Row>
+                </div>
+            }
+            <Row>
+                <Col><Button className="button" onClick={applyFilters}>Применить</Button></Col>
+                <Col><Button className="button" onClick={clearFilters}>Очистить</Button></Col>
+            </Row>
         </div>
+
     );
 }
 
