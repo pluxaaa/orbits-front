@@ -8,7 +8,6 @@ export const addNewOrbit = async (userToken = '', orbit: Orbit): Promise<Orbit> 
       'Authorization': 'Bearer ' + userToken,
     },
   }
-  console.log(orbit)
   return axios.post(
     `/api/orbits/new_orbit`,
     {

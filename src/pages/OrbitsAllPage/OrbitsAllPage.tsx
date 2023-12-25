@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from 'react';
-import { Button, Col } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import CartButton from '../../components/CartButton/CartButton';
@@ -121,7 +121,7 @@ const OrbitsAll: FC = () => {
       setOrbits((orbits) => orbits.filter((orbit) => orbit.Name !== orbitName));
 
     } catch (error) {
-      console.error('Error while changing orbit status:', error);
+      console.error('Ошибка:', error);
     } finally {
       setIsStatusChanging(false);
       navigate('/orbits');
