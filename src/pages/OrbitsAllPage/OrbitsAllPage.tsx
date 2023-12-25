@@ -14,6 +14,7 @@ import getRequestByStatus from '../../modules/getRequestByStatus';
 import cartSlice from '../../store/cartSlice';
 import filtersSlice from "../../store/filtersSlice";
 import store, { useAppDispatch } from '../../store/store';
+import { BsGrid, BsTable } from 'react-icons/bs';
 import './OrbitsAll.styles.css';
 
 const OrbitsAll: FC = () => {
@@ -32,6 +33,14 @@ const OrbitsAll: FC = () => {
   const [isCircle, setIsCircle] = useState(orbitIsCircle);
 
   const [isStatusChanging, setIsStatusChanging] = useState(false);
+
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+
+  const ToggleIcon = viewMode === 'table' ? BsGrid : BsTable;
+
+  const toggleViewMode = () => {
+    setViewMode((prevMode) => (prevMode === 'table' ? 'cards' : 'table'));
+  };
 
 
   useEffect(() => {
@@ -132,9 +141,14 @@ const OrbitsAll: FC = () => {
     <div>
       {userToken && userRole === '1' && <CartButton />}
       {userToken && userRole === '2' && (
-        <Button onClick={() => navigate(`/orbits/add`)} className='cart-button'>
-          Новая орбита
-        </Button>
+        <>
+          <Button onClick={() => navigate(`/orbits/add`)} className='cart-button'>
+            Новая орбита
+          </Button>
+          <div className='toggle-view-icon' onClick={toggleViewMode}>
+            <ToggleIcon style={{ position: 'absolute', left: '20px', marginTop: '100px' }} size={40} />
+          </div>
+        </>
       )}
       <OrbitFilter
         name={name}
@@ -147,10 +161,27 @@ const OrbitsAll: FC = () => {
         clearFilters={clearFilters}
       />
       {userRole === '2' ? (
-        <OrbitTable
-          orbits={orbits}
-          handleStatusChange={handleStatusChange}
-          isStatusChanging={isStatusChanging} />
+        viewMode === 'table' ? (
+          <OrbitTable
+            orbits={orbits}
+            handleStatusChange={handleStatusChange}
+            isStatusChanging={isStatusChanging}
+          />
+        ) : (
+          <div className="card_group">
+            {orbits.map((orbit, index) => (
+              <div key={index} className="orbit-card">
+                <OrbitCard
+                  imageUrl={orbit.ImageURL}
+                  orbitName={orbit.Name}
+                  orbitStatus={orbit.IsAvailable}
+                  changeStatus={`/orbits/change_status/${orbit.Name}`}
+                  onStatusChange={handleStatusChange}
+                />
+              </div>
+            ))}
+          </div>
+        )
       ) : (
         <div className="card_group">
           {orbits.map((orbit, index) => (
@@ -168,7 +199,6 @@ const OrbitsAll: FC = () => {
       )}
     </div>
   );
-
 };
 
 export default OrbitsAll;

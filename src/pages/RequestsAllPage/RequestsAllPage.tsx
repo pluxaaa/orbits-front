@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Table, Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux/es/hooks/useSelector';
-import { useNavigate } from 'react-router-dom';
+import { useFetcher, useNavigate } from 'react-router-dom';
 import RequestFilter from '../../components/RequestFilter/RequestFilter';
 import { TransferRequest } from '../../modules/ds';
 import getRequestByStatus from '../../modules/getRequestByStatus';
@@ -32,6 +32,22 @@ const TransfReq: FC = () => {
         };
         loadValidRequests();
     }, []);
+
+    //short-polling
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const loadPollRequests = async () => {
+                const result = await getRequestByStatus(userToken?.toString(),
+                    userRole, userName, status || "client", reqStartDate, reqFinDate);
+                if (result) {
+                    setTransfReqs(result);
+                }
+            };
+            loadPollRequests();
+        }, 10000);
+
+        return () => clearInterval(intervalId);
+    }, [userToken, userRole, userName, status, reqStartDate, reqFinDate]);
 
     const applyFilters = async () => {
         try {
@@ -121,7 +137,7 @@ const TransfReq: FC = () => {
                 <>
                     <div style={{ textAlign: 'center', marginTop: '50px' }}>
                         <h3>Вам необходимо войти в систему</h3>
-                        <Button className="button" onClick={() => navigate(`/auth`)} variant="primary" style={{ marginTop: '10px' }}>
+                        <Button className="button" onClick={() => navigate(`/login`)} variant="primary" style={{ marginTop: '10px' }}>
                             Войти
                         </Button>
                     </div>

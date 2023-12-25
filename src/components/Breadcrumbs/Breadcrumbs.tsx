@@ -8,9 +8,10 @@ interface EndpointToLabelMap {
 const endpointToLabel: EndpointToLabelMap = {
   'orbits': 'Орбиты',
   'profile': 'Личный кабинет',
-  'auth': 'Вход',
+  'login': 'Вход',
   'transfer_requests': 'Заявки на трансфер',
-  'cart' : 'Корзина'
+  'cart' : 'Корзина',
+  'register' : 'Регистрация'
 };
 
 function Breadcrumbs() {
