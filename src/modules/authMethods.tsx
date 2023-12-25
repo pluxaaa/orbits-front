@@ -70,7 +70,7 @@ export const loginUser = createAsyncThunk(
   });
 
 export const logoutUser = createAsyncThunk(
-  '/auth/logout',
+  '/api/logout',
   async (userToken: string, { rejectWithValue }) => {
     try {
       localStorage.setItem('userToken', '')

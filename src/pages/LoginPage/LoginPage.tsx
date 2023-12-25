@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Button, Modal, Spinner } from 'react-bootstrap';
 
-import './AuthPage.styles.css';
+import './LoginPage.styles.css';
 
 import { loginUser, registerUser } from '../../modules/authMethods';
 import store, { useAppDispatch } from '../../store/store';
@@ -14,9 +14,9 @@ interface InputChangeInterface {
 }
 
 
-const Auth: FC = () => {
+const Login: FC = () => {
 
-  const { loading, userInfo, error, success } = useSelector(
+  const { loading, error, success } = useSelector(
     (state: ReturnType<typeof store.getState>) => state.auth
   )
 
@@ -74,7 +74,7 @@ const Auth: FC = () => {
   }, [error]);
 
   useEffect(() => {
-    if (success){
+    if (success) {
       const sendLogin = async () => await dispatch(loginUser({ login: login, password: password }));
       sendLogin()
     }
@@ -122,7 +122,8 @@ const Auth: FC = () => {
         <button onClick={sendLogin} disabled={loading}>
           Войти
         </button>
-        <button onClick={sendRegister} disabled={loading}>
+        <div style={{ textAlign: 'center', marginTop: '30px' }}>Нет аккаунта?</div>
+        <button onClick={() => (navigate(`/register`))}>
           Регистрация
         </button>
         {loading ? <Spinner /> : ''}
@@ -131,4 +132,4 @@ const Auth: FC = () => {
   );
 };
 
-export default Auth;
+export default Login;

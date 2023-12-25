@@ -160,7 +160,7 @@ const Cart: FC = () => {
             {!userToken && (
                 <>
                     <h3> Вам необходимо войти в систему </h3>
-                    <Button onClick={() => (navigate(`/auth`))} variant="primary" className="button">
+                    <Button onClick={() => (navigate(`/login`))} variant="primary" className="button">
                         Войти
                     </Button>
                 </>
