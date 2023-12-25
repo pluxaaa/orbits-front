@@ -54,7 +54,7 @@ const OrbitDetailed: FC = () => {
         <img
           src={orbit?.ImageURL}
           className="card_image"
-          onError={(e) => {e.currentTarget.src = '/DEFAULT.jpg'}}
+          onError={(e) => { e.currentTarget.src = '/DEFAULT.jpg' }}
         />
         <div className="right-content-sub">
           <p>Статус: {orbit?.IsAvailable ? 'Доступна' : 'Недоступна'}</p>
@@ -65,16 +65,16 @@ const OrbitDetailed: FC = () => {
         </div>
       </div>
       <Row>
-      <Col>
-      <button className="button-det" onClick={() => (navigate(`/orbits/`))}>Назад</button>
-      </Col>
-      {userRole == '2' && (<>
-                <Col>
-                <button onClick={() => navigate(`/orbits/${orbit?.Name}/edit`)}
-                        className="button-det">
-                        Изменить
-                    </button>
-                </Col>
+        <Col>
+          <button className="button-det" onClick={() => (navigate(`/orbits/`))}>Назад</button>
+        </Col>
+        {userRole == '2' && (<>
+          <Col>
+            <button onClick={() => navigate(`/orbits/${orbit?.Name}/edit`)}
+              className="button-det">
+              Изменить
+            </button>
+          </Col>
         </>)}
       </Row>
     </div>

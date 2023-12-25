@@ -56,7 +56,7 @@ const filtersSlice = createSlice({
         },
         setReqFinDate(state, { payload }) {
             state.reqFinDate = payload
-            localStorage.setItem('setReqFinDate', payload)
+            localStorage.setItem('ReqFinDate', payload)
         }
     }
 })

@@ -8,6 +8,7 @@ import { getOrbitByName } from '../../modules/getOrbitByName';
 import { editOrbit } from '../../modules/editOrbit';
 import { addNewOrbit } from '../../modules/addNewOrbit';
 import { uploadOrbitImage } from '../../modules/uploadOrbitImage';
+import "./OrbitForm.styles.css"
 
 const OrbitForm: FC = () => {
     const navigate = useNavigate();
@@ -49,18 +50,16 @@ const OrbitForm: FC = () => {
                 [e.target.name]: e.target.value,
             }));
         }
-    };    
+    };
 
     const handleImageUpload = async () => {
         try {
             if (imageFile) {
-                const imageUrl = await uploadOrbitImage(userToken?.toString(), imageFile);
+                const imageUrl = await uploadOrbitImage(userToken?.toString(), imageFile, orbit?.Name);
                 setOrbit((prevOrbit) => ({
                     ...prevOrbit!,
                     ImageURL: imageUrl,
                 }));
-                console.log("new image: ", imageUrl);
-                console.log("orbit image: ", orbit?.ImageURL);
             }
         } catch (error) {
             console.error('Ошибка при загрузке изображения:', error);
@@ -71,19 +70,18 @@ const OrbitForm: FC = () => {
         e.preventDefault();
 
         try {
-            await handleImageUpload();
-
             if (orbit) {
                 if (orbit_name && localStorage.getItem("flag") == "edit") {
-                    console.log("orbit image edit: ", orbit?.ImageURL);
                     const updatedOrbit = await editOrbit(userToken?.toString(), orbit);
                     setOrbit(updatedOrbit);
+                    navigate(`/orbits/${updatedOrbit.Name}/edit`);
                 } else {
-                    console.log("orbit image add: ", orbit?.ImageURL);
                     const newOrbit = await addNewOrbit(userToken?.toString(), orbit);
                     setOrbit(newOrbit);
+                    localStorage.setItem("flag", "edit")
                     navigate(`/orbits/${newOrbit.Name}/edit`);
                 }
+                await handleImageUpload();
             }
         } catch (error) {
             console.error('Ошибка при сохранении орбиты:', error);
@@ -91,76 +89,78 @@ const OrbitForm: FC = () => {
     };
 
     return (
+        <div className="form-container">
             <Form onSubmit={handleOrbitSubmit} encType="multipart/form-data">
                 <Form.Group controlId="formOrbitImage">
-                    {orbit?.ImageURL && (
-                    <img
-                        src={orbit.ImageURL}
-                        alt={`Orbit ${orbit.Name} Image`}
-                        style={{ maxWidth: '40%', marginBottom: '10px' }}
-                    />
-                )}
                     <Form.Control
                         type="file"
                         name="image"
                         onChange={handleChange}
                     />
+                    {orbit?.ImageURL && (
+                        <img
+                            src={orbit.ImageURL}
+                            alt={`Orbit ${orbit.Name} Image`}
+                            style={{ maxWidth: '40%', marginBottom: '10px' }}
+                        />
+                    )}
                 </Form.Group>
-            <Form.Group controlId="formOrbitName">
-                <Form.Label>Название орбиты</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Введите название"
-                    name="Name"
-                    value={orbit?.Name || ''}
-                    onChange={handleChange}
-                    required
-                />
-            </Form.Group>
-            <Form.Group controlId="formOrbitApogee">
-                <Form.Label>Апогей</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Введите апогей"
-                    name="Apogee"
-                    value={orbit?.Apogee || ''}
-                    onChange={handleChange}
-                />
-            </Form.Group>
-            <Form.Group controlId="formOrbitPerigee">
-                <Form.Label>Перигей</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Введите перигей"
-                    name="Perigee"
-                    value={orbit?.Perigee || ''}
-                    onChange={handleChange}
-                />
-            </Form.Group>
-            <Form.Group controlId="formOrbitIncl">
-                <Form.Label>Наклонение</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Введите наклонение"
-                    name="Inclination"
-                    value={orbit?.Inclination || ''}
-                    onChange={handleChange}
-                />
-            </Form.Group>
-            <Form.Group controlId="formOrbitDesc">
-                <Form.Label>Описание</Form.Label>
-                <Form.Control
-                    type="text"
-                    placeholder="Введите описание"
-                    name="Description"
-                    value={orbit?.Description || ''}
-                    onChange={handleChange}
-                />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-                {orbit_name && orbit_name !== 'add' ? 'Сохранить изменения' : 'Добавить орбиту'}
-            </Button>
-        </Form>
+                <Form.Group controlId="formOrbitName">
+                    <Form.Label>Название орбиты</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Введите название"
+                        name="Name"
+                        value={orbit?.Name || ''}
+                        onChange={handleChange}
+                        required
+                    />
+                </Form.Group>
+                <Form.Group controlId="formOrbitApogee">
+                    <Form.Label>Апогей</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Введите апогей"
+                        name="Apogee"
+                        value={orbit?.Apogee || ''}
+                        onChange={handleChange}
+                    />
+                </Form.Group>
+                <Form.Group controlId="formOrbitPerigee">
+                    <Form.Label>Перигей</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Введите перигей"
+                        name="Perigee"
+                        value={orbit?.Perigee || ''}
+                        onChange={handleChange}
+                    />
+                </Form.Group>
+                <Form.Group controlId="formOrbitIncl">
+                    <Form.Label>Наклонение</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Введите наклонение"
+                        name="Inclination"
+                        value={orbit?.Inclination || ''}
+                        onChange={handleChange}
+                    />
+                </Form.Group>
+                <Form.Group controlId="formOrbitDesc">
+                    <Form.Label>Описание</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="Введите описание"
+                        name="Description"
+                        value={orbit?.Description || ''}
+                        onChange={handleChange}
+                    />
+                </Form.Group>
+                <Button className='button' type="submit">
+                    {orbit_name && orbit_name !== 'add' ? 'Сохранить изменения' : 'Добавить орбиту'}
+                </Button>
+            </Form>
+        </div>
     );
 };
 
