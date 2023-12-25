@@ -30,6 +30,7 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
     );
 
     const handleStatusChange = async () => {
+        console.log("det")
         setIsStatusChanging(true);
 
         try {
