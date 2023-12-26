@@ -6,10 +6,11 @@ const getRequestByStatus = async (
     userName: string | null, 
     status: string,
     dateStart: string | null,
-    dateFin: string | null
+    dateFin: string | null,
+    client: string | null,
     ) => {
     if (userToken && userToken !== '') {
-        const result = (await getTransfReqs(userToken, status, dateStart, dateFin)).filter((item) => {
+        const result = (await getTransfReqs(userToken, status, dateStart, dateFin, client)).filter((item) => {
             if (userRole === '1') {
                 return item.Client?.Name === userName;
             } else {

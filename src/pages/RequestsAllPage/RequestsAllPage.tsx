@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Table, Button } from 'react-bootstrap';
 import { useSelector } from 'react-redux/es/hooks/useSelector';
-import { useFetcher, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import RequestFilter from '../../components/RequestFilter/RequestFilter';
 import { TransferRequest } from '../../modules/ds';
 import getRequestByStatus from '../../modules/getRequestByStatus';
@@ -9,25 +9,35 @@ import filtersSlice from '../../store/filtersSlice';
 import store, { useAppDispatch } from '../../store/store';
 import './RequestsAllPage.styles.css';
 import Pagination from '../../components/Pagination/Pagination';
+import { getDistinctClients } from '../../modules/getDistinctClients';
 
 const TransfReq: FC = () => {
     const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
-    const { requestStatus } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
-    const { reqStartDate, reqFinDate } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
+    const {
+        requestStatus,
+        reqStartDate,
+        reqFinDate,
+        reqClient } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [transfReqs, setTransfReqs] = useState<TransferRequest[]>([]);
     const [startDate, setStartDate] = useState(reqStartDate);
     const [finDate, setFinDate] = useState(reqFinDate);
     const [status, setStatus] = useState(requestStatus);
+    const [client, setClient] = useState(reqClient);
+    const [allClients, setAllClients] = useState<string[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         const loadValidRequests = async () => {
             const result = await getRequestByStatus(userToken?.toString(),
-                userRole, userName, 'client', reqStartDate, reqFinDate);
+                userRole, userName, 'client', reqStartDate, reqFinDate, reqClient);
             if (result) {
                 setTransfReqs(result);
+            }
+            if (userRole == '2') {
+                const distinctClients = await getDistinctClients(userToken?.toString())
+                setAllClients(distinctClients)
             }
         };
         loadValidRequests();
@@ -38,7 +48,7 @@ const TransfReq: FC = () => {
         const intervalId = setInterval(() => {
             const loadPollRequests = async () => {
                 const result = await getRequestByStatus(userToken?.toString(),
-                    userRole, userName, status || "client", reqStartDate, reqFinDate);
+                    userRole, userName, status || "client", reqStartDate, reqFinDate, reqClient);
                 if (result) {
                     setTransfReqs(result);
                 }
@@ -47,7 +57,7 @@ const TransfReq: FC = () => {
         }, 10000);
 
         return () => clearInterval(intervalId);
-    }, [userToken, userRole, userName, status, reqStartDate, reqFinDate]);
+    }, [userToken, userRole, userName, status, reqStartDate, reqFinDate, reqClient]);
 
     const applyFilters = async () => {
         try {
@@ -58,10 +68,11 @@ const TransfReq: FC = () => {
             dispatch(filtersSlice.actions.setReqStartDate(startDate));
             dispatch(filtersSlice.actions.setReqFinDate(finDate));
             dispatch(filtersSlice.actions.setRequestStatus(status));
+            dispatch(filtersSlice.actions.setReqClient(client));
 
             if (status !== undefined && status !== null) {
                 const result = await getRequestByStatus(userToken?.toString(),
-                    userRole, userName, status, startDate, finDate);
+                    userRole, userName, status, startDate, finDate, client);
                 if (result) {
                     setTransfReqs(result);
                     navigate('/transfer_requests', { state: { result } });
@@ -76,14 +87,16 @@ const TransfReq: FC = () => {
         setStatus('');
         setStartDate('');
         setFinDate('');
+        setClient('');
 
         dispatch(filtersSlice.actions.setRequestStatus(''));
+        dispatch(filtersSlice.actions.setReqClient(''));
         dispatch(filtersSlice.actions.setReqStartDate(''));
         dispatch(filtersSlice.actions.setReqFinDate(''));
 
         try {
             const result = await getRequestByStatus(userToken?.toString(),
-                userRole, userName, 'client', '', '');
+                userRole, userName, 'client', '', '', '');
             if (result) {
                 setTransfReqs(result);
             }
@@ -137,7 +150,10 @@ const TransfReq: FC = () => {
                 <>
                     <div style={{ textAlign: 'center', marginTop: '50px' }}>
                         <h3>Вам необходимо войти в систему</h3>
-                        <Button className="button" onClick={() => navigate(`/login`)} variant="primary" style={{ marginTop: '10px' }}>
+                        <Button
+                            className="button"
+                            onClick={() => navigate(`/login`)}
+                            style={{ marginTop: '10px' }}>
                             Войти
                         </Button>
                     </div>
@@ -152,10 +168,14 @@ const TransfReq: FC = () => {
                         setReqStartDate={setStartDate}
                         reqFinDate={finDate}
                         setReqFinDate={setFinDate}
+                        reqClient={client}
+                        setReqClient={setClient}
+                        allClients={allClients}
                         applyFilters={applyFilters}
                         clearFilters={clearFilters}>
                     </RequestFilter>
-                    {transfReqs.length === 0 && <h3 style={{ textAlign: 'center', marginTop: '20px' }}> Заявки не найдены</h3>}
+                    {transfReqs.length === 0 && <h3 style={{ textAlign: 'center', marginTop: '20px' }}>
+                        Заявки не найдены</h3>}
 
                     {transfReqs.length !== 0 && (
                         <>
@@ -163,6 +183,7 @@ const TransfReq: FC = () => {
                                 <thead>
                                     <tr>
                                         <th>#</th>
+                                        <th>Клиент</th>
                                         <th>Статус</th>
                                         <th>Создана</th>
                                         <th>На рассмотрении</th>
@@ -174,6 +195,7 @@ const TransfReq: FC = () => {
                                     {currentItems.map((item, index) => (
                                         <tr key={index}>
                                             <td>{item.ID}</td>
+                                            {userRole == '2' && <td>{item.Client?.Name}</td>}
                                             <td>{item.Status}</td>
                                             <td>{formatDate(item.DateCreated)}</td>
                                             <td>{formatDate(item.DateProcessed)}</td>
@@ -185,7 +207,7 @@ const TransfReq: FC = () => {
                                     ))}
                                 </tbody>
                             </Table>
-                            <div style={{ margin: '0 auto' }}>
+                            <div>
                                 {transfReqs.length > itemsPerPage && (
                                     <Pagination
                                         currentPage={currentPage}

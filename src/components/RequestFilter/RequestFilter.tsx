@@ -11,6 +11,9 @@ interface RequestFilterProps {
     setReqStartDate: React.Dispatch<React.SetStateAction<string | string | null>>;
     reqFinDate: string | null | undefined;
     setReqFinDate: React.Dispatch<React.SetStateAction<string | string | null>>;
+    reqClient: string | null | undefined;
+    setReqClient: React.Dispatch<React.SetStateAction<string | string | null>>;
+    allClients: string[];
     applyFilters: () => void;
     clearFilters: () => void;
 }
@@ -22,6 +25,9 @@ const RequestFilter: FC<RequestFilterProps> = ({
     setReqStartDate,
     reqFinDate,
     setReqFinDate,
+    reqClient,
+    setReqClient,
+    allClients,
     applyFilters,
     clearFilters
 }) => {
@@ -71,6 +77,19 @@ const RequestFilter: FC<RequestFilterProps> = ({
                                 onChange={(e) => setReqFinDate(e.target.value)}
                             />
                         </Col>
+                        <Col>
+                            <Form.Label className="request-filter-label">Клиент:</Form.Label>
+                            <Form.Select
+                                className="request-filter-select"
+                                value={reqClient?.toString()}
+                                onChange={(e) => setReqClient(e.target.value)}
+                            >
+                                <option value="">Выберите клиента</option>
+                                {allClients.map(client => (
+                                    <option key={client} value={client}>{client}</option>
+                                ))}
+                            </Form.Select>
+                        </Col>
                     </Row>
                 </div>
             }
@@ -79,7 +98,6 @@ const RequestFilter: FC<RequestFilterProps> = ({
                 <Col><Button className="button" onClick={clearFilters}>Очистить</Button></Col>
             </Row>
         </div>
-
     );
 }
 

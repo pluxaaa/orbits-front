@@ -3,11 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const orbitIsCircle = localStorage.getItem('orbitIsCircle')
     ? localStorage.getItem('orbitIsCircle')
     : '';
-
 const orbitIncl = localStorage.getItem('orbitIncl')
     ? localStorage.getItem('orbitIncl')
     : '';
-
 const orbitName = localStorage.getItem('orbitName')
     ? localStorage.getItem('orbitName')
     : '';
@@ -20,6 +18,9 @@ const reqStartDate = localStorage.getItem('reqStartDate')
 const reqFinDate = localStorage.getItem('reqFinDate')
     ? localStorage.getItem('reqFinDate')
     : '';
+const reqClient = localStorage.getItem('reqClient')
+    ? localStorage.getItem('reqClient')
+    : '';
 
 const initialState = {
     orbitIsCircle,
@@ -28,6 +29,7 @@ const initialState = {
     requestStatus,
     reqStartDate,
     reqFinDate,
+    reqClient
 }
 
 const filtersSlice = createSlice({
@@ -57,6 +59,10 @@ const filtersSlice = createSlice({
         setReqFinDate(state, { payload }) {
             state.reqFinDate = payload
             localStorage.setItem('ReqFinDate', payload)
+        },
+        setReqClient(state, {payload}) {
+            state.reqClient = payload
+            localStorage.setItem('reqClient', payload)
         }
     }
 })

@@ -5,7 +5,8 @@ export const getTransfReqs = async (
     userToken = '',
     status = '', 
     dateStart: string | null, 
-    dateFin: string | null
+    dateFin: string | null,
+    client: string | null,
     ): Promise<TransferRequest[]> => {
     const config = {
         headers: {
@@ -18,6 +19,7 @@ export const getTransfReqs = async (
         status: status,
         date_start: dateStart || "",
         date_fin: dateFin || "",
+        client: client || "",
     });
 
     return axios.get(`/api/transfer_requests?${queryParams.toString()}`, config)
