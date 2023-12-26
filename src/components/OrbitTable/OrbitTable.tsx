@@ -18,9 +18,10 @@ const OrbitTable: FC<OrbitTableProps> = ({ orbits, handleStatusChange, isStatusC
       <table className="orbit-table">
         <thead>
           <tr>
+            <th>Изображение</th>
             <th>Название орбиты</th>
             <th>Статус</th>
-            <th>Действия</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -34,17 +35,20 @@ const OrbitTable: FC<OrbitTableProps> = ({ orbits, handleStatusChange, isStatusC
                       onError={(e) => {
                         e.currentTarget.src = '/DEFAULT.jpg';
                       }}
-                      style={{ width: '75px', height: '75px', right: '0' }}
+                      style={{ width: '150px', height: '150px' }}
                     />
                   )}
-                  <span style={{ marginLeft: '10px' }}>{orbit.Name}</span>
                 </div>
               </td>
-              <td style={{ paddingLeft: '20px' }}>{orbit.IsAvailable ? 'Доступна' : 'Не доступна'}</td>
+              <td><span style={{ marginLeft: '10px', fontSize: '20px' }}>{orbit.Name}</span></td>
+              <td style={{ fontSize: '20px', paddingLeft: '10px', paddingRight: '10px' }}>
+                {orbit.IsAvailable ? 'Доступна' : 'Не доступна'}
+              </td>
               <td>
                 <Col>
                   <Button
                     className="orbit-table-button"
+                    style={{ backgroundColor: '#0E3E8DFF', marginRight: "60px" }}
                     onClick={() => navigate(`/orbits/${encodeURIComponent(orbit.Name)}`)}
                   >
                     Подробнее
@@ -53,6 +57,18 @@ const OrbitTable: FC<OrbitTableProps> = ({ orbits, handleStatusChange, isStatusC
                 <Col>
                   <Button
                     className="orbit-table-button"
+                    style={{ marginRight:'60px' }}
+                    variant='success'
+                    onClick={() => navigate(`/orbits/${encodeURIComponent(orbit.Name)}/edit`)}
+                  >
+                    Изменить
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    className="orbit-table-button"
+                    style={{ marginRight:'60px' }}
+                    variant='danger'
                     onClick={() => handleStatusChange(orbit.Name, !orbit.IsAvailable)}
                     disabled={isStatusChanging}
                   >

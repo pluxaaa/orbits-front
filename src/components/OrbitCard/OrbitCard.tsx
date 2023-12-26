@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Button, Card, Row } from 'react-bootstrap';
+import { Button, Card, Col } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { changeOrbitStatus } from '../../modules/changeOrbitStatus';
@@ -23,7 +23,6 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
     const dispatch = useAppDispatch();
 
     const { userRole, userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
-    const orbits = useSelector((state: ReturnType<typeof store.getState>) => state.cart.orbits);
 
     const isOrbitInCart = useSelector((state: ReturnType<typeof store.getState>) =>
         state.cart.orbits?.includes(orbitName)
@@ -45,11 +44,11 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
 
     const handleCreateRequest = async () => {
         try {
-            if(!userToken){
+            if (!userToken) {
                 return
             }
             if (isOrbitInCart) {
-                const response = await deleteOrbitTransfer(orbitName, localStorage.getItem("reqID"), userToken);
+                await deleteOrbitTransfer(orbitName, localStorage.getItem("reqID"), userToken);
                 dispatch(cartSlice.actions.removeOrbit(orbitName));
             } else {
                 const response = await createOrbitTransferReq(orbitName, userToken);
@@ -79,7 +78,12 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
                     <Card.Title> {orbitName} </Card.Title>
                     <Card.Title> Статус: {orbitStatus ? "Доступна" : "Недоступна"} </Card.Title>
                 </div>
-                <Button className='button' onClick={() => (navigate(`/orbits/${encodeURIComponent(orbitName)}`))}> Подробнее </Button>
+                <Button
+                    className='button-card'
+                    style={{backgroundColor: '#0E3E8DFF'}}
+                    onClick={() => (navigate(`/orbits/${encodeURIComponent(orbitName)}`))}>
+                    Подробнее
+                </Button>
                 {userRole === '1' && (
                     <>
                         <div style={{ width: '1px', height: '1px' }}></div>
@@ -92,20 +96,29 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
                         </Button>
                     </>
                 )}
-                <Row>
                 {userRole === '2' && (
                     <>
-                    <div style={{marginTop:"5px"}}></div>
-                    <Button
-                        className='button'
-                        onClick={handleStatusChange}
-                        disabled={isStatusChanging}
-                    >
-                        {isStatusChanging ? 'Удаление...' : 'Удалить'}
-                    </Button>
+                        <Col>
+                            <Button
+                                className='button-card'
+                                variant='success'
+                                onClick={() => navigate(`/orbits/${encodeURIComponent(orbitName)}/edit`)}
+                            >
+                                Изменить
+                            </Button>
+                        </Col>
+                        <Col>
+                            <Button
+                                className='button-card'
+                                onClick={handleStatusChange}
+                                disabled={isStatusChanging}
+                                variant='danger'
+                            >
+                                {isStatusChanging ? 'Удаление...' : 'Удалить'}
+                            </Button>
+                        </Col>
                     </>
                 )}
-                </Row>
             </Card.Body>
         </Card>
     );

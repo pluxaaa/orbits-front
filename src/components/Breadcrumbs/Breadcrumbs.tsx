@@ -11,7 +11,9 @@ const endpointToLabel: EndpointToLabelMap = {
   'login': 'Вход',
   'transfer_requests': 'Заявки на трансфер',
   'cart' : 'Корзина',
-  'register' : 'Регистрация'
+  'register' : 'Регистрация',
+  'add' : 'Добавление',
+  'edit' : 'Изменение',
 };
 
 function Breadcrumbs() {
