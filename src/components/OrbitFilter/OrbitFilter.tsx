@@ -60,14 +60,14 @@ const OrbitFilter: React.FC<OrbitFilterProps> = ({
           />
         </Col>
       </Row>
-      <Row className="orbit-buttons">
+      <Row>
         <Col>
-          <Button className="orbit-button" onClick={applyFilters}>
+          <Button className="button" onClick={applyFilters}>
             Поиск
           </Button>
         </Col>
         <Col>
-          <Button className="orbit-button" onClick={clearFilters}>
+          <Button className="button" style={{marginRight:'0'}} onClick={clearFilters}>
             Очистить
           </Button>
         </Col>

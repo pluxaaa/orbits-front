@@ -15,7 +15,7 @@
 }
 
 .request-filter-label {
-  margin-right: 10px;
+  margin-left: 15px;
   font-weight: bold;
 }
 
@@ -23,44 +23,27 @@
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  margin-left: 63px;
+  margin-left: 77px;
   font-family: "Century Gothic", sans-serif;
   width: 190px;
 }
 
-.request-filter-button {
-  margin-left: 40px;
-  margin-top: 0;
-  padding: 8px 15px;
-  background-color: #0E3E8DFF;
-  color: #fff;
-  border: none;
+.label-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.date-label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.date-input {
+  padding: 8px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
   font-family: "Century Gothic", sans-serif;
-
-  &:hover {
-    background-color: #001246;
-  }
-
-  .label-container {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
-  }
-
-  .date-label {
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-
-  .date-input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    font-family: "Century Gothic", sans-serif;
-    width: 100%;
-  }
+  width: 100%;
 }

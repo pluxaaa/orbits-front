@@ -1,5 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
+import { BsGrid, BsTable } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import CartButton from '../../components/CartButton/CartButton';
@@ -14,7 +15,6 @@ import getRequestByStatus from '../../modules/getRequestByStatus';
 import cartSlice from '../../store/cartSlice';
 import filtersSlice from "../../store/filtersSlice";
 import store, { useAppDispatch } from '../../store/store';
-import { BsGrid, BsTable } from 'react-icons/bs';
 import './OrbitsAll.styles.css';
 
 const OrbitsAll: FC = () => {

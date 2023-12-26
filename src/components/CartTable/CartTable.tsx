@@ -1,6 +1,7 @@
 import React from "react";
 import { ListGroup, ListGroupItem, Button } from "react-bootstrap";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { RxDragHandleHorizontal } from "react-icons/rx";
 
 interface DragAndDropListProps {
   transfersOrder: { [orbit: string]: number };
@@ -26,9 +27,12 @@ const CartTable: React.FC<DragAndDropListProps> = ({
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    {orbitName}
+                    <span className="drag-handle">
+                      <RxDragHandleHorizontal style={{marginTop:'5px'}}size={30}/>
+                    </span>
+                    <div style={{fontSize:'20px', marginTop:'5px', marginLeft:'5px'}}>{orbitName}</div>
                     <span className="delete-button">
-                      <Button variant="danger" onClick={deleteFromCart(orbitName)}>
+                      <Button variant="danger" style={{marginTop:'0px'}} onClick={deleteFromCart(orbitName)}>
                         Удалить
                       </Button>
 
