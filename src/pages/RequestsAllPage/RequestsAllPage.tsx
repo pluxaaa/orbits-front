@@ -10,6 +10,7 @@ import store, { useAppDispatch } from '../../store/store';
 import './RequestsAllPage.styles.css';
 import Pagination from '../../components/Pagination/Pagination';
 import { getDistinctClients } from '../../modules/getDistinctClients';
+import usePagination from '../../components/Pagination/usePagination';
 
 const TransfReq: FC = () => {
     const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
@@ -26,7 +27,14 @@ const TransfReq: FC = () => {
     const [status, setStatus] = useState(requestStatus);
     const [client, setClient] = useState(reqClient);
     const [allClients, setAllClients] = useState<string[]>([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const {
+        currentPage,
+        currentItems,
+        pageCount,
+        paginate,
+        goToNextPage,
+        goToPrevPage,
+      } = usePagination(transfReqs, 5);
 
     useEffect(() => {
         const loadValidRequests = async () => {
@@ -126,24 +134,6 @@ const TransfReq: FC = () => {
         return new Intl.DateTimeFormat('ru-RU', options).format(date);
     };
 
-    const itemsPerPage = 5;
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = transfReqs.slice(indexOfFirstItem, indexOfLastItem);
-    const pageCount = Math.ceil(transfReqs.length / itemsPerPage);
-
-    const paginate = (pageNumber: number) => {
-        setCurrentPage(pageNumber);
-    };
-
-    const goToNextPage = () => {
-        setCurrentPage((prev) => Math.min(prev + 1, pageCount));
-    };
-
-    const goToPrevPage = () => {
-        setCurrentPage((prev) => Math.max(prev - 1, 1));
-    };
-
     return (
         <>
             {!userToken && (
@@ -212,7 +202,7 @@ const TransfReq: FC = () => {
                                 </tbody>
                             </Table>
                             <div>
-                                {transfReqs.length > itemsPerPage && (
+                                {transfReqs.length > 5 && (
                                     <Pagination
                                         currentPage={currentPage}
                                         pageCount={pageCount}
