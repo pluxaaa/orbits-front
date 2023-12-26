@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import { FC, useState } from 'react';
 import { Nav, NavDropdown, Navbar } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -8,7 +8,7 @@ import store, { useAppDispatch } from '../../store/store';
 import './NavigationMain.styles.css';
 
 const NavigationMain: FC = () => {
-    const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
+    const { userToken, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
     const [showDropdown, setShowDropdown] = useState(false);
 
     const navigate = useNavigate();
@@ -62,7 +62,7 @@ const NavigationMain: FC = () => {
                         </>}
                     {!userToken &&
                         <>
-                            <NavLink to="/login" className='nav-link'>Вход</NavLink>
+                            <NavLink style={{marginRight:'10px'}} to="/login" className='nav-link'>Вход</NavLink>
                         </>}
                 </Nav>
             </Navbar.Collapse>

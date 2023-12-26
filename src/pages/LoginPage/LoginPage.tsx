@@ -6,7 +6,7 @@ import { Button, Modal, Spinner } from 'react-bootstrap';
 
 import './LoginPage.styles.css';
 
-import { loginUser, registerUser } from '../../modules/authMethods';
+import { loginUser } from '../../modules/authMethods';
 import store, { useAppDispatch } from '../../store/store';
 
 interface InputChangeInterface {
@@ -31,10 +31,6 @@ const Login: FC = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleRegisterModalClose = () => {
-    setShowRegisterModal(false)
-  }
-
   const handleLoginChange = (event: InputChangeInterface) => {
     setLogin(event.target.value)
   }
@@ -55,16 +51,6 @@ const Login: FC = () => {
       window.location.reload()
     }
   };
-
-  const sendRegister = async () => {
-    await dispatch(registerUser({ login: login, password: password }));
-
-    if (success) {
-      setShowRegisterModal(true);
-      handleRegisterModalClose();
-    }
-  };
-
 
   useEffect(() => {
     if (error) {
@@ -94,16 +80,6 @@ const Login: FC = () => {
         <Modal.Body>{errorMessage}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleModalClose}>
-            Закрыть
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <Modal show={success && showRegisterModal && !loading} onHide={handleRegisterModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Регистрация прошла успешно!</Modal.Title>
-        </Modal.Header>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleRegisterModalClose}>
             Закрыть
           </Button>
         </Modal.Footer>

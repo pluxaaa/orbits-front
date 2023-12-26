@@ -183,7 +183,7 @@ const TransfReq: FC = () => {
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Клиент</th>
+                                        {userRole == '2' && <th>Клиент</th>}
                                         <th>Статус</th>
                                         <th>Создана</th>
                                         <th>На рассмотрении</th>

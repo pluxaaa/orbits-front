@@ -107,7 +107,7 @@ const Cart: FC = () => {
         newTransfersOrderOrder.splice(result.destination.index, 0, [movedOrbit, movedNumber]);
 
         const newTransfersOrder: { [orbit: string]: number } = {};
-        newTransfersOrderOrder.forEach(([orbit, number], index) => {
+        newTransfersOrderOrder.forEach(([orbit], index) => {
             newTransfersOrder[orbit] = index + 1;
         });
 

@@ -71,7 +71,7 @@ const TransfReqDet: FC = () => {
         }
 
         try {
-            const editResult = await changeReqStatus(userToken, {
+            await changeReqStatus(userToken, {
                 ID: req.ID,
                 Status: status,
             });
@@ -106,7 +106,7 @@ const TransfReqDet: FC = () => {
                                 <img
                                     src={orbit?.ImageURL}
                                     onError={(e) => { e.currentTarget.src = '/DEFAULT.jpg' }}
-                                    style={{ width: '75px', height: '75px', position: 'absolute', right: '0' }}
+                                    style={{ width: '75px', height: '75px', position: 'absolute', right: '5px', marginTop: '0px' }}
                                 />
                             )}
                             <div style={{ width: '75px', height: '75px' }}></div>
@@ -119,18 +119,18 @@ const TransfReqDet: FC = () => {
                     {userRole === '2' && status === 'На рассмотрении' && (
                         <>
                             <div>
-                                <Button 
-                                className="common-button" 
-                                variant="warning" 
-                                onClick={() => sendChanges('Отклонена')}>
+                                <Button
+                                    className="common-button"
+                                    variant="warning"
+                                    onClick={() => sendChanges('Отклонена')}>
                                     Отклонить
                                 </Button>
                             </div>
                             <div>
-                                <Button 
-                                className="common-button" 
-                                variant="success" 
-                                onClick={() => sendChanges('Оказана')}>
+                                <Button
+                                    className="common-button"
+                                    variant="success"
+                                    onClick={() => sendChanges('Оказана')}>
                                     Одобрить
                                 </Button>
                             </div>
