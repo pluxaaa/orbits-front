@@ -83,6 +83,9 @@ export const logoutUser = createAsyncThunk(
       localStorage.setItem("orbitIsCircle", '')
       localStorage.setItem("reqID", '')
       localStorage.setItem("transfersOrder", '{}')
+      localStorage.setItem("reqStartDate", "")
+      localStorage.setItem("reqFinDate", "")
+      localStorage.setItem("reqClient", "")
 
 
       const config = {

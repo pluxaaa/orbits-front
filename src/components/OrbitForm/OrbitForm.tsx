@@ -8,7 +8,9 @@ import { getOrbitByName } from '../../modules/getOrbitByName';
 import { editOrbit } from '../../modules/editOrbit';
 import { addNewOrbit } from '../../modules/addNewOrbit';
 import { uploadOrbitImage } from '../../modules/uploadOrbitImage';
+import { ToastContainer, toast } from 'react-toastify';
 import "./OrbitForm.styles.css"
+import "react-toastify/dist/ReactToastify.css";
 
 const OrbitForm: FC = () => {
     const navigate = useNavigate();
@@ -36,6 +38,9 @@ const OrbitForm: FC = () => {
             });
             localStorage.setItem("flag", "add")
         }
+        return () => {
+            localStorage.removeItem('flag');
+        };
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,8 +68,15 @@ const OrbitForm: FC = () => {
             }
         } catch (error) {
             console.error('Ошибка при загрузке изображения:', error);
+            toast.error('Ошибка при загрузке изображения', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 2000,
+                closeButton: false,
+                hideProgressBar: true,
+            });
         }
     };
+        
 
     const handleOrbitSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -85,11 +97,18 @@ const OrbitForm: FC = () => {
             }
         } catch (error) {
             console.error('Ошибка при сохранении орбиты:', error);
+            toast.error('Ошибка при сохранении орбиты', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: 2000,
+                closeButton: false,
+                hideProgressBar: true,
+            });
         }
     };
 
     return (
         <div className="form-container">
+            <ToastContainer />
             <Form onSubmit={handleOrbitSubmit} encType="multipart/form-data">
                 <Form.Group controlId="formOrbitImage">
                     <Form.Control
