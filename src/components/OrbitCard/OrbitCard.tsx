@@ -75,7 +75,7 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
             </div>
             <Card.Body>
                 <div className='card_title'>
-                    <Card.Title> {orbitName} </Card.Title>
+                    <Card.Title style={{fontWeight: 'bold'}}> {orbitName} </Card.Title>
                     <Card.Title> Статус: {orbitStatus ? "Доступна" : "Недоступна"} </Card.Title>
                 </div>
                 <Button

@@ -201,7 +201,11 @@ const TransfReq: FC = () => {
                                             <td>{formatDate(item.DateProcessed)}</td>
                                             <td>{formatDate(item.DateFinished)}</td>
                                             <td>
-                                                <button onClick={() => navigate(`/transfer_requests/${item.ID}`)}>Подробнее</button>
+                                                <button
+                                                    style={{ marginBottom: '15px' }}
+                                                    onClick={() => navigate(`/transfer_requests/${item.ID}`)}>
+                                                    Подробнее
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}

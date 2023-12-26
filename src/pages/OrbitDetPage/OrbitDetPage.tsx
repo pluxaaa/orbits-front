@@ -55,9 +55,9 @@ const OrbitDetailed: FC = () => {
         />
         <div className="right-content-sub">
           <p>Статус: {orbit?.IsAvailable ? 'Доступна' : 'Недоступна'}</p>
-          <p>Апогей: {orbit?.Apogee}</p>
-          <p>Перигей: {orbit?.Perigee}</p>
-          <p>Наклонение: {orbit?.Inclination}</p>
+          <p>Апогей: {orbit?.Apogee} км</p>
+          <p>Перигей: {orbit?.Perigee} км</p>
+          <p>Наклонение: {orbit?.Inclination}°</p>
           <p>Описание: {orbit?.Description}</p>
         </div>
       </div>
