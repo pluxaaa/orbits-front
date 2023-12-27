@@ -10,6 +10,7 @@ import store, { useAppDispatch } from '../../store/store';
 import './RequestsAllPage.styles.css';
 import Pagination from '../../components/Pagination/Pagination';
 import { getDistinctClients } from '../../modules/getDistinctClients';
+import usePagination from '../../components/Pagination/usePagination';
 
 const TransfReq: FC = () => {
     const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
@@ -26,12 +27,19 @@ const TransfReq: FC = () => {
     const [status, setStatus] = useState(requestStatus);
     const [client, setClient] = useState(reqClient);
     const [allClients, setAllClients] = useState<string[]>([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const {
+        currentPage,
+        currentItems,
+        pageCount,
+        paginate,
+        goToNextPage,
+        goToPrevPage,
+      } = usePagination(transfReqs, 5);
 
     useEffect(() => {
         const loadValidRequests = async () => {
             const result = await getRequestByStatus(userToken?.toString(),
-                userRole, userName, 'client', reqStartDate, reqFinDate, reqClient);
+                userRole, userName, 'client', reqStartDate, reqFinDate, /*reqClient*/);
             if (result) {
                 setTransfReqs(result);
             }
@@ -48,7 +56,7 @@ const TransfReq: FC = () => {
         const intervalId = setInterval(() => {
             const loadPollRequests = async () => {
                 const result = await getRequestByStatus(userToken?.toString(),
-                    userRole, userName, status || "client", reqStartDate, reqFinDate, reqClient);
+                    userRole, userName, status || "client", reqStartDate, reqFinDate, /*reqClient*/);
                 if (result) {
                     setTransfReqs(result);
                 }
@@ -72,9 +80,13 @@ const TransfReq: FC = () => {
 
             if (status !== undefined && status !== null) {
                 const result = await getRequestByStatus(userToken?.toString(),
-                    userRole, userName, status, startDate, finDate, client);
+                    userRole, userName, status, startDate, finDate, /*client*/);
                 if (result) {
-                    setTransfReqs(result);
+                    //фильтр по клиенту => убрать фильтр по клиенту с бэка (не используется)
+                    const filteredRequests = result.filter(
+                        (request) => request.Client && request.Client.Name === client
+                    );
+                    setTransfReqs(filteredRequests);
                     navigate('/transfer_requests', { state: { result } });
                 }
             }
@@ -96,7 +108,7 @@ const TransfReq: FC = () => {
 
         try {
             const result = await getRequestByStatus(userToken?.toString(),
-                userRole, userName, 'client', '', '', '');
+                userRole, userName, 'client', '', '', /*''*/);
             if (result) {
                 setTransfReqs(result);
             }
@@ -124,24 +136,6 @@ const TransfReq: FC = () => {
         const date = new Date(dateString);
 
         return new Intl.DateTimeFormat('ru-RU', options).format(date);
-    };
-
-    const itemsPerPage = 5;
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = transfReqs.slice(indexOfFirstItem, indexOfLastItem);
-    const pageCount = Math.ceil(transfReqs.length / itemsPerPage);
-
-    const paginate = (pageNumber: number) => {
-        setCurrentPage(pageNumber);
-    };
-
-    const goToNextPage = () => {
-        setCurrentPage((prev) => Math.min(prev + 1, pageCount));
-    };
-
-    const goToPrevPage = () => {
-        setCurrentPage((prev) => Math.max(prev - 1, 1));
     };
 
     return (
@@ -212,7 +206,7 @@ const TransfReq: FC = () => {
                                 </tbody>
                             </Table>
                             <div>
-                                {transfReqs.length > itemsPerPage && (
+                                {transfReqs.length > 5 && (
                                     <Pagination
                                         currentPage={currentPage}
                                         pageCount={pageCount}
