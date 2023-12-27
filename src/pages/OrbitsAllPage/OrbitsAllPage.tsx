@@ -46,7 +46,7 @@ const OrbitsAll: FC = () => {
   useEffect(() => {
     const loadDraftRequest = async () => {
       const result = (await getRequestByStatus(userToken?.toString(),
-        userRole, userName, 'Черновик', '', '', ''))
+        userRole, userName, 'Черновик', '', '', /*''*/))
       if (!result) {
         return
       }

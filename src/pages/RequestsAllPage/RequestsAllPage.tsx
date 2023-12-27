@@ -39,7 +39,7 @@ const TransfReq: FC = () => {
     useEffect(() => {
         const loadValidRequests = async () => {
             const result = await getRequestByStatus(userToken?.toString(),
-                userRole, userName, 'client', reqStartDate, reqFinDate, reqClient);
+                userRole, userName, 'client', reqStartDate, reqFinDate, /*reqClient*/);
             if (result) {
                 setTransfReqs(result);
             }
@@ -56,7 +56,7 @@ const TransfReq: FC = () => {
         const intervalId = setInterval(() => {
             const loadPollRequests = async () => {
                 const result = await getRequestByStatus(userToken?.toString(),
-                    userRole, userName, status || "client", reqStartDate, reqFinDate, reqClient);
+                    userRole, userName, status || "client", reqStartDate, reqFinDate, /*reqClient*/);
                 if (result) {
                     setTransfReqs(result);
                 }
@@ -80,9 +80,13 @@ const TransfReq: FC = () => {
 
             if (status !== undefined && status !== null) {
                 const result = await getRequestByStatus(userToken?.toString(),
-                    userRole, userName, status, startDate, finDate, client);
+                    userRole, userName, status, startDate, finDate, /*client*/);
                 if (result) {
-                    setTransfReqs(result);
+                    //фильтр по клиенту => убрать фильтр по клиенту с бэка (не используется)
+                    const filteredRequests = result.filter(
+                        (request) => request.Client && request.Client.Name === client
+                    );
+                    setTransfReqs(filteredRequests);
                     navigate('/transfer_requests', { state: { result } });
                 }
             }
@@ -104,7 +108,7 @@ const TransfReq: FC = () => {
 
         try {
             const result = await getRequestByStatus(userToken?.toString(),
-                userRole, userName, 'client', '', '', '');
+                userRole, userName, 'client', '', '', /*''*/);
             if (result) {
                 setTransfReqs(result);
             }
