@@ -8,29 +8,37 @@ import OrbitCard from '../../components/OrbitCard/OrbitCard';
 import OrbitFilter from '../../components/OrbitFilter/OrbitFilter';
 import OrbitTable from '../../components/OrbitTable/OrbitTable';
 import { changeOrbitStatus } from '../../modules/changeOrbitStatus';
-import { Orbit } from '../../modules/ds';
 import { getAllOrbits } from '../../modules/getAllOrbits';
-import { getOrbitOrder } from '../../modules/getOrbitOrder';
+import loadOrbitOrder from '../../modules/loadOrbitOrder';
 import getRequestByStatus from '../../modules/getRequestByStatus';
-import cartSlice from '../../store/cartSlice';
-import filtersSlice from "../../store/filtersSlice";
+import {
+  setOrbApo,
+  setOrbCircle,
+  setOrbIncl,
+  setOrbName,
+  setOrbPeri,
+  setOrbit,
+  useOrbApo,
+  useOrbCircle,
+  useOrbIncl,
+  useOrbName,
+  useOrbPeri,
+  useOrbit,
+} from '../../store/newFilter';
 import store, { useAppDispatch } from '../../store/store';
 import './OrbitsAll.styles.css';
 
 const OrbitsAll: FC = () => {
-  const [orbits, setOrbits] = useState<Orbit[]>([]);
   const dispatch = useAppDispatch()
   const navigate = useNavigate();
   const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth)
 
-  const { orbitIncl } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
-  const [incl, setIncl] = useState(orbitIncl);
-
-  const { orbitName } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
-  const [name, setName] = useState(orbitName);
-
-  const { orbitIsCircle } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
-  const [isCircle, setIsCircle] = useState(orbitIsCircle);
+  const orbit = useOrbit();
+  const orbName = useOrbName();
+  const orbApo = useOrbApo();
+  const orbPeri = useOrbPeri();
+  const orbIncl = useOrbIncl();
+  const orbCircle = useOrbCircle();
 
   const [isStatusChanging, setIsStatusChanging] = useState(false);
 
@@ -53,18 +61,8 @@ const OrbitsAll: FC = () => {
       if (result[0]?.ID) {
         localStorage.setItem("reqID", result[0].ID.toString());
 
-        const reqIDString: string | null = localStorage.getItem("reqID");
-        const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
+        loadOrbitOrder(userToken, dispatch);
 
-        const orbitOrder = await getOrbitOrder(reqID, userToken?.toString());
-
-        dispatch(cartSlice.actions.setOrbits(orbitOrder.map(orbit => orbit.orbit_name)));
-
-        const newTransfersOrder: { [orbit: string]: number } = {};
-        orbitOrder.forEach((orbit, index) => {
-          newTransfersOrder[orbit.orbit_name] = index + 1;
-        });
-        dispatch(cartSlice.actions.setTransfersOrder(newTransfersOrder));
       };
     }
     loadDraftRequest()
@@ -72,8 +70,8 @@ const OrbitsAll: FC = () => {
 
     const loadOrbits = async () => {
       try {
-        const result = await getAllOrbits(name?.toString(), incl?.toString(), isCircle?.toString());
-        setOrbits(result);
+        const result = await getAllOrbits(orbName, orbIncl, orbCircle);
+        dispatch(setOrbit(result));
       } catch (error) {
         console.error("Ошибка при загрузке объектов:", error);
       }
@@ -84,12 +82,14 @@ const OrbitsAll: FC = () => {
 
   const applyFilters = async () => {
     try {
-      const data = await getAllOrbits(name?.toString(), incl?.toString(), isCircle?.toString());
-      dispatch(filtersSlice.actions.setOrbitName(name));
-      dispatch(filtersSlice.actions.setOrbitIncl(incl));
-      dispatch(filtersSlice.actions.setOrbitIsCircle(isCircle));
+      const data = await getAllOrbits(orbName, orbIncl, orbCircle);
 
-      setOrbits(data);
+      dispatch(setOrbit(data));
+      dispatch(setOrbName(orbName?.toString() || ""));
+      dispatch(setOrbApo(orbApo?.toString() || ''));
+      dispatch(setOrbPeri(orbPeri?.toString() || ''));
+      dispatch(setOrbIncl(orbIncl?.toString() || ''));
+      dispatch(setOrbCircle(orbCircle?.toString() || ''));
 
       navigate('/orbits', { state: { data } });
     } catch (error) {
@@ -98,17 +98,17 @@ const OrbitsAll: FC = () => {
   };
 
   const clearFilters = async () => {
-    setName('');
-    setIncl('');
-    setIsCircle('');
 
-    dispatch(filtersSlice.actions.setOrbitName(''));
-    dispatch(filtersSlice.actions.setOrbitIncl(''));
-    dispatch(filtersSlice.actions.setOrbitIsCircle(''));
+    dispatch(setOrbit([]));
+    dispatch(setOrbName(''));
+    dispatch(setOrbApo(''));
+    dispatch(setOrbPeri(''));
+    dispatch(setOrbIncl(''));
+    dispatch(setOrbCircle(''));
 
     try {
       const data = await getAllOrbits();
-      setOrbits(data);
+      dispatch(setOrbit(data));
     } catch (error) {
       console.error("Error loading all orbits:", error);
     }
@@ -117,18 +117,20 @@ const OrbitsAll: FC = () => {
 
   const handleStatusChange = async (orbitName: string, newStatus: boolean) => {
     setIsStatusChanging(true);
-
+  
     try {
       await changeOrbitStatus(userToken?.toString(), orbitName);
-
-      setOrbits((orbits) =>
-        orbits.map((orbit) =>
-          orbit.Name === orbitName ? { ...orbit, IsAvailable: newStatus } : orbit
+  
+      dispatch(
+        setOrbit(
+          orbit.map((orbit) =>
+            orbit.Name === orbitName ? { ...orbit, IsAvailable: newStatus } : orbit
+          )
         )
       );
-
-      setOrbits((orbits) => orbits.filter((orbit) => orbit.Name !== orbitName));
-
+  
+      dispatch(setOrbit(orbit.filter((orbit) => orbit.Name !== orbitName)));
+  
     } catch (error) {
       console.error('Ошибка:', error);
     } finally {
@@ -151,25 +153,25 @@ const OrbitsAll: FC = () => {
         </>
       )}
       <OrbitFilter
-        name={name}
-        incl={incl}
-        isCircle={isCircle}
-        setName={setName}
-        setIncl={setIncl}
-        setIsCircle={setIsCircle}
+        name={orbName}
+        incl={orbIncl}
+        isCircle={orbCircle}
+        setName={setOrbName}
+        setIncl={setOrbIncl}
+        setIsCircle={setOrbCircle}
         applyFilters={applyFilters}
         clearFilters={clearFilters}
       />
       {userRole === '2' ? (
         viewMode === 'table' ? (
           <OrbitTable
-            orbits={orbits}
+            orbits={orbit}
             handleStatusChange={handleStatusChange}
             isStatusChanging={isStatusChanging}
           />
         ) : (
           <div className="card_group">
-            {orbits.map((orbit, index) => (
+            {orbit.map((orbit, index) => (
               <div key={index} className="orbit-card">
                 <OrbitCard
                   imageUrl={orbit.ImageURL}
@@ -184,7 +186,7 @@ const OrbitsAll: FC = () => {
         )
       ) : (
         <div className="card_group">
-          {orbits.map((orbit, index) => (
+          {orbit.map((orbit, index) => (
             <div key={index} className="orbit-card">
               <OrbitCard
                 imageUrl={orbit.ImageURL}

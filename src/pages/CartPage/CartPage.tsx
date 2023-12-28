@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Button, Modal, Col, Row } from "react-bootstrap";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ import { DropResult } from "react-beautiful-dnd";
 import { updateTransfersOrder } from "../../modules/updateTransfersOrder";
 import CartTable from "../../components/CartTable/CartTable";
 import "./CartPage.styles.css";
+import loadOrbitOrder from "../../modules/loadOrbitOrder";
 
 const Cart: FC = () => {
     const [showSuccess, setShowSuccess] = useState(false);
@@ -22,6 +23,10 @@ const Cart: FC = () => {
     const { userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
     const orbits = useSelector((state: ReturnType<typeof store.getState>) => state.cart.orbits);
     const transfersOrder = useSelector((state: ReturnType<typeof store.getState>) => state.cart.transfersOrder);
+
+    useEffect(() => {
+        loadOrbitOrder(userToken, dispatch);
+    }, [dispatch, userToken]);
 
     const deleteFromCart = (orbitName = '') => {
         if (!userToken) {
@@ -129,8 +134,6 @@ const Cart: FC = () => {
         // отправляю только измененные записи
         await updateTransfersOrder(userToken?.toString(), reqID, changedData);
     };
-
-
 
     return (
         <div className="cart-container">

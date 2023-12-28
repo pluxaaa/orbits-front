@@ -1,32 +1,40 @@
 import { FC, useEffect, useState } from 'react';
-import { Table, Button } from 'react-bootstrap';
-import { useSelector } from 'react-redux/es/hooks/useSelector';
+import { Button, Table } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import RequestFilter from '../../components/RequestFilter/RequestFilter';
-import { TransferRequest } from '../../modules/ds';
-import getRequestByStatus from '../../modules/getRequestByStatus';
-import filtersSlice from '../../store/filtersSlice';
-import store, { useAppDispatch } from '../../store/store';
-import './RequestsAllPage.styles.css';
 import Pagination from '../../components/Pagination/Pagination';
-import { getDistinctClients } from '../../modules/getDistinctClients';
 import usePagination from '../../components/Pagination/usePagination';
+import RequestFilter from '../../components/RequestFilter/RequestFilter';
+import { getDistinctClients } from '../../modules/getDistinctClients';
+import getRequestByStatus from '../../modules/getRequestByStatus';
+import store, { useAppDispatch } from '../../store/store';
+import {
+    useReqStatus,
+    useReqStart,
+    useReqEnd,
+    useReqClient,
+    useRequest,
+    setReqStatus,
+    setReqStart,
+    setReqEnd,
+    setReqClientSl,
+    setRequest,
+} from '../../store/newFilter';
+import './RequestsAllPage.styles.css';
 
 const TransfReq: FC = () => {
     const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
-    const {
-        requestStatus,
-        reqStartDate,
-        reqFinDate,
-        reqClient } = useSelector((state: ReturnType<typeof store.getState>) => state.filters);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const [transfReqs, setTransfReqs] = useState<TransferRequest[]>([]);
-    const [startDate, setStartDate] = useState(reqStartDate);
-    const [finDate, setFinDate] = useState(reqFinDate);
-    const [status, setStatus] = useState(requestStatus);
-    const [client, setClient] = useState(reqClient);
+
+    const reqStatus = useReqStatus();
+    const reqStartDate = useReqStart();
+    const reqFinDate = useReqEnd();
+    const reqClient = useReqClient();
+    const request = useRequest();
+
     const [allClients, setAllClients] = useState<string[]>([]);
+
     const {
         currentPage,
         currentItems,
@@ -34,59 +42,66 @@ const TransfReq: FC = () => {
         paginate,
         goToNextPage,
         goToPrevPage,
-      } = usePagination(transfReqs, 5);
+    } = usePagination(request, 5);
 
     useEffect(() => {
         const loadValidRequests = async () => {
-            const result = await getRequestByStatus(userToken?.toString(),
-                userRole, userName, 'client', reqStartDate, reqFinDate, /*reqClient*/);
+            const result = await getRequestByStatus(userToken?.toString(), userRole, userName, reqStatus || "client", reqStartDate || "", reqFinDate || "", /*reqClient*/);
             if (result) {
-                setTransfReqs(result);
-            }
-            if (userRole == '2') {
-                const distinctClients = await getDistinctClients(userToken?.toString())
-                setAllClients(distinctClients)
+                dispatch(setRequest(result));
+
+                if (userRole === '2') {
+                    const distinctClients = await getDistinctClients(userToken?.toString());
+                    setAllClients(distinctClients)
+                    if (reqClient !== '') {
+                        const filteredRequests = result.filter(
+                            (request) => request.Client && request.Client.Name === reqClient
+                        );
+                        dispatch(setRequest(filteredRequests));
+                    }
+                }
             }
         };
         loadValidRequests();
     }, []);
 
-    //short-polling
+    // short-polling
     useEffect(() => {
         const intervalId = setInterval(() => {
             const loadPollRequests = async () => {
-                const result = await getRequestByStatus(userToken?.toString(),
-                    userRole, userName, status || "client", reqStartDate, reqFinDate, /*reqClient*/);
+                const result = await getRequestByStatus(userToken?.toString(), userRole, userName, reqStatus || "client", reqStartDate || "", reqFinDate || "", /*reqClient*/);
                 if (result) {
-                    setTransfReqs(result);
+                    dispatch(setRequest(result));
                 }
             };
             loadPollRequests();
         }, 10000);
 
         return () => clearInterval(intervalId);
-    }, [userToken, userRole, userName, status, reqStartDate, reqFinDate, reqClient]);
+    }, [userToken, userRole, userName, reqStatus, reqStartDate, reqFinDate, reqClient]);
 
     const applyFilters = async () => {
         try {
-            if (status === '') {
-                setStatus('client');
+            if (reqStatus === '') {
+                dispatch(setReqStatus('client'));
             }
 
-            dispatch(filtersSlice.actions.setReqStartDate(startDate));
-            dispatch(filtersSlice.actions.setReqFinDate(finDate));
-            dispatch(filtersSlice.actions.setRequestStatus(status));
-            dispatch(filtersSlice.actions.setReqClient(client));
+            dispatch(setReqStart(reqStartDate || ""));
+            dispatch(setReqEnd(reqFinDate || ""));
+            dispatch(setReqClientSl(reqClient || ""));
 
-            if (status !== undefined && status !== null) {
-                const result = await getRequestByStatus(userToken?.toString(),
-                    userRole, userName, status, startDate, finDate, /*client*/);
-                if (result) {
-                    //фильтр по клиенту => убрать фильтр по клиенту с бэка (не используется)
+            const result = await getRequestByStatus(userToken?.toString(), userRole, userName, reqStatus || "client", reqStartDate || "", reqFinDate || "", /*client*/);
+
+            if (result) {
+                // фильтр по клиенту => убрать фильтр по клиенту с бэка (не используется)
+                if (reqClient !== '') {
                     const filteredRequests = result.filter(
-                        (request) => request.Client && request.Client.Name === client
+                        (request) => request.Client && request.Client.Name === reqClient
                     );
-                    setTransfReqs(filteredRequests);
+                    dispatch(setRequest(filteredRequests));
+                    navigate('/transfer_requests', { state: { result } });
+                } else {
+                    dispatch(setRequest(result));
                     navigate('/transfer_requests', { state: { result } });
                 }
             }
@@ -95,22 +110,19 @@ const TransfReq: FC = () => {
         }
     };
 
-    const clearFilters = async () => {
-        setStatus('');
-        setStartDate('');
-        setFinDate('');
-        setClient('');
 
-        dispatch(filtersSlice.actions.setRequestStatus(''));
-        dispatch(filtersSlice.actions.setReqClient(''));
-        dispatch(filtersSlice.actions.setReqStartDate(''));
-        dispatch(filtersSlice.actions.setReqFinDate(''));
+    const clearFilters = async () => {
+
+        dispatch(setReqStatus(""));
+        dispatch(setReqStart(""));
+        dispatch(setReqEnd(""));
+        dispatch(setReqClientSl(""));
 
         try {
             const result = await getRequestByStatus(userToken?.toString(),
                 userRole, userName, 'client', '', '', /*''*/);
             if (result) {
-                setTransfReqs(result);
+                dispatch(setRequest(result));
             }
         } catch (error) {
             console.error("Ошибка:", error);
@@ -156,22 +168,22 @@ const TransfReq: FC = () => {
             {userToken && (
                 <>
                     <RequestFilter
-                        status={status}
-                        setStatus={setStatus}
-                        reqStartDate={startDate}
-                        setReqStartDate={setStartDate}
-                        reqFinDate={finDate}
-                        setReqFinDate={setFinDate}
-                        reqClient={client}
-                        setReqClient={setClient}
+                        status={reqStatus}
+                        setStatus={setReqStatus}
+                        reqStartDate={reqStartDate}
+                        setReqStartDate={setReqStart}
+                        reqFinDate={reqFinDate}
+                        setReqFinDate={setReqEnd}
+                        reqClient={reqClient}
+                        setReqClient={setReqClientSl}
                         allClients={allClients}
                         applyFilters={applyFilters}
                         clearFilters={clearFilters}>
                     </RequestFilter>
-                    {transfReqs.length === 0 && <h3 style={{ textAlign: 'center', marginTop: '20px' }}>
+                    {request.length === 0 && <h3 style={{ textAlign: 'center', marginTop: '20px' }}>
                         Заявки не найдены</h3>}
 
-                    {transfReqs.length !== 0 && (
+                    {request.length !== 0 && (
                         <>
                             <Table striped bordered hover responsive className="custom-table">
                                 <thead>
@@ -206,7 +218,7 @@ const TransfReq: FC = () => {
                                 </tbody>
                             </Table>
                             <div>
-                                {transfReqs.length > 5 && (
+                                {request.length > 5 && (
                                     <Pagination
                                         currentPage={currentPage}
                                         pageCount={pageCount}

@@ -3,11 +3,12 @@ import { Button, Card, Col } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { changeOrbitStatus } from '../../modules/changeOrbitStatus';
+import { changeReqStatus } from '../../modules/changeRequestStatus';
+import { createOrbitTransferReq } from '../../modules/createOrbitTransferRequest';
+import { deleteOrbitTransfer } from '../../modules/deleteTransferToOrbit';
 import cartSlice from '../../store/cartSlice';
 import store, { useAppDispatch } from '../../store/store';
 import "./OrbitCard.styles.css";
-import { createOrbitTransferReq } from '../../modules/createOrbitTransferRequest';
-import { deleteOrbitTransfer } from '../../modules/deleteTransferToOrbit';
 
 interface Props {
     imageUrl: string;
@@ -23,6 +24,7 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
     const dispatch = useAppDispatch();
 
     const { userRole, userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
+    const orbits = useSelector((state: ReturnType<typeof store.getState>) => state.cart.orbits);
 
     const isOrbitInCart = useSelector((state: ReturnType<typeof store.getState>) =>
         state.cart.orbits?.includes(orbitName)
@@ -50,6 +52,15 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
             if (isOrbitInCart) {
                 await deleteOrbitTransfer(orbitName, localStorage.getItem("reqID"), userToken);
                 dispatch(cartSlice.actions.removeOrbit(orbitName));
+                if (orbits.length === 1) {
+                    const reqIDString: string | null = localStorage.getItem("reqID");
+                    const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
+                    await changeReqStatus(userToken, {
+                        ID: reqID,
+                        Status: "На рассмотрении",
+                    });
+                    localStorage.setItem("reqID", "")
+                }
             } else {
                 const response = await createOrbitTransferReq(orbitName, userToken);
                 localStorage.setItem("reqID", response.data)
@@ -75,12 +86,12 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
             </div>
             <Card.Body>
                 <div className='card_title'>
-                    <Card.Title style={{fontWeight: 'bold'}}> {orbitName} </Card.Title>
+                    <Card.Title style={{ fontWeight: 'bold' }}> {orbitName} </Card.Title>
                     <Card.Title> Статус: {orbitStatus ? "Доступна" : "Недоступна"} </Card.Title>
                 </div>
                 <Button
                     className='button-card'
-                    style={{backgroundColor: '#0E3E8DFF'}}
+                    style={{ backgroundColor: '#0E3E8DFF' }}
                     onClick={() => (navigate(`/orbits/${encodeURIComponent(orbitName)}`))}>
                     Подробнее
                 </Button>
