@@ -1,18 +1,20 @@
 import React, { FC } from 'react';
 import { Button, Col, Form, FormLabel, FormSelect, Row } from 'react-bootstrap';
-import { useSelector } from 'react-redux/es/hooks/useSelector';
+import { useSelector, useDispatch } from 'react-redux';
+import { setReqStatus, setReqStart, setReqEnd, setReqClientSl } from '../../store/newFilter';
+import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import store from '../../store/store';
 import "./RequestFilter.styles.css"
 
 interface RequestFilterProps {
     status: string | null | undefined;
-    setStatus: React.Dispatch<React.SetStateAction<string | string | null>>;
+    setStatus: React.Dispatch<React.SetStateAction<string | undefined>> | ActionCreatorWithPayload<string, "data/setReqStatus">;
     reqStartDate: string | null | undefined;
-    setReqStartDate: React.Dispatch<React.SetStateAction<string | string | null>>;
+    setReqStartDate: React.Dispatch<React.SetStateAction<string | undefined>> | ActionCreatorWithPayload<string, "data/setReqStart">;
     reqFinDate: string | null | undefined;
-    setReqFinDate: React.Dispatch<React.SetStateAction<string | string | null>>;
+    setReqFinDate: React.Dispatch<React.SetStateAction<string | undefined>> | ActionCreatorWithPayload<string, "data/setReqEnd">;
     reqClient: string | null | undefined;
-    setReqClient: React.Dispatch<React.SetStateAction<string | string | null>>;
+    setReqClient: React.Dispatch<React.SetStateAction<string | undefined>> | ActionCreatorWithPayload<string, 'data/setReqClientSl'>;
     allClients: string[];
     applyFilters: () => void;
     clearFilters: () => void;
@@ -32,6 +34,7 @@ const RequestFilter: FC<RequestFilterProps> = ({
     clearFilters
 }) => {
     const { userRole } = useSelector((state: ReturnType<typeof store.getState>) => state.auth)
+    const dispatch = useDispatch();
 
     return (
         <div className="request-filter-container">
@@ -45,7 +48,10 @@ const RequestFilter: FC<RequestFilterProps> = ({
                             <FormSelect
                                 className="request-filter-select"
                                 value={status?.toString()}
-                                onChange={(e) => setStatus(e.target.value)}
+                                onChange={(e) => {
+                                    dispatch(setReqStatus(e.target.value));
+                                    setStatus(e.target.value);
+                                }}
                             >
                                 <option value="client">Все</option>
                                 <option value="На рассмотрении">На рассмотрении</option>
@@ -65,7 +71,10 @@ const RequestFilter: FC<RequestFilterProps> = ({
                                 type="date"
                                 className="date-input"
                                 value={reqStartDate?.toString()}
-                                onChange={(e) => setReqStartDate(e.target.value)}
+                                onChange={(e) => {
+                                    dispatch(setReqStart(e.target.value));
+                                    setReqStartDate(e.target.value);
+                                }}
                             />
                         </Col>
                         <Col>
@@ -74,7 +83,10 @@ const RequestFilter: FC<RequestFilterProps> = ({
                                 type="date"
                                 className="date-input"
                                 value={reqFinDate?.toString()}
-                                onChange={(e) => setReqFinDate(e.target.value)}
+                                onChange={(e) => {
+                                    dispatch(setReqEnd(e.target.value));
+                                    setReqFinDate(e.target.value);
+                                }}
                             />
                         </Col>
                         <Col>
@@ -82,7 +94,10 @@ const RequestFilter: FC<RequestFilterProps> = ({
                             <Form.Select
                                 className="request-filter-select"
                                 value={reqClient?.toString()}
-                                onChange={(e) => setReqClient(e.target.value)}
+                                onChange={(e) => {
+                                    dispatch(setReqClientSl(e.target.value));
+                                    setReqClient(e.target.value);
+                                }}
                             >
                                 <option value="">Выберите клиента</option>
                                 {allClients.map(client => (

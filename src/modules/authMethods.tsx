@@ -51,10 +51,6 @@ export const loginUser = createAsyncThunk(
       localStorage.setItem('userName', data.login)
       localStorage.setItem('userToken', data.access_token)
       localStorage.setItem('userRole', data.role)
-      localStorage.setItem("requestStatus", '')
-      localStorage.setItem("orbitName", '')
-      localStorage.setItem("OrbitIncl", '')
-      localStorage.setItem("orbitIsCircle", '')
       return data
     } catch (error) {
       if (!axios.isAxiosError(error)) {
@@ -76,16 +72,7 @@ export const logoutUser = createAsyncThunk(
       localStorage.setItem('userToken', '')
       localStorage.setItem('userName', '')
       localStorage.setItem('userRole', '0')
-      localStorage.setItem('orbits', '')
-      localStorage.setItem("requestStatus", '')
-      localStorage.setItem("orbitName", '')
-      localStorage.setItem("OrbitIncl", '')
-      localStorage.setItem("orbitIsCircle", '')
       localStorage.setItem("reqID", '')
-      localStorage.setItem("transfersOrder", '{}')
-      localStorage.setItem("reqStartDate", "")
-      localStorage.setItem("reqFinDate", "")
-      localStorage.setItem("reqClient", "")
 
 
       const config = {

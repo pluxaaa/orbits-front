@@ -7,12 +7,8 @@ interface CartState {
 }
 
 const initialState: CartState = {
-  orbits: localStorage.getItem('orbits')
-    ? localStorage.getItem('orbits')?.split(',') || []
-    : [],
-  transfersOrder: localStorage.getItem('transfersOrder')
-    ? JSON.parse(localStorage.getItem('transfersOrder') || '{}')
-    : {},
+  orbits: [],
+  transfersOrder: {},
   added: false,
 };
 
@@ -23,11 +19,7 @@ const cartSlice = createSlice({
     addOrbit(state, { payload }: PayloadAction<string>) {
       if (!state.orbits.includes(payload)) {
         state.orbits.push(payload);
-
         state.transfersOrder[payload] = state.orbits.length;
-
-        localStorage.setItem('orbits', state.orbits.toString());
-        localStorage.setItem('transfersOrder', JSON.stringify(state.transfersOrder));
       }
       state.added = true;
     },
@@ -40,9 +32,6 @@ const cartSlice = createSlice({
         state.orbits.forEach((orbit, index) => {
           state.transfersOrder[orbit] = index + 1;
         });
-
-        localStorage.setItem('orbits', state.orbits.toString());
-        localStorage.setItem('transfersOrder', JSON.stringify(state.transfersOrder));
       }
     },
     disableAdded(state) {
@@ -50,11 +39,9 @@ const cartSlice = createSlice({
     },
     setOrbits(state, { payload }: PayloadAction<string[]>) {
       state.orbits = Array.from(new Set([...state.orbits, ...payload]));
-      localStorage.setItem('orbits', state.orbits.toString());
     },
     setTransfersOrder(state, { payload }: PayloadAction<{ [orbit: string]: number }>) {
       state.transfersOrder = payload;
-      localStorage.setItem('transfersOrder', JSON.stringify(state.transfersOrder));
     },
   },
 });
