@@ -10,7 +10,6 @@ import OrbitTable from '../../components/OrbitTable/OrbitTable';
 import { changeOrbitStatus } from '../../modules/changeOrbitStatus';
 import { getAllOrbits } from '../../modules/getAllOrbits';
 import loadOrbitOrder from '../../modules/loadOrbitOrder';
-import getRequestByStatus from '../../modules/getRequestByStatus';
 import {
   setOrbApo,
   setOrbCircle,
@@ -31,7 +30,7 @@ import './OrbitsAll.styles.css';
 const OrbitsAll: FC = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate();
-  const { userToken, userRole, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth)
+  const { userToken, userRole } = useSelector((state: ReturnType<typeof store.getState>) => state.auth)
 
   const orbit = useOrbit();
   const orbName = useOrbName();
@@ -52,28 +51,19 @@ const OrbitsAll: FC = () => {
 
 
   useEffect(() => {
-    const loadDraftRequest = async () => {
-      const result = (await getRequestByStatus(userToken?.toString(),
-        userRole, userName, 'Черновик', '', '', /*''*/))
-      if (!result) {
-        return
-      }
-      if (result[0]?.ID) {
-        localStorage.setItem("reqID", result[0].ID.toString());
-
-        loadOrbitOrder(userToken, dispatch);
-
-      };
-    }
-    loadDraftRequest()
-
-
     const loadOrbits = async () => {
       try {
-        const result = await getAllOrbits(orbName, orbIncl, orbCircle);
-        dispatch(setOrbit(result));
+        const result = await getAllOrbits(orbName, orbIncl, orbCircle, userToken?.toString());
+
+        if (result.reqID !== 0){
+          localStorage.setItem("reqID", result.reqID.toString());
+
+          loadOrbitOrder(userToken, dispatch);
+        }
+
+        dispatch(setOrbit(result.allOrbits));
       } catch (error) {
-        console.error("Ошибка при загрузке объектов:", error);
+        console.error("Ошибка при загрузке орбит:", error);
       }
     }
 
@@ -82,9 +72,9 @@ const OrbitsAll: FC = () => {
 
   const applyFilters = async () => {
     try {
-      const data = await getAllOrbits(orbName, orbIncl, orbCircle);
+      const data = await getAllOrbits(orbName, orbIncl, orbCircle, userToken?.toString());
 
-      dispatch(setOrbit(data));
+      dispatch(setOrbit(data.allOrbits));
       dispatch(setOrbName(orbName?.toString() || ""));
       dispatch(setOrbApo(orbApo?.toString() || ''));
       dispatch(setOrbPeri(orbPeri?.toString() || ''));
@@ -107,8 +97,8 @@ const OrbitsAll: FC = () => {
     dispatch(setOrbCircle(''));
 
     try {
-      const data = await getAllOrbits();
-      dispatch(setOrbit(data));
+      const data = await getAllOrbits('','','',userToken?.toString());
+      dispatch(setOrbit(data.allOrbits));
     } catch (error) {
       console.error("Error loading all orbits:", error);
     }

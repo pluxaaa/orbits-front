@@ -1,7 +1,19 @@
 import axios from 'axios';
 import { Orbit } from './ds';
 
-export const getAllOrbits = async (orbitName = '', orbitIncl = '', orbitIsCircle = ''): Promise<Orbit[]> => {
+export const getAllOrbits = async (orbitName = '', orbitIncl = '', orbitIsCircle = '', userToken = ''): Promise<{ allOrbits: Orbit[], reqID: number }> => {
+  if (userToken === "") {
+    userToken = "guest";
+  }
+
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + userToken,
+      'Accept': 'application/json'
+    },
+  };
+
   try {
     const queryParams = new URLSearchParams({
       orbit_name: orbitName,
@@ -9,19 +21,25 @@ export const getAllOrbits = async (orbitName = '', orbitIncl = '', orbitIsCircle
       is_circle: orbitIsCircle,
     });
 
-    const response = await axios.get(`/api/orbits?${queryParams.toString()}`);
-    return response.data;
+    const response = await axios.get(`/api/orbits?${queryParams.toString()}`, config);
+    
+    const { allOrbits, reqID } = response.data;
+
+    return { allOrbits, reqID };
   } catch (error) {
-    console.error('Ошибка при получении орбит:', error);
-    return [{
-      "ID": 0,
-      "Name": "Нет информации",
-      "IsAvailable": false,
-      "Apogee": "Нет информации",
-      "Perigee": "Нет информации",
-      "Inclination": "Нет информации",
-      "Description": "Нет информации",
-      "ImageURL": "./DEFAULT.jpg"
-    }];
+    console.error('Error fetching orbits:', error);
+    return {
+      allOrbits: [{
+        "ID": 0,
+        "Name": "No information",
+        "IsAvailable": false,
+        "Apogee": "No information",
+        "Perigee": "No information",
+        "Inclination": "No information",
+        "Description": "No information",
+        "ImageURL": "./DEFAULT.jpg"
+      }],
+      reqID: 0,
+    };
   }
 };
