@@ -1,19 +1,21 @@
 import axios, { AxiosResponse } from "axios";
 
-export const createOrbitTransferReq = async(orbit: string, userToken: string): Promise<AxiosResponse> => {
+export const addOrbitTransfer = async(orbit: string, req: string | null, userToken: string): Promise<AxiosResponse> => {
     const config = {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + userToken,
         },
-      }
+    };
+
     return axios.post(
-        `/api/orbits/${encodeURIComponent(orbit)}/add`,
+        `/api/transfer_to_orbit/add`,
         {
-            orbit: orbit
+            orbit: orbit,
+            req: req
         },
         config
-
     )
     .then((response) => response);
+    
 }
