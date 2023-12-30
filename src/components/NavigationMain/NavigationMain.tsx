@@ -36,6 +36,7 @@ const NavigationMain: FC = () => {
                     {!userToken &&
                         <>
                             <NavLink style={{ marginRight: '10px' }} to="/login" className='nav-link'>Вход</NavLink>
+                            <NavLink style={{ marginRight: '10px' }} to="/register" className='nav-link'>Регистрация</NavLink>
                         </>}
                 </Nav>
             </Navbar.Collapse>
