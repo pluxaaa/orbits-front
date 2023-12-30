@@ -10,6 +10,7 @@ import OrbitTable from '../../components/OrbitTable/OrbitTable';
 import { changeOrbitStatus } from '../../modules/changeOrbitStatus';
 import { getAllOrbits } from '../../modules/getAllOrbits';
 import loadOrbitOrder from '../../modules/loadOrbitOrder';
+import { setViewMode } from '../../store/viewModeSlice';
 import {
   setOrbApo,
   setOrbCircle,
@@ -41,14 +42,14 @@ const OrbitsAll: FC = () => {
 
   const [isStatusChanging, setIsStatusChanging] = useState(false);
 
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+  const viewMode = useSelector((state: ReturnType<typeof store.getState>) => state.viewMode.mode);
 
   const ToggleIcon = viewMode === 'table' ? BsGrid : BsTable;
 
   const toggleViewMode = () => {
-    setViewMode((prevMode) => (prevMode === 'table' ? 'cards' : 'table'));
+    const newMode = viewMode === 'table' ? 'cards' : 'table';
+    dispatch(setViewMode(newMode));
   };
-
 
   useEffect(() => {
     const loadOrbits = async () => {
@@ -66,7 +67,6 @@ const OrbitsAll: FC = () => {
         console.error("Ошибка при загрузке орбит:", error);
       }
     }
-
     loadOrbits();
   }, []);
 
