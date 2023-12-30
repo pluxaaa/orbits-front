@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import Pagination from '../../components/Pagination/Pagination';
 import usePagination from '../../components/Pagination/usePagination';
 import RequestFilter from '../../components/RequestFilter/RequestFilter';
-import { getDistinctClients } from '../../modules/getDistinctClients';
 import getRequestByStatus from '../../modules/getRequestByStatus';
 import store, { useAppDispatch } from '../../store/store';
+import { formatDate } from '../../modules/formatDate';
 import {
     useReqStatus,
     useReqStart,
@@ -51,8 +51,8 @@ const TransfReq: FC = () => {
                 dispatch(setRequest(result));
 
                 if (userRole === '2') {
-                    const distinctClients = await getDistinctClients(userToken?.toString());
-                    setAllClients(distinctClients)
+                    const uniqueClientRefers: string[] = Array.from(new Set(result.map(item => item.Client?.Name || '')));
+                    setAllClients(uniqueClientRefers)
                     if (reqClient !== '') {
                         const filteredRequests = result.filter(
                             (request) => request.Client && request.Client.Name === reqClient
@@ -128,26 +128,6 @@ const TransfReq: FC = () => {
             console.error("Ошибка:", error);
         }
 
-    };
-
-    const formatDate = (dateString: string | undefined) => {
-        if (!dateString) {
-            return '-';
-        }
-
-        const options: Intl.DateTimeFormatOptions = {
-            timeZone: 'UTC',
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-        };
-
-        const date = new Date(dateString);
-
-        return new Intl.DateTimeFormat('ru-RU', options).format(date);
     };
 
     return (

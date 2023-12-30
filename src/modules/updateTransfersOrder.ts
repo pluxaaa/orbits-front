@@ -7,7 +7,7 @@ const updateTransfersOrder = async (
         
     const updateTransfersOrderBody = {
         req_id: transferID,
-        visit_order: transfersOrder,
+        transfer_order: transfersOrder,
     };
 
     try {

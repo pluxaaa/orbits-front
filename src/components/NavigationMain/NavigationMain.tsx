@@ -1,5 +1,5 @@
-import { FC, useState } from 'react';
-import { Nav, NavDropdown, Navbar } from 'react-bootstrap';
+import { FC } from 'react';
+import { Nav, Navbar } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,6 @@ import './NavigationMain.styles.css';
 
 const NavigationMain: FC = () => {
     const { userToken, userName } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
-    const [showDropdown, setShowDropdown] = useState(false);
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -31,38 +30,12 @@ const NavigationMain: FC = () => {
                     {userToken &&
                         <>
                             <NavLink to="/transfer_requests" className="nav-link">Заявки</NavLink>
-                            <NavDropdown
-                                className="nav-dropdown"
-                                title={userName}
-                                id="basic-nav-dropdown"
-                                show={showDropdown}
-                                onMouseEnter={() => setShowDropdown(true)}
-                                onMouseLeave={() => setShowDropdown(false)}
-                                align={{ sm: 'end' }}
-                            >
-                                <NavDropdown.Item
-                                    className="navbar-block"
-                                    onClick={() => {
-                                        navigate('/profile');
-                                        setShowDropdown(false);
-                                    }}
-                                >
-                                    Личный кабинет
-                                </NavDropdown.Item>
-                                <NavDropdown.Item
-                                    className="navbar-block"
-                                    onClick={() => {
-                                        handleLogout();
-                                        setShowDropdown(false);
-                                    }}
-                                >
-                                    Выйти
-                                </NavDropdown.Item>
-                            </NavDropdown>
+                            <NavLink to="/profile" className="nav-link">{userName}</NavLink>
+                            <Nav.Item style={{ cursor: 'pointer' }} onClick={handleLogout} className="nav-link">Выйти</Nav.Item>
                         </>}
                     {!userToken &&
                         <>
-                            <NavLink style={{marginRight:'10px'}} to="/login" className='nav-link'>Вход</NavLink>
+                            <NavLink style={{ marginRight: '10px' }} to="/login" className='nav-link'>Вход</NavLink>
                         </>}
                 </Nav>
             </Navbar.Collapse>

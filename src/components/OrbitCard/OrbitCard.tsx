@@ -8,8 +8,10 @@ import { deleteOrbitTransfer } from '../../modules/deleteTransferToOrbit';
 import cartSlice from '../../store/cartSlice';
 import store, { useAppDispatch } from '../../store/store';
 import "./OrbitCard.styles.css";
-import { createTransferReq } from '../../modules/createTransferRequest';
-import { addOrbitTransfer } from '../../modules/addTransferToOrbit';
+// import { createTransferReq } from '../../modules/createTransferRequest';
+// import { addOrbitTransfer } from '../../modules/addTransferToOrbit';
+import { createOrbitTransferReq } from '../../modules/createOrbitTransferRequest';
+import { getAllOrbits } from '../../modules/getAllOrbits';
 
 interface Props {
     imageUrl: string;
@@ -58,21 +60,15 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
                     const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
                     await changeReqStatus(userToken, {
                         ID: reqID,
-                        Status: "Удалена",
+                        Status: "На рассмотрении",
                     });
                     localStorage.setItem("reqID", "")
                 }
             } else {
-
-                if (localStorage.getItem("reqID") === ""){
-                    const response = await createTransferReq(userToken)
-                    localStorage.setItem("reqID", response.data)
-                    addOrbitTransfer(orbitName, localStorage.getItem("reqID"), userToken)
-                } else {
-                    addOrbitTransfer(orbitName, localStorage.getItem("reqID"), userToken)
-                }
+                await createOrbitTransferReq(orbitName, userToken);
+                const data = await getAllOrbits('', '', '', userToken?.toString())
+                localStorage.setItem("reqID", data.reqID.toString())
                 dispatch(cartSlice.actions.addOrbit(orbitName));
-                
             }
         } catch (error) {
             console.error('Ошибка:', error);

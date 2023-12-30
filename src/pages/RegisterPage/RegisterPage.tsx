@@ -21,6 +21,8 @@ const Register: FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const { userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
+
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
@@ -79,12 +81,24 @@ const Register: FC = () => {
     }
     if (success && !showRegisterModal) {
       navigate('/orbits');
-      window.location.reload();
     }
   }, [showRegisterModal, success]);
 
   return (
     <>
+      {userToken && (
+        <>
+          <div style={{ textAlign: 'center', marginTop: '50px' }}>
+            <h3>Вы уже вошли в систему</h3>
+            <Button
+              className="button"
+              onClick={() => navigate(`/orbits`)}
+              style={{ marginTop: '10px' }}>
+              К орбитам
+            </Button>
+          </div>
+        </>
+      )}
       <Modal show={showErrorModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Ошибка</Modal.Title>
@@ -106,31 +120,36 @@ const Register: FC = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
-      <div className="login-card">
-        <h1>Регистрация</h1>
-        <div className="form-group">
-          <label>Логин:</label>
-          <input className="input-login" value={login} onChange={handleLoginChange} />
+      {!userToken && (
+        <div className="login-card">
+          <h1>Регистрация</h1>
+          <div className="form-group">
+            <label>Логин:</label>
+            <input className="input-login" value={login} onChange={handleLoginChange} />
+          </div>
+          <div className="form-group">
+            <label>Пароль:</label>
+            <input className="input-login" type="password" value={password} onChange={handlePasswordChange} />
+          </div>
+          <div className="form-group">
+            <label>Повторите пароль:</label>
+            <input
+              className="input-login"
+              type="password"
+              value={repeatPassword}
+              onChange={handleRepeatPasswordChange}
+            />
+          </div>
+          <button onClick={sendRegister} disabled={loading}>
+            Зарегистрироваться
+          </button>
+          <div style={{ textAlign: 'center', marginTop: '30px' }}>Уже зарегистрированы?</div>
+          <button onClick={() => (navigate(`/login`))}>
+            Вход
+          </button>
+          {loading ? <Spinner /> : ''}
         </div>
-        <div className="form-group">
-          <label>Пароль:</label>
-          <input className="input-login" type="password" value={password} onChange={handlePasswordChange} />
-        </div>
-        <div className="form-group">
-          <label>Повторите пароль:</label>
-          <input
-            className="input-login"
-            type="password"
-            value={repeatPassword}
-            onChange={handleRepeatPasswordChange}
-          />
-        </div>
-        <button onClick={sendRegister} disabled={loading}>
-          Зарегистрироваться
-        </button>
-        {loading ? <Spinner /> : ''}
-      </div>
+      )}
     </>
   );
 };

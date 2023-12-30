@@ -31,6 +31,8 @@ const Login: FC = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const { userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
+
   const handleLoginChange = (event: InputChangeInterface) => {
     setLogin(event.target.value)
   }
@@ -73,6 +75,19 @@ const Login: FC = () => {
 
   return (
     <>
+      {userToken && (
+        <>
+          <div style={{ textAlign: 'center', marginTop: '50px' }}>
+            <h3>Вы уже вошли в систему</h3>
+            <Button
+              className="button"
+              onClick={() => navigate(`/orbits`)}
+              style={{ marginTop: '10px' }}>
+              К орбитам
+            </Button>
+          </div>
+        </>
+      )}
       <Modal show={showErrorModal} onHide={handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Ошибка</Modal.Title>
@@ -84,26 +99,27 @@ const Login: FC = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
-      <div className="login-card">
-        <h1>Вход</h1>
-        <div className="form-group">
-          <label>Логин:</label>
-          <input className="input-login" value={login} onChange={handleLoginChange} />
+      {!userToken && (
+        <div className="login-card">
+          <h1>Вход</h1>
+          <div className="form-group">
+            <label>Логин:</label>
+            <input className="input-login" value={login} onChange={handleLoginChange} />
+          </div>
+          <div className="form-group">
+            <label>Пароль:</label>
+            <input className="input-login" type="password" value={password} onChange={handlePasswordChange} />
+          </div>
+          <button onClick={sendLogin} disabled={loading}>
+            Войти
+          </button>
+          <div style={{ textAlign: 'center', marginTop: '30px' }}>Нет аккаунта?</div>
+          <button onClick={() => (navigate(`/register`))}>
+            Регистрация
+          </button>
+          {loading ? <Spinner /> : ''}
         </div>
-        <div className="form-group">
-          <label>Пароль:</label>
-          <input className="input-login" type="password" value={password} onChange={handlePasswordChange} />
-        </div>
-        <button onClick={sendLogin} disabled={loading}>
-          Войти
-        </button>
-        <div style={{ textAlign: 'center', marginTop: '30px' }}>Нет аккаунта?</div>
-        <button onClick={() => (navigate(`/register`))}>
-          Регистрация
-        </button>
-        {loading ? <Spinner /> : ''}
-      </div>
+      )}
     </>
   );
 };

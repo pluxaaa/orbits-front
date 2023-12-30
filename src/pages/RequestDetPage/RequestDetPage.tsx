@@ -9,6 +9,7 @@ import { getRequestOrbits } from "../../modules/getRequestOrbits";
 import store from '../../store/store';
 import "./RequestDetPage.styles.css";
 import { useNavigate } from 'react-router-dom';
+import { formatDate } from '../../modules/formatDate';
 
 const TransfReqDet: FC = () => {
     const [orbits, setOrbits] = useState<Orbit[]>();
@@ -95,7 +96,12 @@ const TransfReqDet: FC = () => {
                 </Modal.Footer>
             </Modal>
             <h1>Заявка на трансфер #{req?.ID}</h1>
+            {userRole === '2' && req?.Client && (
+                <p>Клиент: {req.Client.Name}</p>
+            )}
             <p>Статус: {status}</p>
+            <p>Дата создания: {formatDate(req?.DateCreated)}</p>
+            <p>Дата формирования: {formatDate(req?.DateProcessed)}</p>
             {status !== 'Отклонена' && (<>
                 <h4>Орбиты:</h4>
                 <ListGroup className="list-group" style={{ width: '300px' }}>
