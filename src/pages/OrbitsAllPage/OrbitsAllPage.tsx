@@ -100,7 +100,7 @@ const OrbitsAll: FC = () => {
       const data = await getAllOrbits('','','',userToken?.toString());
       dispatch(setOrbit(data.allOrbits));
     } catch (error) {
-      console.error("Error loading all orbits:", error);
+      console.error("Ошибка загрузки орбит:", error);
     }
 
   };

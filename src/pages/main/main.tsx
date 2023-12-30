@@ -30,7 +30,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/orbits/add" element={<OrbitForm />} />
           <Route path="/transfer_requests" Component={TransfReq} />
           <Route path="/transfer_requests/:req_id" Component={TransfReqDet} />
-          <Route path="/cart/:req_id" Component={Cart} />
+          <Route path="/transfer_requests/draft/:req_id" Component={Cart} />
           <Route path="/login" Component={Login} />
           <Route path="/register" Component={Register} />
           <Route path="/profile" Component={Profile} />
