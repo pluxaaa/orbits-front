@@ -25,6 +25,10 @@ function Breadcrumbs() {
     const crumbs = location.pathname.split('/')
         .filter(crumb => crumb !== '')
         .map(crumb => {
+            if (crumb === 'cards' || crumb === 'table') {
+                return null;
+            }
+
             currentLink += `/${crumb}`;
             const decodedCrumb = decodeURIComponent(crumb);
             const label = endpointToLabel[crumb] || decodedCrumb;
