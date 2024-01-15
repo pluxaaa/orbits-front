@@ -6,7 +6,7 @@ import NavigationMain from '../../components/NavigationMain/NavigationMain';
 import Footer from '../../components/Footer/Footer';
 import Login from '../LoginPage/LoginPage';
 import Register from '../RegisterPage/RegisterPage';
-import Cart from '../CartPage/CartPage';
+import HomePage from '../MenuPage/MenuPage';
 import OrbitDetailed from '../OrbitDetPage/OrbitDetPage';
 import OrbitsAll from '../OrbitsAllPage/OrbitsAllPage';
 import Profile from '../ProfilePage/ProfilePage';
@@ -33,6 +33,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path="/login" Component={Login} />
         <Route path="/register" Component={Register} />
         <Route path="/profile" Component={Profile} />
+        <Route path="/" element={<HomePage />} />
         <Route path="*" Component={NotFoundPage} />
       </Routes>
       <Footer />

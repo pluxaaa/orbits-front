@@ -22,7 +22,7 @@ const NavigationMain: FC = () => {
 
     return (
         <Navbar expand="sm">
-            <NavLink className="logo" to="/orbits" style={{ textDecoration: 'none' }}>ORBIT TRANSFER</NavLink>
+            <NavLink className="logo" to="/" style={{ textDecoration: 'none' }}>ORBIT TRANSFER</NavLink>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <span><NavLink to="/orbits" className="nav-link">Список орбит</NavLink></span>
