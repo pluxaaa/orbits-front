@@ -4,12 +4,14 @@ interface CartState {
   orbits: string[];
   transfersOrder: { [orbit: string]: number };
   added: boolean;
+  isInCart: boolean;
 }
 
 const initialState: CartState = {
   orbits: [],
   transfersOrder: {},
   added: false,
+  isInCart: true,
 };
 
 const cartSlice = createSlice({
@@ -43,6 +45,9 @@ const cartSlice = createSlice({
     setTransfersOrder(state, { payload }: PayloadAction<{ [orbit: string]: number }>) {
       state.transfersOrder = payload;
     },
+    setIsInCart(state, { payload }: PayloadAction<boolean>) {
+      state.isInCart = payload;
+    }
   },
 });
 

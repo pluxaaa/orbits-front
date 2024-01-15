@@ -11,7 +11,7 @@ const updateTransfersOrder = async (
     };
 
     try {
-        const response = await axios.put('/api/transfer_to_orbit/update_order', updateTransfersOrderBody, {
+        const response = await axios.put('/api/transfer_requests/update_order', updateTransfersOrderBody, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + userToken,

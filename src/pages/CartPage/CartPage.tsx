@@ -6,11 +6,13 @@ import { deleteOrbitTransfer } from "../../modules/deleteTransferToOrbit";
 import cartSlice from "../../store/cartSlice";
 import store, { useAppDispatch } from "../../store/store";
 import { changeReqStatus } from "../../modules/changeRequestStatus";
+import { deleteTransferRequest } from "../../modules/deleteTransferRequest";
 import { DropResult } from "react-beautiful-dnd";
 import { updateTransfersOrder } from "../../modules/updateTransfersOrder";
 import CartTable from "../../components/CartTable/CartTable";
 import "./CartPage.styles.css";
 import loadOrbitOrder from "../../modules/loadOrbitOrder";
+import { changeReqStatusClient } from "../../modules/changeRequestStatusClient";
 
 const Cart: FC = () => {
     const [showSuccess, setShowSuccess] = useState(false);
@@ -25,26 +27,27 @@ const Cart: FC = () => {
     const transfersOrder = useSelector((state: ReturnType<typeof store.getState>) => state.cart.transfersOrder);
 
     useEffect(() => {
+        dispatch(cartSlice.actions.setIsInCart(true));
         loadOrbitOrder(userToken, dispatch);
     }, [dispatch, userToken]);
 
     const deleteFromCart = (orbitName = '') => {
         if (!userToken) {
-          return;
+            return;
         }
-        return async ()  => {
-          await deleteOrbitTransfer(orbitName, localStorage.getItem("reqID"), userToken)
-            .then(() => {
-              dispatch(cartSlice.actions.removeOrbit(orbitName));
-              if (orbits.length === 1) {
-                deleteRequest()
-              }
-            })
-            .catch(() => {
-              setShowError(true);
-            });
+        return async () => {
+            await deleteOrbitTransfer(orbitName, localStorage.getItem("reqID"), userToken)
+                .then(() => {
+                    dispatch(cartSlice.actions.removeOrbit(orbitName));
+                    if (orbits.length === 1) {
+                        deleteRequest()
+                    }
+                })
+                .catch(() => {
+                    setShowError(true);
+                });
         };
-      };
+    };
 
     const sendRequest = async () => {
         if (!userToken) {
@@ -54,10 +57,12 @@ const Cart: FC = () => {
         const reqIDString: string | null = localStorage.getItem("reqID");
         const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
 
-        await changeReqStatus(userToken, {
-            ID: reqID,
-            Status: "На рассмотрении",
-        });
+        await changeReqStatusClient(userToken, reqID)
+
+        // await changeReqStatus(userToken, {
+        //     ID: reqID,
+        //     Status: "На рассмотрении",
+        // });
 
         if (orbits) {
             orbits.forEach((orbitName: string) => {
@@ -65,6 +70,7 @@ const Cart: FC = () => {
             });
             localStorage.setItem("reqID", "")
         }
+        dispatch(cartSlice.actions.setIsInCart(false))
 
         setRedirectUrl(`/transfer_requests/${reqID}`);
         setShowSuccess(true);
@@ -78,10 +84,11 @@ const Cart: FC = () => {
         const reqIDString: string | null = localStorage.getItem("reqID");
         const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
 
-        await changeReqStatus(userToken, {
-            ID: reqID,
-            Status: "Удалена",
-        });
+        // await changeReqStatus(userToken, {
+        //     ID: reqID,
+        //     Status: "Удалена",
+        // });
+        await deleteTransferRequest(userToken, reqID)
 
         if (orbits) {
             orbits.forEach((orbitName: string) => {
@@ -89,6 +96,7 @@ const Cart: FC = () => {
             });
             localStorage.setItem("reqID", "")
         }
+        dispatch(cartSlice.actions.setIsInCart(false))
     };
 
     const handleErrorClose = () => {
@@ -99,6 +107,7 @@ const Cart: FC = () => {
         setShowSuccess(false);
 
         if (redirectUrl) {
+            dispatch(cartSlice.actions.setIsInCart(false))
             navigate(redirectUrl);
             setRedirectUrl(null);
         }

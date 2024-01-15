@@ -12,6 +12,7 @@ import "./OrbitCard.styles.css";
 // import { addOrbitTransfer } from '../../modules/addTransferToOrbit';
 import { createOrbitTransferReq } from '../../modules/createOrbitTransferRequest';
 import { getAllOrbits } from '../../modules/getAllOrbits';
+import { changeReqStatusClient } from '../../modules/changeRequestStatusClient';
 
 interface Props {
     imageUrl: string;
@@ -58,10 +59,11 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
                 if (orbits.length === 1) {
                     const reqIDString: string | null = localStorage.getItem("reqID");
                     const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
-                    await changeReqStatus(userToken, {
-                        ID: reqID,
-                        Status: "На рассмотрении",
-                    });
+                    await changeReqStatusClient(userToken, reqID)
+                    // await changeReqStatus(userToken, {
+                    //     ID: reqID,
+                    //     Status: "На рассмотрении",
+                    // });
                     localStorage.setItem("reqID", "")
                 }
             } else {
