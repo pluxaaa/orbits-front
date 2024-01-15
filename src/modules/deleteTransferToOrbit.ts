@@ -9,7 +9,7 @@ export const deleteOrbitTransfer = async(orbit: string, req: string | null, user
     };
 
     return axios.delete(
-        `/api/transfer_to_orbit/delete_single`,
+        `/api/transfer_requests/delete_single`,
         {
             headers: config.headers,
             data: {

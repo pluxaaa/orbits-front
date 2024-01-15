@@ -14,7 +14,6 @@ const endpointToLabel: EndpointToLabelMap = {
   'register' : 'Регистрация',
   'add' : 'Добавление',
   'edit' : 'Изменение',
-  'draft' : 'Черновик',
 };
 
 function Breadcrumbs() {

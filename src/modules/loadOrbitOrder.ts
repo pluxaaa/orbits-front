@@ -10,11 +10,11 @@ const loadOrbitOrder = async (userToken: string | null, dispatch: ThunkDispatch<
 
   const orbitOrder = await getOrbitOrder(reqID, userToken?.toString());
 
-  dispatch(cartSlice.actions.setOrbits(orbitOrder.map((orbit) => orbit.orbit_name)));
+  dispatch(cartSlice.actions.setOrbits(orbitOrder.map((orbit) => orbit.orbit.Name)));
 
   const newTransfersOrder: { [orbit: string]: number } = {};
   orbitOrder.forEach((orbit, index) => {
-    newTransfersOrder[orbit.orbit_name] = index + 1;
+    newTransfersOrder[orbit.orbit.Name] = index + 1;
   });
 
   dispatch(cartSlice.actions.setTransfersOrder(newTransfersOrder));

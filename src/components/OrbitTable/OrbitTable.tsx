@@ -33,29 +33,41 @@ const OrbitTable: FC<OrbitTableProps> = ({ orbits, handleStatusChange, isStatusC
               <th>Изображение</th>
               <th>Название орбиты</th>
               <th>Статус</th>
+              <th>Параметры</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {currentItems.map((orbit, index) => (
               <tr key={index}>
-                <td>
-                  <div className="orbit-details">
-                    {orbit.ImageURL && (
-                      <img
-                        src={orbit?.ImageURL}
-                        onError={(e) => {
-                          e.currentTarget.src = '/DEFAULT.jpg';
-                        }}
-                        style={{ width: '150px', height: '150px' }}
-                      />
-                    )}
-                  </div>
-                </td>
+                  <td style={{ minWidth: '150px' }}>
+                    <div className="orbit-details">
+                      {orbit.ImageURL && (
+                        <img
+                          src={orbit?.ImageURL}
+                          onError={(e) => {
+                            e.currentTarget.src = '/DEFAULT.jpg';
+                          }}
+                          style={{ width: '150px', height: '150px' }}
+                        />
+                      )}
+                    </div>
+                  </td>
                 <td><span style={{ fontSize: '19px', fontWeight: 'bold' }}>{orbit.Name}</span></td>
                 <td style={{ fontSize: '19px', paddingLeft: '10px', paddingRight: '10px' }}>
                   {orbit.IsAvailable ? 'Доступна' : 'Не доступна'}
                 </td>
+                  <td style={{ minWidth: '200px', fontSize: '19px' }}>
+                    <div>
+                      <strong>Апогей:</strong> {orbit.Apogee} км
+                    </div>
+                    <div>
+                      <strong>Перигей:</strong> {orbit.Perigee} км
+                    </div>
+                    <div>
+                      <strong>Наклонение:</strong> {orbit.Inclination}°
+                    </div>
+                  </td>
                 <td>
                   <Col>
                     <Button
@@ -102,6 +114,7 @@ const OrbitTable: FC<OrbitTableProps> = ({ orbits, handleStatusChange, isStatusC
       />}
     </>
   );
+
 };
 
 export default OrbitTable;

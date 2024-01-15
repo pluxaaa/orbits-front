@@ -26,4 +26,5 @@ export interface TransferRequest {
     DateCreated?: string,
     DateProcessed?: string,
     DateFinished?: string,
+    Result?: boolean,
 }

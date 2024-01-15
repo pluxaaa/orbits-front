@@ -13,7 +13,7 @@ const CartButton: FC = () => {
     <Button 
       className={"cart-button"} 
       disabled={orbits?.length === 0}
-      onClick={() => (navigate(`/transfer_requests/draft/${localStorage.getItem('reqID')}`))}>
+      onClick={() => (navigate(`/transfer_requests/${localStorage.getItem('reqID')}`))}>
       Корзина ({orbits?.length || 0})
     </Button>
   );

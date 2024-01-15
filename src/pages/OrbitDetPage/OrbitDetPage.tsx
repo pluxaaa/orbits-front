@@ -14,6 +14,7 @@ import cartSlice from '../../store/cartSlice';
 import { changeReqStatus } from '../../modules/changeRequestStatus';
 import { createOrbitTransferReq } from '../../modules/createOrbitTransferRequest';
 import { getAllOrbits } from '../../modules/getAllOrbits';
+import { changeReqStatusClient } from '../../modules/changeRequestStatusClient';
 
 
 const OrbitDetailed: FC = () => {
@@ -74,10 +75,11 @@ const OrbitDetailed: FC = () => {
         if (orbits.length === 1) {
           const reqIDString: string | null = localStorage.getItem("reqID");
           const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
-          await changeReqStatus(userToken, {
-            ID: reqID,
-            Status: "На рассмотрении",
-          });
+          // await changeReqStatus(userToken, {
+          //   ID: reqID,
+          //   Status: "На рассмотрении",
+          // });
+          await changeReqStatusClient(userToken, reqID)
           localStorage.setItem("reqID", "")
         }
       } else {
