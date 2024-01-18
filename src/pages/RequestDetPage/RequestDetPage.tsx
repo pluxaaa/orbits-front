@@ -132,7 +132,7 @@ const TransfReqDet: FC = () => {
                     )}
                     <p>Дата создания: {formatDate(req?.DateCreated)}</p>
                     <p>Дата формирования: {formatDate(req?.DateProcessed)}</p>
-                    {status !== 'Отклонена' && (<>
+                    {status !== '' && (<>
                         <h4>Орбиты:</h4>
                         <ListGroup className="list-group" style={{ width: '300px' }}>
                             {orbits?.map((orbit) => (
