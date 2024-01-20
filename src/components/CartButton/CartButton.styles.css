@@ -1,7 +1,7 @@
 .cart-button {
   display: inline-block;
   position: absolute; /*fixed=остается при скроле*/
-  left: 20px;
+  right: 20px;
   top: 90px;
   text-decoration: none;
   background-color: #0E3E8DFF;
