@@ -11,7 +11,6 @@ import { useAppDispatch } from '../../store/store';
 import store from '../../store/store';
 import { deleteOrbitTransfer } from '../../modules/deleteTransferToOrbit';
 import cartSlice from '../../store/cartSlice';
-import { changeReqStatus } from '../../modules/changeRequestStatus';
 import { createOrbitTransferReq } from '../../modules/createOrbitTransferRequest';
 import { getAllOrbits } from '../../modules/getAllOrbits';
 import { changeReqStatusClient } from '../../modules/changeRequestStatusClient';
@@ -28,6 +27,7 @@ const OrbitDetailed: FC = () => {
 
   const { userRole, userToken } = useSelector((state: ReturnType<typeof store.getState>) => state.auth);
   const orbits = useSelector((state: ReturnType<typeof store.getState>) => state.cart.orbits);
+  const viewMode = useSelector((state: ReturnType<typeof store.getState>) => state.viewMode.mode);
 
   const isOrbitInCart = useSelector((state: ReturnType<typeof store.getState>) =>
     state.cart.orbits?.includes(orbit_name || "")
@@ -75,10 +75,6 @@ const OrbitDetailed: FC = () => {
         if (orbits.length === 1) {
           const reqIDString: string | null = localStorage.getItem("reqID");
           const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
-          // await changeReqStatus(userToken, {
-          //   ID: reqID,
-          //   Status: "На рассмотрении",
-          // });
           await changeReqStatusClient(userToken, reqID)
           localStorage.setItem("reqID", "")
         }
@@ -102,7 +98,7 @@ const OrbitDetailed: FC = () => {
           onError={(e) => { e.currentTarget.src = '/DEFAULT.jpg' }}
         />
         <div className="right-content-sub">
-          <p style={{fontWeight:"bold", fontSize:"30px"}}>{orbit?.Name}</p>
+          <p style={{ fontWeight: "bold", fontSize: "30px" }}>{orbit?.Name}</p>
           <p>Апогей: {orbit?.Apogee} км</p>
           <p>Перигей: {orbit?.Perigee} км</p>
           <p>Наклонение: {orbit?.Inclination}°</p>
@@ -111,20 +107,34 @@ const OrbitDetailed: FC = () => {
       </div>
       <Row>
         <Col>
-          <button className="button-det" onClick={() => (navigate(`/orbits/`))}>Назад</button>
-        </Col>
-        <Col>
-          {userRole === '1' && (
+          <button
+            className="button-det"
+            style={{ width: '95%', position: 'relative', marginLeft: '40px' }}
+            onClick={() => (navigate(`/orbits/`))}>
+            Назад
+          </button>
+
+          {userToken && (viewMode !== 'table' || userRole === '1') && (
             <>
               <div style={{ width: '1px', height: '1px' }}></div>
               <Button
                 className='button-add'
+                style={{ width: '95%', position: 'relative', marginLeft: '40px' }}
                 onClick={handleCreateRequest}
                 variant={isOrbitInCart ? 'danger' : 'success'}
               >
                 {isOrbitInCart ? 'Удалить' : 'Добавить'}
               </Button>
             </>
+          )}
+          {userRole === '2' && viewMode !== 'cards' && (
+            <Button
+              className="common-button"
+              variant="success"
+              style={{ width: '95%', position: 'relative', marginLeft: '40px' }}
+              onClick={() => (navigate(`/orbits/${orbit_name}/edit`))}>
+              Изменить
+            </Button>
           )}
         </Col>
       </Row>

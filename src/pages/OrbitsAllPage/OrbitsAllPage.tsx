@@ -56,7 +56,7 @@ const OrbitsAll: FC = () => {
       try {
         const result = await getAllOrbits(orbName, orbIncl, orbCircle, userToken?.toString());
 
-        if (result.reqID !== 0){
+        if (result.reqID !== 0) {
           localStorage.setItem("reqID", result.reqID.toString());
 
           loadOrbitOrder(userToken, dispatch);
@@ -97,7 +97,7 @@ const OrbitsAll: FC = () => {
     dispatch(setOrbCircle(''));
 
     try {
-      const data = await getAllOrbits('','','',userToken?.toString());
+      const data = await getAllOrbits('', '', '', userToken?.toString());
       dispatch(setOrbit(data.allOrbits));
     } catch (error) {
       console.error("Ошибка загрузки орбит:", error);
@@ -107,10 +107,10 @@ const OrbitsAll: FC = () => {
 
   const handleStatusChange = async (orbitName: string, newStatus: boolean) => {
     setIsStatusChanging(true);
-  
+
     try {
       await changeOrbitStatus(userToken?.toString(), orbitName);
-  
+
       dispatch(
         setOrbit(
           orbit.map((orbit) =>
@@ -118,9 +118,9 @@ const OrbitsAll: FC = () => {
           )
         )
       );
-  
+
       dispatch(setOrbit(orbit.filter((orbit) => orbit.Name !== orbitName)));
-  
+
     } catch (error) {
       console.error('Ошибка:', error);
     } finally {
@@ -131,14 +131,17 @@ const OrbitsAll: FC = () => {
 
   return (
     <div>
-      {userToken && userRole === '1' && <CartButton />}
+      {userToken && (userRole === '1' || viewMode != "table") && <CartButton />}
       {userToken && userRole === '2' && (
         <>
-          <Button onClick={() => navigate(`/orbits/add`)} className='cart-button'>
-            Новая орбита
-          </Button>
+          {viewMode != "cards" && (
+            <Button
+              onClick={() => navigate(`/orbits/add`)} style={{marginTop:'80px', position: 'absolute'}} className='button-det'>
+              Новая орбита
+            </Button>
+          )}
           <div className='toggle-view-icon' onClick={toggleViewMode}>
-            <ToggleIcon style={{ position: 'absolute', left: '20px', marginTop: '100px' }} size={40} />
+            <ToggleIcon style={{ position: 'absolute', left: '20px', marginTop: '20px' }} size={40} />
           </div>
         </>
       )}

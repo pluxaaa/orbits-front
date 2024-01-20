@@ -3,16 +3,12 @@ import { Button, Card, Col } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { changeOrbitStatus } from '../../modules/changeOrbitStatus';
-import { changeReqStatus } from '../../modules/changeRequestStatus';
 import { deleteOrbitTransfer } from '../../modules/deleteTransferToOrbit';
 import cartSlice from '../../store/cartSlice';
 import store, { useAppDispatch } from '../../store/store';
 import "./OrbitCard.styles.css";
-// import { createTransferReq } from '../../modules/createTransferRequest';
-// import { addOrbitTransfer } from '../../modules/addTransferToOrbit';
 import { createOrbitTransferReq } from '../../modules/createOrbitTransferRequest';
 import { getAllOrbits } from '../../modules/getAllOrbits';
-import { changeReqStatusClient } from '../../modules/changeRequestStatusClient';
 import { deleteTransferRequest } from '../../modules/deleteTransferRequest';
 
 interface Props {
@@ -61,10 +57,6 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
                     const reqIDString: string | null = localStorage.getItem("reqID");
                     const reqID: number = reqIDString ? parseInt(reqIDString, 10) : 0;
                     await deleteTransferRequest(userToken, reqID)
-                    // await changeReqStatus(userToken, {
-                    //     ID: reqID,
-                    //     Status: "На рассмотрении",
-                    // });
                     localStorage.setItem("reqID", "")
                 }
             } else {
@@ -101,7 +93,7 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
                     onClick={() => (navigate(`/orbits/${encodeURIComponent(orbitName)}`))}>
                     Подробнее
                 </Button>
-                {userRole === '1' && (
+                {userToken && (
                     <>
                         <div style={{ width: '1px', height: '1px' }}></div>
                         <Button
@@ -113,7 +105,7 @@ const OrbitCard: FC<Props> = ({ imageUrl, orbitName, orbitStatus, onStatusChange
                         </Button>
                     </>
                 )}
-                {userRole === '2' && (
+                {userRole === 'TEMP CHANGE' && (
                     <>
                         <Col>
                             <Button
